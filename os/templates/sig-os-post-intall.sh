@@ -65,6 +65,8 @@ sudo ssh -o StrictHostKeyChecking=accept-new $DOCKER_USER@localhost \
     . ~/.profile && 
     docker context use rootless && 
     wget -O portainer.yml https://github.com/naub1n/lade_dsiun_sig/blob/production/docker/standalone/portainer.yml && 
-    wget -O traefik.yml https://github.com/naub1n/lade_dsiun_sig/blob/production/docker/standalone/traefik.yml && 
+    wget -O traefik.yml https://github.com/naub1n/lade_dsiun_sig/blob/production/docker/standalone/traefik/traefik.yml && 
     docker compose -f portainer.yml -p portainer up -d && 
+    mkdir /app/traefik/providers && 
+    wget -O /app/traefik/providers/tls.yml https://github.com/naub1n/lade_dsiun_sig/blob/production/docker/standalone/traefik/tls.yml && 
     docker compose -f traefik.yml -p traefik up -d'
