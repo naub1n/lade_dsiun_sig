@@ -10,9 +10,11 @@ sudo apt-get -y install \
     curl \
     gnupg \
     lsb-release
+
 # Ajouter la clé GPG Docker officielle 
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --batch --yes --dearmor -o /etc/apt/keyrings/docker.gpg
+
 # Ajouter le repository stable
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
@@ -41,16 +43,22 @@ sudo apt-get install -y uidmap \
     docker-ce-rootless-extras \
     iptables
 
-# Installation
-dockerd-rootless-setuptool.sh install
+echo "Indiquer l'utilisateur avec lequel lancer le daemon Docker"
+read DOCKER_USER
 
-# Demarrer Docker
-systemctl --user start docker
+# Déclaration de l'utilisateur dans loginctl (indispensable pour démarrer systemctl avec l'utilisateur)
+sudo loginctl enable-linger $DOCKER_USER
 
-# Activer Docker au demarrage
-systemctl --user enable docker
-sudo loginctl enable-linger $(whoami)
-
-# Définir le chemin vers le socket
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-
+# Installation de docker en mode rootless, démarrage du service et déclaration des variables d'environnement nécessaires
+# Cette partie doit se faire en ouvrant une session avec l'utilisateur concerné et ainsi démarrer une session loginctl.
+# Afin de ne pas lancer les commandes dans un autres script avec l'utilisateur souhaité, une connexion ssh locale est ouverte pour réaliser les commandes.
+sudo ssh -o StrictHostKeyChecking=accept-new $DOCKER_USER@localhost \
+    'dockerd-rootless-setuptool.sh install &&
+    systemctl --user enable docker &&
+    systemctl --user start docker && 
+    echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> ~/.profile &&
+    echo "DOCKER_HOST=unix://\$XDG_RUNTIME_DIR/docker.sock" >> ~/.profile && 
+    echo "PATH=/usr/bin:\$PATH" >> ~/.profile && 
+    . ~/.profile && 
+    docker context use rootless && 
+    docker run -d -p 9000:9000 -p 9443:9443 --name portainer --restart=always -v /$XDG_RUNTIME_DIR/docker.sock:/var/run/docker.sock -v ~/.local/share/docker/volumes:/var/lib/docker/volumes -v portainer_data:/data portainer/portainer-ce:latest'
