@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik
+    restart: always
+    command:
+      #- "--log.level=DEBUG"
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - /${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_traefik.rule=Host(`geotraefik.lesagencesdeleau.eu`) || Host(`geotraefik-int.lesagencesdeleau.eu`) || Host(`geotraefik-dev.lesagencesdeleau.eu`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_traefik.entrypoints=web"
+      - "traefik.http.services.s_traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.r_traefik.service=s_traefik"
+      #- "traefik.http.routers.r_traefik.tls.certresolver=leresolver"
