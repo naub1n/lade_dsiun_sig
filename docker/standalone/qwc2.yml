@@ -10,9 +10,6 @@ x-qwc-service-variables: &qwc-service-variables
   PGSERVICEFILE: "/srv/pg_services/pg_service.conf"
   #TENANT_URL_RE: '^https?://(.+?)[-|.]'
   TENANT_URL_RE: ^https?://.+?/(.+?)/
-  #TENANT_HEADER: 'Tenant_LADE'
-  FLASK_DEBUG: 1
-  FLASK_ENV: 'development'
   POST_PARAM_LOGIN: True
 
 services:
@@ -20,17 +17,14 @@ services:
     image: sourcepole/qwc-qgis-server:3.22-plugins
     environment:
       <<: *qwc-service-variables
-      QGIS_SERVER_LOG_LEVEL: DEBUG
-      QGIS_SERVER_LOG_PROFILE: true
-
+      #QGIS_SERVER_LOG_LEVEL: DEBUG
+      #QGIS_SERVER_LOG_PROFILE: true
     volumes:
-      - qgs-resources:/data:ro
-      - pg_services:/etc/postgresql-common:ro
+      - /app/qwc2/qgs-resources:/data:ro
+      - /app/qwc2/pg_services:/etc/postgresql-common:ro
+      - /app/qgis-server/auth-db:/qgs-server-auth-db
+      - /app/qgis-server/conf:/etc/apache2/sites-enabled
       - /etc/localtime:/etc/localtime:ro
-      - qgs-server-auth-db:/qgs-server-auth-db
-      - qgs-server-conf:/etc/apache2/sites-enabled
-    networks:
-      - qwc2_network
 
   qwc-config-service:
     image: sourcepole/qwc-config-generator:v2022.08.22
@@ -42,14 +36,12 @@ services:
       OUTPUT_CONFIG_PATH: '/srv/qwc_service/config-out'
       GENERATE_DYNAMIC_KVRELS: 1
     volumes:
-      - config-in:/srv/qwc_service/config-in:ro
-      - config:/srv/qwc_service/config-out
-      - qwc2:/qwc2
-      - qgs-resources:/data
-      - pg_services:/srv/pg_services:ro
+      - /app/qwc2/config-in:/srv/qwc_service/config-in:ro
+      - /app/qwc2/config:/srv/qwc_service/config-out
+      - /app/qwc2/qwc2:/qwc2
+      - /app/qwc2/qgs-resources:/data
+      - /app/qwc2/pg_services:/srv/pg_services:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-ogc-service:
     image: sourcepole/qwc-ogc-service:v2022.08.22
@@ -57,10 +49,8 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/ows'
     volumes:
-      - config:/srv/qwc_service/config:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-data-service:
     image: sourcepole/qwc-data-service:v2022.08.22
@@ -70,12 +60,10 @@ services:
       ATTACHMENTS_BASE_DIR: '/attachments'
       MAX_ATTACHMENT_FILE_SIZE: 1048576
     volumes:
-      - pg_services:/srv/pg_services:ro
-      - config:/srv/qwc_service/config:ro
-      - attachments:/attachments
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /app/qwc2/attachments:/attachments
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-solr:
     image: solr:8.11.1-slim
@@ -95,8 +83,6 @@ services:
       # Change "#credentials" to "credentials" in security.json for adding a user 'solr' with password 'SolrRocks'
       #- ./volumes/solr/security.json:/var/solr/data/security.json:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-fulltext-search-service:
     image: sourcepole/qwc-fulltext-search-service:v2022.08.22
@@ -104,11 +90,9 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v2/search'
     volumes:
-      - pg_services:/srv/pg_services:ro
-      - config:/srv/qwc_service/config:ro
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-map-viewer:
     image: sourcepole/qwc-map-viewer-demo:v2022.08.25
@@ -120,17 +104,14 @@ services:
     environment:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/'
-
     volumes:
-      - pg_services:/srv/pg_services:ro
-      - config:/srv/qwc_service/config:ro
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
       # When using qwc-map-viewer-demo:
-      - assets:/qwc2/assets:ro
+      - /app/qwc2/qwc2/assets:/qwc2/assets:ro
       # When using own viewer build with qwc-map-viewer-base:
-      #- qwc2:/qwc2:ro
+      #- /app/qwc2/qwc2:/qwc2:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-admin-gui:
     image: sourcepole/qwc-admin-gui:v2022.08.19
@@ -146,37 +127,35 @@ services:
       MAIL_SUPPRESS_SEND: 'True'
       MAIL_DEFAULT_SENDER: 'from@example.com'
     volumes:
-      - pg_services:/srv/pg_services:ro
-      - config:/srv/qwc_service/config:ro
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
       # Volumes for plugins
-      - qwc2:/qwc2:ro
-      - qgs-resources:/data
-      - config-in:/srv/qwc_service/config-in
+      - /app/qwc2/qwc2:/qwc2:ro
+      - /app/qwc2/qgs-resources:/data
+      - /app/qwc2/config-in:/srv/qwc_service/config-in
     networks:
       - qwc2_network
 
-  qwc-auth-service:
-    image: sourcepole/qwc-db-auth:v2022.08.22
-    environment:
-      <<: *qwc-service-variables
-      SERVICE_MOUNTPOINT: '/auth'
-      # https://flask-jwt-extended.readthedocs.io/en/stable/options/#cookie-options
-      JWT_COOKIE_SAMESITE: 'Strict'
-      # Enable the following in production (requires https):
-      #JWT_COOKIE_SECURE: 'True'
-      #TOTP_ENABLED: 'False'
-      #TOTP_ISSUER_NAME: 'QWC Services'
-      MAIL_SUPPRESS_SEND: 'True'
-      MAIL_DEFAULT_SENDER: 'from@example.com'
-    volumes:
-      - pg_services:/srv/pg_services:ro
-      - config:/srv/qwc_service/config:ro
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
+  # qwc-auth-service:
+  #   image: sourcepole/qwc-db-auth:v2022.08.22
+  #   environment:
+  #     <<: *qwc-service-variables
+  #     SERVICE_MOUNTPOINT: '/auth'
+  #     # https://flask-jwt-extended.readthedocs.io/en/stable/options/#cookie-options
+  #     JWT_COOKIE_SAMESITE: 'Strict'
+  #     # Enable the following in production (requires https):
+  #     #JWT_COOKIE_SECURE: 'True'
+  #     #TOTP_ENABLED: 'False'
+  #     #TOTP_ISSUER_NAME: 'QWC Services'
+  #     MAIL_SUPPRESS_SEND: 'True'
+  #     MAIL_DEFAULT_SENDER: 'from@example.com'
+  #   volumes:
+  #     - pg_services:/srv/pg_services:ro
+  #     - config:/srv/qwc_service/config:ro
+  #     - /etc/localtime:/etc/localtime:ro
       
-  qwc-auth-service2:
+  qwc-auth-service:
     image: sourcepole/qwc-ldap-auth:v2022.08.22
     environment:
       <<: *qwc-service-variables
@@ -196,8 +175,6 @@ services:
       LDAP_BIND_USER_PASSWORD: ${LDAP_BIND_USER_PASSWORD}
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-elevation-service:
     image: sourcepole/qwc-elevation-service:v2022.08.22
@@ -205,10 +182,8 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/elevation'
     volumes:
-      - config:/srv/qwc_service/config:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-permalink-service:
     image: sourcepole/qwc-permalink-service:v2022.08.22
@@ -216,11 +191,9 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v1/permalink'
     volumes:
-      - pg_services:/srv/pg_services:ro
-      - config:/srv/qwc_service/config:ro
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-print-service:
     image: sourcepole/qwc-print-service:v2022.08.22
@@ -228,10 +201,8 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v1/print'
     volumes:
-      - config:/srv/qwc_service/config:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-feature-info-service:
     image: sourcepole/qwc-feature-info-service:v2022.08.22
@@ -240,11 +211,9 @@ services:
       SERVICE_MOUNTPOINT: '/api/v1/featureinfo'
       # SKIP_EMPTY_ATTRIBUTES: 1
     volumes:
-      - pg_services:/srv/pg_services:ro
-      - config:/srv/qwc_service/config:ro
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-mapinfo-service:
     image: sourcepole/qwc-mapinfo-service:v2022.08.22
@@ -252,11 +221,9 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v1/mapinfo'
     volumes:
-      - pg_services:/srv/pg_services:ro
-      - config:/srv/qwc_service/config:ro
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
 
   qwc-legend-service:
     image: sourcepole/qwc-legend-service:v2022.08.22
@@ -264,11 +231,9 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v1/legend'
     volumes:
-      - config:/srv/qwc_service/config:ro
-      - legends:/legends
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /app/qwc2/legends:/legends
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
       
   qwc-project-publisher:
     image: registry.niaubin.fr/qwc-project-publisher
@@ -277,139 +242,14 @@ services:
       AUTH_REQUIRED: True
       SERVICE_MOUNTPOINT: '/publisher'
     volumes:
-      - config:/srv/qwc_service/config:ro
-      - qgs-resources:/data
-      - pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /app/qwc2/qgs-resources:/data
+      - /app/qwc2/pg_services:/srv/pg_services:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
       
   qgis-plugins-repository:
     image: registry.niaubin.fr/simple-qgisplugins-repo
     environment:
       MOUNTPOINT: "/plugins/"
     volumes:
-      - plugins-dir:/app/downloads
-    networks:
-      - qwc2_network
-
-  qwc-api-gateway:
-    image: nginx:1.19
-    ports:
-      - "8089:80"
-    command: [nginx-debug, '-g', 'daemon off;']
-    volumes:
-      - api-gateway_conf:/etc/nginx/conf.d:ro
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - qwc2_network
-      - sig_network
-    depends_on:
-      - qwc-config-service
-      - qwc-qgis-server
-      - qwc-ogc-service
-      - qwc-map-viewer
-      - qwc-auth-service
-      - qwc-feature-info-service
-      - qwc-legend-service
-      - qwc-mapinfo-service
-      - qwc-permalink-service
-      - qwc-elevation-service
-      - qwc-fulltext-search-service
-      - qwc-data-service
-      - qwc-admin-gui
-      - qwc-project-publisher
-
-networks:
-  sig_network:
-    external: true
-    name: sig_network
-
-  qwc2_network:
-    external: true
-    name: qwc2_network
-
-volumes:
-  pg_services:
-    driver_opts:
-      type: "cifs"
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/pg_services"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-
-  api-gateway_conf:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/api-gateway_conf"
-
-  config:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/config"
-
-  config-in:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/config-in"
-
-  qgs-resources:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/qgs-resources"
-
-  qwc2:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/qwc2"
-
-  assets:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/qwc2/assets"
-    
-  legends:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/legends"
-      
-  attachments:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/attachments"
-
-  solr_gdi:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/solr/configsets/gdi"
-
-  solr_data:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/solr/data"
-      
-  qgs-server-auth-db:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/qgs-server/auth_db"
-      
-  qgs-server-conf:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/qgs-server/apache_conf"
-      
-  plugins-dir:
-    driver_opts:
-      type: "cifs"
-      o: addr=${CIFS_HOST},username=${CIFS_USER},password=${CIFS_PASS},vers=1.0,file_mode=0777,dir_mode=0777,uid=${UID},gid=${GID}
-      device: "//${CIFS_HOST}/${CIFS_ROOT_DIR}/stacks/QWC2/volumes/plugins-repository"
+      - /app/qgis-plugins/plugins:/app/downloads
