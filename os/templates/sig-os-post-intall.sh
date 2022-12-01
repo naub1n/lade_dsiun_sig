@@ -64,5 +64,7 @@ sudo ssh -o StrictHostKeyChecking=accept-new $DOCKER_USER@localhost \
     echo "PATH=/usr/bin:\$PATH" >> ~/.profile && 
     . ~/.profile && 
     docker context use rootless && 
-    docker run -d -p 9000:9000 -p 9443:9443 --name portainer --restart=always -v /$XDG_RUNTIME_DIR/docker.sock:/var/run/docker.sock -v ~/.local/share/docker/volumes:/var/lib/docker/volumes -v portainer_data:/data portainer/portainer-ce:latest'
-    docker run -d -p 8080:8080 -p 80:80 -v /app/traefik/traefik.yml:/etc/traefik/traefik.yml -v /$XDG_RUNTIME_DIR/docker.sock:/var/run/docker.sock traefik:v2.9
+    wget -O portainer.yml https://github.com/naub1n/lade_dsiun_sig/blob/production/docker/standalone/portainer.yml && 
+    wget -O traefik.yml https://github.com/naub1n/lade_dsiun_sig/blob/production/docker/standalone/traefik.yml && 
+    docker compose -f portainer.yml -p portainer up -d && 
+    docker compose -f traefik.yml -p traefik up -d'
