@@ -10,7 +10,6 @@ services:
       - --api.insecure=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
-      - --providers.file.directory=/etc/traefik/providers
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
     ports:
@@ -19,8 +18,6 @@ services:
       - 8080:8080
     volumes:
       - /${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock:ro
-      - /app/traefik/providers:/etc/traefik/providers
-      - /etc/ssl:/etc/ssl
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_traefik.rule=Host(`geotraefik.lesagencesdeleau.eu`) || Host(`geotraefik-int.lesagencesdeleau.eu`) || Host(`geotraefik-dev.lesagencesdeleau.eu`)"
