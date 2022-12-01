@@ -75,10 +75,10 @@ services:
     # ports:
      # - "127.0.0.1:8983:8983"
     volumes:
-      - solr_gdi:/gdi_conf:ro
+      - /app/qwc2/solr/configsets/gdi:/gdi_conf:ro
       # Configuration is copied once from /gdi_conf/ to /var/solr/data/
       # Change ownership to solr user with `sudo chown 8983:8983 volumes/solr/data`
-      #- solr_data:/var/solr/data
+      #- /app/qwc2/solr/data:/var/solr/data
       # Protect admin GUI and admin API with Basic auth
       # Change "#credentials" to "credentials" in security.json for adding a user 'solr' with password 'SolrRocks'
       #- ./volumes/solr/security.json:/var/solr/data/security.json:ro
