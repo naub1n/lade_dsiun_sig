@@ -22,6 +22,9 @@ echo "PATH=/usr/bin:\$PATH" >> ~/.profile
 # Activation du contexte rootless pour Docker
 docker context use rootless
 
+# Création du sous réseau des application SIG
+docker network create sig-net
+
 # Téléchargement et déploiement de la stack Portainer
 wget -O portainer.yml https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/production/docker/standalone/portainer.yml
 docker compose -f portainer.yml -p portainer up -d

@@ -29,3 +29,8 @@ services:
       - "traefik.http.services.s_traefik.loadbalancer.server.port=8080"
       - "traefik.http.routers.r_traefik.service=s_traefik"
       #- "traefik.http.routers.r_traefik.tls.certresolver=leresolver"
+
+networks:
+  default:
+    name: sig-net
+    external: true
