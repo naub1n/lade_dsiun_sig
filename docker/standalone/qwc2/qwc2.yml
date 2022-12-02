@@ -134,8 +134,6 @@ services:
       - /app/qwc2/qwc2:/qwc2:ro
       - /app/qwc2/qgs-resources:/data
       - /app/qwc2/config-in:/srv/qwc_service/config-in
-    networks:
-      - qwc2_network
 
   # qwc-auth-service:
   #   image: sourcepole/qwc-db-auth:v2022.08.22
@@ -253,3 +251,8 @@ services:
       MOUNTPOINT: "/plugins/"
     volumes:
       - /app/qgis-plugins/plugins:/app/downloads
+
+networks:
+  default:
+    name: sig-net
+    external: true
