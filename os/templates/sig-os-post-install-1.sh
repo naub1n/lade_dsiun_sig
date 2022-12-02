@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# A lancer avec l'utilisateur 'admgen' ou un utiliateur spécifique à l'application
+
 ## Préparation du repository
 ## https://docs.docker.com/engine/install/debian/#set-up-the-repository
 
@@ -43,22 +45,11 @@ sudo apt-get install -y uidmap \
     docker-ce-rootless-extras \
     iptables
 
-echo "Indiquer l'utilisateur avec lequel lancer le daemon Docker"
+echo "Indiquer l'utilisateur avec lequel sera lance le daemon Docker"
 read DOCKER_USER
 
 # Déclaration de l'utilisateur dans loginctl (indispensable pour démarrer systemctl avec l'utilisateur)
 sudo loginctl enable-linger $DOCKER_USER
 
-# Installation de docker en mode rootless, démarrage du service et déclaration des variables d'environnement nécessaires
-# Cette partie doit se faire en ouvrant une session avec l'utilisateur concerné et ainsi démarrer une session loginctl.
-# Afin de ne pas lancer les commandes dans un autres script avec l'utilisateur souhaité, une connexion ssh locale est ouverte pour réaliser les commandes.
-sudo ssh -o StrictHostKeyChecking=accept-new $DOCKER_USER@localhost \
-    'dockerd-rootless-setuptool.sh install &&
-    systemctl --user enable docker &&
-    systemctl --user start docker && 
-    echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> ~/.profile &&
-    echo "DOCKER_HOST=unix://\$XDG_RUNTIME_DIR/docker.sock" >> ~/.profile && 
-    echo "PATH=/usr/bin:\$PATH" >> ~/.profile && 
-    . ~/.profile && 
-    docker context use rootless && 
-    docker run -d -p 9000:9000 -p 9443:9443 --name portainer --restart=always -v /$XDG_RUNTIME_DIR/docker.sock:/var/run/docker.sock -v ~/.local/share/docker/volumes:/var/lib/docker/volumes -v portainer_data:/data portainer/portainer-ce:latest'
+# Exposer les ports < 1024
+sudo setcap cap_net_bind_service=ep $(which rootlesskit)
