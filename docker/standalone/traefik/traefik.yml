@@ -7,6 +7,7 @@ services:
     restart: always
     command:
       #- "--log.level=DEBUG"
+      - --accesslog.fields.names.StartUTC=drop
       - --api.insecure=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
