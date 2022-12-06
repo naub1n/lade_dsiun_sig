@@ -118,7 +118,7 @@ services:
       #- "traefik.http.routers.r_traefik.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_map.entrypoints=web"
       - "traefik.http.services.s_qwc2_map.loadbalancer.server.port=9090"
-      #- "traefik.http.routers.r_qwc2_map.service=s_qwc2"
+      - "traefik.http.routers.r_qwc2_map.service=s_qwc2_map"
 
   qwc-admin-gui:
     image: sourcepole/qwc-admin-gui:v2022.08.19
@@ -186,7 +186,7 @@ services:
       #- "traefik.http.routers.r_traefik.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_auth.entrypoints=web"
       - "traefik.http.services.s_qwc2_auth.loadbalancer.server.port=9090"
-      #- "traefik.http.routers.r_qwc2.service=s_qwc2"
+      - "traefik.http.routers.r_qwc2_auth.service=s_qwc2_auth"
 
   qwc-elevation-service:
     image: sourcepole/qwc-elevation-service:v2022.08.22
@@ -262,8 +262,9 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_proj_publisher.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/publisher`)"
       #- "traefik.http.routers.r_traefik.entrypoints=websecure"
-      - "traefik.http.services.r_qwc2_proj_publisher.loadbalancer.server.port=9090"
+      - "traefik.http.services.s_qwc2_proj_publisher.loadbalancer.server.port=9090"
       - "traefik.http.routers.r_qwc2_proj_publisher.entrypoints=web"
+      - "traefik.http.routers.r_qwc2_proj_publisher.service=s_qwc2_proj_publisher"
       
   qgis-plugins-repository:
     image: registry.niaubin.fr/simple-qgisplugins-repo
