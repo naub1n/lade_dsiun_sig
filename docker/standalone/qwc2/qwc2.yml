@@ -51,6 +51,13 @@ services:
     volumes:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_ogc.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/ows`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_ogc.entrypoints=web"
+      - "traefik.http.services.s_qwc2_ogc.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_ogc.service=s_qwc2_ogc"
 
   qwc-data-service:
     image: sourcepole/qwc-data-service:v2022.08.22
@@ -64,6 +71,13 @@ services:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /app/qwc2/attachments:/attachments
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_data.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/data`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_data.entrypoints=web"
+      - "traefik.http.services.s_qwc2_data.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_data.service=s_qwc2_data"
 
   qwc-solr:
     image: solr:8.11.1-slim
@@ -93,6 +107,13 @@ services:
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_search.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v2/search`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_search.entrypoints=web"
+      - "traefik.http.services.s_qwc2_search.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_search.service=s_qwc2_search"
 
   qwc-map-viewer:
     image: sourcepole/qwc-map-viewer-demo:v2022.08.25
@@ -141,6 +162,13 @@ services:
       - /app/qwc2/qwc2:/qwc2:ro
       - /app/qwc2/qgs-resources:/data
       - /app/qwc2/config-in:/srv/qwc_service/config-in
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_admin.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/qwc_admin`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_admin.entrypoints=web"
+      - "traefik.http.services.s_qwc2_admin.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_admin.service=s_qwc2_admin"
 
   # qwc-auth-service:
   #   image: sourcepole/qwc-db-auth:v2022.08.22
@@ -196,6 +224,13 @@ services:
     volumes:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_elevation.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/elevation`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_elevation.entrypoints=web"
+      - "traefik.http.services.s_qwc2_elevation.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_elevation.service=s_qwc2_elevation"
 
   qwc-permalink-service:
     image: sourcepole/qwc-permalink-service:v2022.08.22
@@ -206,6 +241,13 @@ services:
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_permalink.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/permalink`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_permalink.entrypoints=web"
+      - "traefik.http.services.s_qwc2_permalink.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_permalink.service=s_qwc2_permalink"
 
   qwc-print-service:
     image: sourcepole/qwc-print-service:v2022.08.22
@@ -215,6 +257,13 @@ services:
     volumes:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_print.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/print`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_print.entrypoints=web"
+      - "traefik.http.services.s_qwc2_print.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_print.service=s_qwc2_print"
 
   qwc-feature-info-service:
     image: sourcepole/qwc-feature-info-service:v2022.08.22
@@ -226,6 +275,13 @@ services:
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_f_info.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/featureinfo`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_f_info.entrypoints=web"
+      - "traefik.http.services.s_qwc2_f_info.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_f_info.service=s_qwc2_f_info"
 
   qwc-mapinfo-service:
     image: sourcepole/qwc-mapinfo-service:v2022.08.22
@@ -236,6 +292,13 @@ services:
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_m_info.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/mapinfo`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_m_info.entrypoints=web"
+      - "traefik.http.services.s_qwc2_m_info.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_m_info.service=s_qwc2_m_info"
 
   qwc-legend-service:
     image: sourcepole/qwc-legend-service:v2022.08.22
@@ -246,6 +309,13 @@ services:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /app/qwc2/legends:/legends
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_legend.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/legend`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_legend.entrypoints=web"
+      - "traefik.http.services.s_qwc2_legend.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2_legend.service=s_qwc2_legend"
       
   qwc-project-publisher:
     image: registry.niaubin.fr/qwc-project-publisher
@@ -272,6 +342,13 @@ services:
       MOUNTPOINT: "/plugins/"
     volumes:
       - /app/qgis-plugins/plugins:/app/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qgis_plugins.rule=Host(`${QGIS_PLUGIN_HOST}`)"
+      #- "traefik.http.routers.r_qgis_plugins.entrypoints=websecure"
+      - "traefik.http.services.s_qgis_plugins.loadbalancer.server.port=80"
+      - "traefik.http.routers.r_qgis_plugins.entrypoints=web"
+      - "traefik.http.routers.r_qgis_plugins.service=s_qgis_plugins"
 
 networks:
   default:
