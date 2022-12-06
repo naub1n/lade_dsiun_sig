@@ -8,8 +8,8 @@ x-qwc-service-variables: &qwc-service-variables
   SERVICE_UID: ${UID}
   SERVICE_GID: ${GID}
   PGSERVICEFILE: "/srv/pg_services/pg_service.conf"
-  #TENANT_URL_RE: '^https?://(.+?)[-|.]'
-  TENANT_URL_RE: ^https?://.+?/(.+?)/
+  TENANT_URL_RE: '^https?://(.+?)[-|.]'
+  #TENANT_URL_RE: ^https?://.+?/(.+?)/
   POST_PARAM_LOGIN: True
 
 services:
@@ -200,7 +200,7 @@ services:
   #     - config:/srv/qwc_service/config:ro
   #     - /etc/localtime:/etc/localtime:ro
   #     # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
-        - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
+  #     - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
       
   qwc-auth-service:
     image: sourcepole/qwc-ldap-auth:v2022.08.22
