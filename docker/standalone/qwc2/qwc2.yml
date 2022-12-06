@@ -42,6 +42,8 @@ services:
       - /app/qwc2/qgs-resources:/data
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.py
 
   qwc-ogc-service:
     image: sourcepole/qwc-ogc-service:v2022.08.22
@@ -51,6 +53,8 @@ services:
     volumes:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_ogc.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/ows`)"
@@ -71,6 +75,8 @@ services:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /app/qwc2/attachments:/attachments
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_data.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/data`)"
@@ -107,6 +113,8 @@ services:
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_search.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v2/search`)"
@@ -133,6 +141,8 @@ services:
       # When using own viewer build with qwc-map-viewer-base:
       #- /app/qwc2/qwc2:/qwc2:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_map.rule=Host(`${QWC2_HOST}`)"
@@ -162,6 +172,8 @@ services:
       - /app/qwc2/qwc2:/qwc2:ro
       - /app/qwc2/qgs-resources:/data
       - /app/qwc2/config-in:/srv/qwc_service/config-in
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_admin.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/qwc_admin`)"
@@ -187,6 +199,8 @@ services:
   #     - pg_services:/srv/pg_services:ro
   #     - config:/srv/qwc_service/config:ro
   #     - /etc/localtime:/etc/localtime:ro
+  #     # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+        - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
       
   qwc-auth-service:
     image: sourcepole/qwc-ldap-auth:v2022.08.22
@@ -208,6 +222,8 @@ services:
       LDAP_BIND_USER_PASSWORD: ${LDAP_BIND_USER_PASSWORD}
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_auth.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/auth/`)"
@@ -224,6 +240,8 @@ services:
     volumes:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_elevation.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/elevation`)"
@@ -241,6 +259,8 @@ services:
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_permalink.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/permalink`)"
@@ -257,6 +277,8 @@ services:
     volumes:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_print.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/print`)"
@@ -275,6 +297,8 @@ services:
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_f_info.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/featureinfo`)"
@@ -292,6 +316,8 @@ services:
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_m_info.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/mapinfo`)"
@@ -309,6 +335,8 @@ services:
       - /app/qwc2/config:/srv/qwc_service/config:ro
       - /app/qwc2/legends:/legends
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_legend.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/legend`)"
@@ -328,6 +356,8 @@ services:
       - /app/qwc2/qgs-resources:/data
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /etc/localtime:/etc/localtime:ro
+      # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+      - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_proj_publisher.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/publisher`)"
