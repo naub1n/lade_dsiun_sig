@@ -112,6 +112,13 @@ services:
       # When using own viewer build with qwc-map-viewer-base:
       #- /app/qwc2/qwc2:/qwc2:ro
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2.rule=Host(`${QWC2_HOST}`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2.entrypoints=web"
+      - "traefik.http.services.s_qwc2.loadbalancer.server.port=9090"
+      - "traefik.http.routers.r_qwc2.service=s_qwc2"
 
   qwc-admin-gui:
     image: sourcepole/qwc-admin-gui:v2022.08.19
@@ -173,6 +180,13 @@ services:
       LDAP_BIND_USER_PASSWORD: ${LDAP_BIND_USER_PASSWORD}
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/auth/`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2.entrypoints=web"
+      #- "traefik.http.services.s_qwc2.loadbalancer.server.port=9090"
+      #- "traefik.http.routers.r_qwc2.service=s_qwc2"
 
   qwc-elevation-service:
     image: sourcepole/qwc-elevation-service:v2022.08.22
@@ -244,6 +258,11 @@ services:
       - /app/qwc2/qgs-resources:/data
       - /app/qwc2/pg_services:/srv/pg_services:ro
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_proj_publisher.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/publisher`)"
+      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.routers.r_qwc2_proj_publisher.entrypoints=web"
       
   qgis-plugins-repository:
     image: registry.niaubin.fr/simple-qgisplugins-repo
