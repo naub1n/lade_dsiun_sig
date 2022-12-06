@@ -185,7 +185,7 @@ services:
       - "traefik.http.routers.r_qwc2.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/auth/`)"
       #- "traefik.http.routers.r_traefik.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2.entrypoints=web"
-      #- "traefik.http.services.s_qwc2.loadbalancer.server.port=9090"
+      - "traefik.http.services.s_qwc2.loadbalancer.server.port=9090"
       #- "traefik.http.routers.r_qwc2.service=s_qwc2"
 
   qwc-elevation-service:
@@ -262,6 +262,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_proj_publisher.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/publisher`)"
       #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+      - "traefik.http.services.s_qwc2.loadbalancer.server.port=9090"
       - "traefik.http.routers.r_qwc2_proj_publisher.entrypoints=web"
       
   qgis-plugins-repository:
