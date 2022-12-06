@@ -4,6 +4,9 @@
 # Cette partie doit se faire en ouvrant une session avec l'utilisateur concerné et ainsi démarrer une session loginctl.
 # A lancer avec l'utilisateur 'maint' ou un utiliateur spécifique à l'application
 
+# Création du fichier de configuration de docker pour changer le chemin vers les data de Docker
+echo '{"data-root": "/app/docker/data"}' | python3 -m json.tool > ~/.config/docker/daemon.json
+
 # Installation de docker en mode rootless
 dockerd-rootless-setuptool.sh install
 
