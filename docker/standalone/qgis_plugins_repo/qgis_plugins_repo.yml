@@ -2,11 +2,9 @@ version: '3.4'
 
 services:
   qgis-plugins-repository:
-    image: registry.niaubin.fr/simple-qgisplugins-repo
-    environment:
-      MOUNTPOINT: "/plugins/"
+    image: webdevops/php-apache:7.3
     volumes:
-      - /app/qgis-plugins/plugins:/app/downloads
+      - /app/qgis-plugins-repo:/app
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qgis_plugins.rule=Host(`${QGIS_PLUGIN_HOST}`)"
