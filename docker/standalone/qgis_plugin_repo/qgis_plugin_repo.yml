@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  qgis-plugins-repository:
+    image: registry.niaubin.fr/simple-qgisplugins-repo
+    environment:
+      MOUNTPOINT: "/plugins/"
+    volumes:
+      - /app/qgis-plugins/plugins:/app/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qgis_plugins.rule=Host(`${QGIS_PLUGIN_HOST}`)"
+      #- "traefik.http.routers.r_qgis_plugins.entrypoints=websecure"
+      - "traefik.http.services.s_qgis_plugins.loadbalancer.server.port=80"
+      - "traefik.http.routers.r_qgis_plugins.entrypoints=web"
+      - "traefik.http.routers.r_qgis_plugins.service=s_qgis_plugins"
+
+networks:
+  default:
+    name: sig-net
+    external: true
