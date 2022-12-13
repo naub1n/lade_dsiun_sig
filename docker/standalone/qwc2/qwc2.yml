@@ -8,7 +8,7 @@ x-qwc-service-variables: &qwc-service-variables
   SERVICE_UID: ${UID}
   SERVICE_GID: ${GID}
   PGSERVICEFILE: "/srv/pg_services/pg_service.conf"
-  TENANT_URL_RE: '^https?://(.+?)[-|.]'
+  TENANT_URL_RE: '^https?://geo-(.+?)[-|.]'
   #TENANT_URL_RE: ^https?://.+?/(.+?)/
   POST_PARAM_LOGIN: True
 
