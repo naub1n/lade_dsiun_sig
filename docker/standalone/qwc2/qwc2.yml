@@ -205,7 +205,9 @@ services:
   #     - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.py
       
   qwc-auth-service:
-    image: sourcepole/qwc-ldap-auth:v2022.08.22
+    #image: sourcepole/qwc-ldap-auth:v2022.08.22
+    # Utilisation du service modifié le temps que la correction soit ajoutée au repo de sourcepole
+    image: naub1n/qwc-ldap-auth:latest
     environment:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/auth'
