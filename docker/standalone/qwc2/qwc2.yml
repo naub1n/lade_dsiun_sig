@@ -334,7 +334,7 @@ services:
       - "traefik.http.routers.r_qwc2_legend.service=s_qwc2_legend"
       
   qwc-project-publisher:
-    image: registry.niaubin.fr/qwc-project-publisher
+    image: naub1n/qwc-project-publisher-service:v2022.12.12
     environment:
       <<: *qwc-service-variables
       AUTH_REQUIRED: True
