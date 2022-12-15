@@ -45,6 +45,7 @@ sudo apt-get install -y uidmap \
     docker-ce-rootless-extras \
     iptables
 
+# TODO ! A expliquer !
 echo "Indiquer l'utilisateur avec lequel sera lance le daemon Docker"
 read DOCKER_USER
 
