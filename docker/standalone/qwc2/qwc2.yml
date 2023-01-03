@@ -8,7 +8,7 @@ x-qwc-service-variables: &qwc-service-variables
   SERVICE_UID: ${UID}
   SERVICE_GID: ${GID}
   PGSERVICEFILE: "/srv/pg_services/pg_service.conf"
-  TENANT_URL_RE: '^https?://geo-(.+?)[-|.]'
+  TENANT_URL_RE: ${QWC2_TENANT_URL_RE}
   #TENANT_URL_RE: ^https?://.+?/(.+?)/
   POST_PARAM_LOGIN: True
 
@@ -56,7 +56,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_ogc.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/ows`)"
+      - "traefik.http.routers.r_qwc2_ogc.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/ows`)"
       #- "traefik.http.routers.r_qwc2_ogc.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_ogc.entrypoints=web"
       - "traefik.http.services.s_qwc2_ogc.loadbalancer.server.port=9090"
@@ -77,7 +77,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_data.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/data`)"
+      - "traefik.http.routers.r_qwc2_data.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/data`)"
       #- "traefik.http.routers.r_qwc2_data.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_data.entrypoints=web"
       - "traefik.http.services.s_qwc2_data.loadbalancer.server.port=9090"
@@ -115,7 +115,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_search.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v2/search`)"
+      - "traefik.http.routers.r_qwc2_search.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v2/search`)"
       #- "traefik.http.routers.r_qwc2_search.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_search.entrypoints=web"
       - "traefik.http.services.s_qwc2_search.loadbalancer.server.port=9090"
@@ -149,7 +149,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_map.rule=Host(`${QWC2_HOST}`)"
+      - "traefik.http.routers.r_qwc2_map.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`)"
       #- "traefik.http.routers.r_qwc2_map.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_map.entrypoints=web"
       - "traefik.http.services.s_qwc2_map.loadbalancer.server.port=9090"
@@ -186,7 +186,7 @@ services:
       - /app/qwc2/config-in:/srv/qwc_service/config-in
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_admin.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/qwc_admin`)"
+      - "traefik.http.routers.r_qwc2_admin.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/qwc_admin`)"
       #- "traefik.http.routers.r_qwc2_admin.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_admin.entrypoints=web"
       - "traefik.http.services.s_qwc2_admin.loadbalancer.server.port=9090"
@@ -237,7 +237,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_auth.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/auth/`)"
+      - "traefik.http.routers.r_qwc2_auth.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/auth/`)"
       #- "traefik.http.routers.r_qwc2_auth.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_auth.entrypoints=web"
       - "traefik.http.services.s_qwc2_auth.loadbalancer.server.port=9090"
@@ -254,7 +254,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_elevation.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/elevation`)"
+      - "traefik.http.routers.r_qwc2_elevation.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/elevation`)"
       #- "traefik.http.routers.r_qwc2_elevation.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_elevation.entrypoints=web"
       - "traefik.http.services.s_qwc2_elevation.loadbalancer.server.port=9090"
@@ -272,7 +272,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_permalink.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/permalink`)"
+      - "traefik.http.routers.r_qwc2_permalink.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/permalink`)"
       #- "traefik.http.routers.r_qwc2_permalink.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_permalink.entrypoints=web"
       - "traefik.http.services.s_qwc2_permalink.loadbalancer.server.port=9090"
@@ -289,7 +289,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_print.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/print`)"
+      - "traefik.http.routers.r_qwc2_print.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/print`)"
       #- "traefik.http.routers.r_qwc2_print.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_print.entrypoints=web"
       - "traefik.http.services.s_qwc2_print.loadbalancer.server.port=9090"
@@ -308,7 +308,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_f_info.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/featureinfo`)"
+      - "traefik.http.routers.r_qwc2_f_info.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/featureinfo`)"
       #- "traefik.http.routers.r_qwc2_f_info.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_f_info.entrypoints=web"
       - "traefik.http.services.s_qwc2_f_info.loadbalancer.server.port=9090"
@@ -326,7 +326,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_m_info.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/mapinfo`)"
+      - "traefik.http.routers.r_qwc2_m_info.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/mapinfo`)"
       #- "traefik.http.routers.r_qwc2_m_info.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_m_info.entrypoints=web"
       - "traefik.http.services.s_qwc2_m_info.loadbalancer.server.port=9090"
@@ -344,7 +344,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_legend.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/api/v1/legend`)"
+      - "traefik.http.routers.r_qwc2_legend.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/legend`)"
       #- "traefik.http.routers.r_qwc2_legend.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_legend.entrypoints=web"
       - "traefik.http.services.s_qwc2_legend.loadbalancer.server.port=9090"
@@ -364,7 +364,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_proj_publisher.rule=Host(`${QWC2_HOST}`) && PathPrefix(`/publisher`)"
+      - "traefik.http.routers.r_qwc2_proj_publisher.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/publisher`)"
       #- "traefik.http.routers.r_qwc2_proj_publisher.entrypoints=websecure"
       - "traefik.http.services.s_qwc2_proj_publisher.loadbalancer.server.port=9090"
       - "traefik.http.routers.r_qwc2_proj_publisher.entrypoints=web"
