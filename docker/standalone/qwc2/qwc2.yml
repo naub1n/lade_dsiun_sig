@@ -8,7 +8,7 @@ x-qwc-service-variables: &qwc-service-variables
   SERVICE_UID: ${UID}
   SERVICE_GID: ${GID}
   PGSERVICEFILE: "/srv/pg_services/pg_service.conf"
-  TENANT_URL_RE: '^https?://(.+?)[-|.]'
+  TENANT_URL_RE: '^https?://geo-(.+?)[-|.]'
   #TENANT_URL_RE: ^https?://.+?/(.+?)/
   POST_PARAM_LOGIN: True
 
@@ -213,7 +213,9 @@ services:
   #     - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.py
       
   qwc-auth-service:
-    image: sourcepole/qwc-ldap-auth:v2022.08.22
+    #image: sourcepole/qwc-ldap-auth:v2022.08.22
+    # Utilisation du service modifié le temps que la correction soit ajoutée au repo de sourcepole
+    image: naub1n/qwc-ldap-auth:latest
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -349,7 +351,7 @@ services:
       - "traefik.http.routers.r_qwc2_legend.service=s_qwc2_legend"
       
   qwc-project-publisher:
-    image: registry.niaubin.fr/qwc-project-publisher
+    image: naub1n/qwc-project-publisher-service:v2023.01.03
     restart: always
     environment:
       <<: *qwc-service-variables

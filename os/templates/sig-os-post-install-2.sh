@@ -25,7 +25,8 @@ echo "PATH=/usr/bin:\$PATH" >> ~/.profile
 # Activation du contexte rootless pour Docker
 docker context use rootless
 
-# Création du sous réseau des application SIG
+# Création du sous réseau des application SIG (A modifier avec un nom générique si on souhaite faire de 
+# ce template un template pour l'ensemble du SI.
 docker network create sig-net
 
 # Téléchargement et déploiement de la stack Portainer
