@@ -215,7 +215,7 @@ services:
   qwc-auth-service:
     #image: sourcepole/qwc-ldap-auth:v2022.08.22
     # Utilisation du service modifié le temps que la correction soit ajoutée au repo de sourcepole
-    image: naub1n/qwc-ldap-auth:latest
+    image: naub1n/qwc-ldap-auth:v2023.01.04
     restart: always
     environment:
       <<: *qwc-service-variables
