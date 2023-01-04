@@ -11,6 +11,7 @@ x-qwc-service-variables: &qwc-service-variables
   TENANT_URL_RE: ${QWC2_TENANT_URL_RE}
   #TENANT_URL_RE: ^https?://.+?/(.+?)/
   POST_PARAM_LOGIN: True
+  FLASK_DEBUG: ${QWC2_FLASK_DEBUG}
 
 services:
   qwc-qgis-server:
