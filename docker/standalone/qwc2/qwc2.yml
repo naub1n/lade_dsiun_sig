@@ -234,6 +234,13 @@ services:
       LDAP_USER_LOGIN_ATTR: 'uid'
       LDAP_BIND_USER_DN: ${LDAP_BIND_USER_DN}
       LDAP_BIND_USER_PASSWORD: ${LDAP_BIND_USER_PASSWORD}
+    # Suppresion de l'ajout du tenant dans l'url dans le script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+    entrypoint: 
+      - sh
+      - -c
+      - |
+        sed -i 's/return self.service_prefix + self.tenant()/return self.service_prefix/g' /usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.py
+        uwsgi --http-socket :9090 --buffer-size $$REQ_HEADER_BUFFER_SIZE --processes $$UWSGI_PROCESSES --threads $$UWSGI_THREADS --plugins python3 $$UWSGI_EXTRA --protocol uwsgi --wsgi-disable-file-wrapper --uid $$SERVICE_UID --gid $$SERVICE_GID --master --chdir /srv/qwc_service --mount $$SERVICE_MOUNTPOINT=server:app --manage-script-name
     volumes:
       - /etc/localtime:/etc/localtime:ro
     labels:
