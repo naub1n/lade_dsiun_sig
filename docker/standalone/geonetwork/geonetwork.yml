@@ -100,7 +100,7 @@ services:
   # The discovery service is the only fixed entry point.
   # Browse to http://localhost:8761 to check all services are registered.
   discovery:
-    image: gn-cloud-discovery:${GEONETWORK_CLOUD_TAG}
+    image: geonetwork/gn-cloud-discovery:${GEONETWORK_CLOUD_TAG}
     environment:
       SERVER_PORT: 8761
       EUREKA_INSTANCE_HOSTNAME: discovery
@@ -117,7 +117,7 @@ services:
   # microservices. Being a Discovery First Bootstrap configuration, it'll
   # register itself with the Eureka discovery service and can be scaled
   config:
-    image: gn-cloud-configuring:${GEONETWORK_CLOUD_TAG}
+    image: geonetwork/gn-cloud-configuring:${GEONETWORK_CLOUD_TAG}
     depends_on:
       - discovery
     environment:
@@ -128,7 +128,7 @@ services:
       - /app/geonetwork/gn-cloud-configuring:/workspace/config
 
   auth:
-    image: gn-cloud-authorizing:${GEONETWORK_CLOUD_TAG}
+    image: geonetwork/gn-cloud-authorizing:${GEONETWORK_CLOUD_TAG}
     depends_on:
       - config
       - rabbitmq
@@ -138,7 +138,7 @@ services:
 
 
   gateway:
-    image: gn-cloud-gateway:${GEONETWORK_CLOUD_TAG}
+    image: geonetwork/gn-cloud-gateway:${GEONETWORK_CLOUD_TAG}
     depends_on:
       - config
       - rabbitmq
@@ -154,7 +154,7 @@ services:
       - "traefik.http.routers.r_geonetwork_cloud.service=s_geonetwork_cloud"
 
   search:
-    image: gn-cloud-searching:${GEONETWORK_CLOUD_TAG}
+    image: geonetwork/gn-cloud-searching:${GEONETWORK_CLOUD_TAG}
     depends_on:
       - config
       - rabbitmq
@@ -163,7 +163,7 @@ services:
       RABBITMQ_HOST: rabbitmq
 
   index:
-    image: gn-cloud-indexing:${GEONETWORK_CLOUD_TAG}
+    image: geonetwork/gn-cloud-indexing:${GEONETWORK_CLOUD_TAG}
     depends_on:
       - config
       - rabbitmq
@@ -172,7 +172,7 @@ services:
       RABBITMQ_HOST: rabbitmq
 
   ogc-records:
-    image: gn-cloud-ogc-api-records-service:${GEONETWORK_CLOUD_TAG}
+    image: geonetwork/gn-cloud-ogc-api-records-service:${GEONETWORK_CLOUD_TAG}
     depends_on:
       - config
       - rabbitmq
