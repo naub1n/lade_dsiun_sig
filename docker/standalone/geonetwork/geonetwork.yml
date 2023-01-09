@@ -37,7 +37,7 @@ services:
     depends_on:
       - kibana
       - elasticsearch
-      - database
+      # - database
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_geonetwork.rule=Host(`${TRAEFIK_GEONETWORK_HOST}`) && PathPrefix(`/geonetwork`)"
