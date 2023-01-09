@@ -48,6 +48,7 @@ services:
 
   elasticsearch:
     image: elasticsearch:7.9.2
+    user: "${UID}:${GID}"
     ulimits:
       memlock:
         soft: -1
