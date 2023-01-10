@@ -1,9 +1,6 @@
 version: "3.8"
 
 services:
-  # include the required legacy geonetwork as a service, and its service dependencies for database and elasticsearch
-  # Rationale is to lower the barrier for developers to get started with this project, and to have the indexing-service
-  # services dependencies in the same network
   geonetwork:
     image: geonetwork:4.2.2
     restart: always
@@ -33,11 +30,10 @@ services:
 
       GEONETWORK_MICROSERVICESPROXY_TARGETURI: ${GEONETWORK_MICROSERVICESPROXY_TARGETURI}
     volumes:
-      - /app/geonetwork/geonetwork:/catalogue-data
+      - gn_geonetwork_data:/catalogue-data
     depends_on:
       - kibana
       - elasticsearch
-      # - database
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_geonetwork.rule=Host(`${TRAEFIK_GEONETWORK_HOST}`) && PathPrefix(`/geonetwork`)"
@@ -45,10 +41,24 @@ services:
       - "traefik.http.services.s_geonetwork.loadbalancer.server.port=8080"
       - "traefik.http.routers.r_geonetwork.entrypoints=web"
       - "traefik.http.routers.r_geonetwork.service=s_geonetwork"
+      
+  ogc-api-records-service:
+    image: geonetwork/gn-cloud-ogc-api-records-service:0.2.0
+    environment:
+      SPRING_PROFILES_ACTIVE: standalone
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${GEONETWORK_DB_HOST}:${GEONETWORK_DB_PORT}/${GEONETWORK_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${GEONETWORK_DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${GEONETWORK_DB_PASSWORD}
+      GN_BASEURL: http://geonetwork:8080/geonetwork/api
+      GN_LEGACY_URL: http://geonetwork:8080/geonetwork
+      GN_INDEX_URL: http://elasticsearch:9200
+      SERVER_FORWARDHEADERSSTRATEGY: FRAMEWORK
+
+    depends_on:
+      - elasticsearch
 
   elasticsearch:
     image: elasticsearch:7.9.2
-    user: "${UID}:${GID}"
     ulimits:
       memlock:
         soft: -1
@@ -60,7 +70,7 @@ services:
       ES_JAVA_OPTS: "-Xms1G -Xmx1G"
       discovery.type: single-node
     volumes:
-      - /app/geonetwork/elasticsearch:/usr/share/elasticsearch/data
+      - gn_elasticsearch_data:/usr/share/elasticsearch/data
 
   kibana:
     image: kibana:7.9.2
@@ -72,21 +82,6 @@ services:
       KIBANA_INDEX: .dashboards
       XPACK_MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED: 'true'
 
-
-  # database:
-  #   image: mdillon/postgis
-  #   environment:
-  #     POSTGRES_USER: "${MDDB_USERNAME}"
-  #     POSTGRES_PASSWORD: "${MDDB_PASSWORD}"
-  #     POSTGRES_DB: "${MDDB_DBNAME}"
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
-
-  #   ports:
-  #     # expose for local profile without overlapping with a running default postgres port in the host
-  #     - "55432:5432"
-
-  # Event broker for spring-cloud-bus event messaging
   rabbitmq:
     image: rabbitmq:3-management
     restart: always
@@ -94,92 +89,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
     volumes:
-      - /app/geonetwork/rabbitmq:/var/lib/rabbitmq
-
-
-  # Eureka service discovery. This is a Discovery First Bootstrap configuration.
-  # The discovery service is the only fixed entry point.
-  # Browse to http://localhost:8761 to check all services are registered.
-  discovery:
-    image: geonetwork/gn-cloud-discovery:${GEONETWORK_CLOUD_TAG}
-    environment:
-      SERVER_PORT: 8761
-      EUREKA_INSTANCE_HOSTNAME: discovery
-    # ports:
-    #   - 8761:8761 # for development, so services can be run from localhost and find the discovery service running on docker
-
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "-m", "1", "http://localhost:8761/actuator/health"]
-#      interval: 1s
-#      timeout: 1s
-#      retries: 15
-
-  # Spring Cloud Config service, provides centralized configuration to all
-  # microservices. Being a Discovery First Bootstrap configuration, it'll
-  # register itself with the Eureka discovery service and can be scaled
-  config:
-    image: geonetwork/gn-cloud-configuring:${GEONETWORK_CLOUD_TAG}
-    depends_on:
-      - discovery
-    environment:
-      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
-      RABBITMQ_HOST: rabbitmq
-      CONFIG_PATH: ./config
-    volumes:
-      - /app/geonetwork/gn-cloud-configuring:/workspace/config
-
-  auth:
-    image: geonetwork/gn-cloud-authorizing:${GEONETWORK_CLOUD_TAG}
-    depends_on:
-      - config
-      - rabbitmq
-    environment:
-      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
-      RABBITMQ_HOST: rabbitmq
-
-
-  gateway:
-    image: geonetwork/gn-cloud-gateway:${GEONETWORK_CLOUD_TAG}
-    depends_on:
-      - config
-      - rabbitmq
-    environment:
-      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
-      RABBITMQ_HOST: rabbitmq
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.r_geonetwork_cloud.rule=Host(`${TRAEFIK_GEONETWORK_HOST}`) && PathPrefix(`/cloud`)"
-      #- "traefik.http.routers.r_geonetwork_cloud.entrypoints=websecure"
-      - "traefik.http.services.s_geonetwork_cloud.loadbalancer.server.port=8080"
-      - "traefik.http.routers.r_geonetwork_cloud.entrypoints=web"
-      - "traefik.http.routers.r_geonetwork_cloud.service=s_geonetwork_cloud"
-
-  search:
-    image: geonetwork/gn-cloud-searching:${GEONETWORK_CLOUD_TAG}
-    depends_on:
-      - config
-      - rabbitmq
-    environment:
-      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
-      RABBITMQ_HOST: rabbitmq
-
-  index:
-    image: geonetwork/gn-cloud-indexing:${GEONETWORK_CLOUD_TAG}
-    depends_on:
-      - config
-      - rabbitmq
-    environment:
-      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
-      RABBITMQ_HOST: rabbitmq
-
-  ogc-records:
-    image: geonetwork/gn-cloud-ogc-api-records-service:${GEONETWORK_CLOUD_TAG}
-    depends_on:
-      - config
-      - rabbitmq
-    environment:
-      EUREKA_SERVER_URL: ${EUREKA_SERVER_URL}
-      RABBITMQ_HOST: rabbitmq
+      - gn_rabbitmq_data:/var/lib/rabbitmq
 
 networks:
   default:
@@ -187,8 +97,6 @@ networks:
     external: true
 
 volumes:
-  rabbitmq_data: # volume for rabbitmq data, so it doesn't create an anonymous one on each container
-  geonetwork:
-  esdata:
-  pgdata:
-  
+  gn_rabbitmq_data:
+  gn_elasticsearch_data:
+  gn_geonetwork_data:
