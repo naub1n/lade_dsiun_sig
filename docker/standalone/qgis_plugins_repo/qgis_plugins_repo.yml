@@ -14,6 +14,7 @@ services:
         supervisord
     volumes:
       - /app/qgis-plugins-repo/plugins:/app/downloads
+      - "/etc/localtime:/etc/localtime:ro"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qgis_plugins.rule=Host(`${TRAEFIK_PHPQGISREPOSITORY_HOST}`)"

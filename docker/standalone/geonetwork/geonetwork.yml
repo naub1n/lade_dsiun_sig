@@ -29,8 +29,10 @@ services:
       GEONETWORK_DB_PASSWORD: ${GEONETWORK_DB_PASSWORD}
 
       GEONETWORK_MICROSERVICESPROXY_TARGETURI: ${GEONETWORK_MICROSERVICESPROXY_TARGETURI}
+      TZ: "Europe/Paris"
     volumes:
       - gn_geonetwork_data:/catalogue-data
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
       - kibana
       - elasticsearch
@@ -53,6 +55,9 @@ services:
       GN_LEGACY_URL: http://geonetwork:8080/geonetwork
       GN_INDEX_URL: http://elasticsearch:9200
       SERVER_FORWARDHEADERSSTRATEGY: FRAMEWORK
+      TZ: "Europe/Paris"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
 
     depends_on:
       - elasticsearch
@@ -69,8 +74,10 @@ services:
     environment:
       ES_JAVA_OPTS: "-Xms1G -Xmx1G"
       discovery.type: single-node
+      TZ: "Europe/Paris"
     volumes:
       - gn_elasticsearch_data:/usr/share/elasticsearch/data
+      - /etc/localtime:/etc/localtime:ro
 
   kibana:
     image: kibana:7.9.2
@@ -81,6 +88,9 @@ services:
       SERVER_REWRITEBASEPATH: 'false'
       KIBANA_INDEX: .dashboards
       XPACK_MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED: 'true'
+      TZ: "Europe/Paris"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -88,8 +98,10 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      TZ: "Europe/Paris"
     volumes:
       - gn_rabbitmq_data:/var/lib/rabbitmq
+      - /etc/localtime:/etc/localtime:ro
 
 networks:
   default:
