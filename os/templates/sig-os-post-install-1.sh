@@ -45,11 +45,12 @@ sudo apt-get install -y uidmap \
     docker-ce-rootless-extras \
     iptables
 
+# TODO ! A expliquer !
 echo "Indiquer l'utilisateur avec lequel sera lance le daemon Docker"
 read DOCKER_USER
 
 # Déclaration de l'utilisateur dans loginctl (indispensable pour démarrer systemctl avec l'utilisateur)
 sudo loginctl enable-linger $DOCKER_USER
 
-# Exposer les ports < 1024
+# Exposer les ports < 1024 notamment pour les ports 80 et 443
 sudo setcap cap_net_bind_service=ep $(which rootlesskit)

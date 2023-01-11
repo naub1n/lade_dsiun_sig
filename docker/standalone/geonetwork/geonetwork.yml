@@ -1,0 +1,114 @@
+version: "3.8"
+
+services:
+  geonetwork:
+    image: geonetwork:4.2.2
+    restart: always
+    environment:
+      DATA_DIR: /catalogue-data
+
+      JAVA_OPTIONS: >
+        -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+        -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true
+        -Xms512M -Xss512M -Xmx2G -XX:+UseConcMarkSweepGC
+        -Dgeonetwork.resources.dir=/catalogue-data/resources
+        -Dgeonetwork.data.dir=/catalogue-data
+        -Dgeonetwork.codeList.dir=/var/lib/jetty/webapps/geonetwork/WEB-INF/data/config/codelist
+        -Dgeonetwork.schema.dir=/var/lib/jetty/webapps/geonetwork/WEB-INF/data/config/schema_plugins
+      ES_HOST: ${GEONETWORK_ES_HOST}
+      ES_PROTOCOL: ${GEONETWORK_ES_PROTOCOL}
+      ES_PORT: ${GEONETWORK_ES_PORT}
+
+      KB_URL: ${GEONETWORK_KB_URL}
+
+      GEONETWORK_DB_TYPE: ${GEONETWORK_DB_TYPE}
+      GEONETWORK_DB_HOST: ${GEONETWORK_DB_HOST}
+      GEONETWORK_DB_PORT: ${GEONETWORK_DB_PORT}
+      GEONETWORK_DB_NAME: ${GEONETWORK_DB_NAME}
+      GEONETWORK_DB_USERNAME: ${GEONETWORK_DB_USERNAME}
+      GEONETWORK_DB_PASSWORD: ${GEONETWORK_DB_PASSWORD}
+
+      GEONETWORK_MICROSERVICESPROXY_TARGETURI: ${GEONETWORK_MICROSERVICESPROXY_TARGETURI}
+      TZ: "Europe/Paris"
+    volumes:
+      - gn_geonetwork_data:/catalogue-data
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - kibana
+      - elasticsearch
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_geonetwork.rule=Host(`${TRAEFIK_GEONETWORK_HOST}`) && PathPrefix(`/geonetwork`)"
+      #- "traefik.http.routers.r_geonetwork.entrypoints=websecure"
+      - "traefik.http.services.s_geonetwork.loadbalancer.server.port=8080"
+      - "traefik.http.routers.r_geonetwork.entrypoints=web"
+      - "traefik.http.routers.r_geonetwork.service=s_geonetwork"
+      
+  ogc-api-records-service:
+    image: geonetwork/gn-cloud-ogc-api-records-service:0.2.0
+    environment:
+      SPRING_PROFILES_ACTIVE: standalone
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${GEONETWORK_DB_HOST}:${GEONETWORK_DB_PORT}/${GEONETWORK_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${GEONETWORK_DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${GEONETWORK_DB_PASSWORD}
+      GN_BASEURL: http://geonetwork:8080/geonetwork/api
+      GN_LEGACY_URL: http://geonetwork:8080/geonetwork
+      GN_INDEX_URL: http://elasticsearch:9200
+      SERVER_FORWARDHEADERSSTRATEGY: FRAMEWORK
+      TZ: "Europe/Paris"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: elasticsearch:7.9.2
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    environment:
+      ES_JAVA_OPTS: "-Xms1G -Xmx1G"
+      discovery.type: single-node
+      TZ: "Europe/Paris"
+    volumes:
+      - gn_elasticsearch_data:/usr/share/elasticsearch/data
+      - /etc/localtime:/etc/localtime:ro
+
+  kibana:
+    image: kibana:7.9.2
+    environment:
+      SERVER_NAME: 'kibana'
+      ELASTICSEARCH_URL: ${KIBANA_ELASTICSEARCH_URL}
+      SERVER_BASEPATH: /geonetwork/dashboards
+      SERVER_REWRITEBASEPATH: 'false'
+      KIBANA_INDEX: .dashboards
+      XPACK_MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED: 'true'
+      TZ: "Europe/Paris"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      TZ: "Europe/Paris"
+    volumes:
+      - gn_rabbitmq_data:/var/lib/rabbitmq
+      - /etc/localtime:/etc/localtime:ro
+
+networks:
+  default:
+    name: sig-net
+    external: true
+
+volumes:
+  gn_rabbitmq_data:
+  gn_elasticsearch_data:
+  gn_geonetwork_data:

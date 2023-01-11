@@ -1,6 +1,6 @@
 tls:
   certificates:
-    - certFile: /etc/ssl/private/domain.pem
+    - certFile: /etc/ssl/certs/domain.pem
       keyFile: /etc/ssl/private/domain.pem
       stores:
         - default
