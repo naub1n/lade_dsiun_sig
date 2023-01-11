@@ -7,6 +7,7 @@ services:
     restart: always
     command:
       #- "--log.level=DEBUG"
+      - --accesslog.fields.names.StartUTC=drop
       - --api.insecure=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
@@ -21,6 +22,7 @@ services:
       - /${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock:ro
       - /app/traefik/providers:/etc/traefik/providers
       - /etc/ssl:/etc/ssl
+      - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_traefik.rule=Host(`geotraefik.lesagencesdeleau.eu`) || Host(`geotraefik-int.lesagencesdeleau.eu`) || Host(`geotraefik-dev.lesagencesdeleau.eu`)"

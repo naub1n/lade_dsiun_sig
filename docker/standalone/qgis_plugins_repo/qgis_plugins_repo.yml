@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  qgis-plugins-repository:
+    image: webdevops/php-nginx:8.2-alpine
+    user: "${UID}:${GID}"
+    command:
+      - sh
+      - -c
+      - |
+        curl https://gitlab.com/GIS-projects/phpQGISrepository/-/archive/${PHPQGISREPOSITORY_VERSION}/phpQGISrepository-${PHPQGISREPOSITORY_VERSION}.zip --output /tmp/phpQGISrepository.zip
+        unzip -j /tmp/phpQGISrepository.zip -d /app
+        rm /tmp/phpQGISrepository.zip
+        supervisord
+    volumes:
+      - /app/qgis-plugins-repo/plugins:/app/downloads
+      - "/etc/localtime:/etc/localtime:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qgis_plugins.rule=Host(`${TRAEFIK_PHPQGISREPOSITORY_HOST}`)"
+      #- "traefik.http.routers.r_qgis_plugins.entrypoints=websecure"
+      - "traefik.http.services.s_qgis_plugins.loadbalancer.server.port=80"
+      - "traefik.http.routers.r_qgis_plugins.entrypoints=web"
+      - "traefik.http.routers.r_qgis_plugins.service=s_qgis_plugins"
+
+networks:
+  default:
+    name: sig-net
+    external: true

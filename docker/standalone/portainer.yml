@@ -9,6 +9,7 @@ services:
       - /${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock
       - ~/.local/share/docker/volumes:/var/lib/docker/volumes
       - portainer_data:/data
+      - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_portainer.rule=Host(`geoportainer.lesagencesdeleau.eu`) || Host(`geoportainer-int.lesagencesdeleau.eu`) || Host(`geoportainer-dev.lesagencesdeleau.eu`)"
