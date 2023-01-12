@@ -1,0 +1,1 @@
+iface.messageBar().pushMessage("DSIUN", "Test du démarrage du script", duration=0)
