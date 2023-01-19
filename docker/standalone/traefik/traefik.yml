@@ -15,6 +15,9 @@ services:
       - --providers.file.watch=true
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+
     ports:
       - 80:80
       - 443:443
@@ -34,11 +37,9 @@ services:
       # Middleware de redirection HTTP vers HTTPS
       - "traefik.http.middlewares.m_traefik.redirectscheme.scheme=https"
       # Paramétrage HTTPS
+      - "traefik.http.routers.r_traefik_s.tls=true"
       - "traefik.http.routers.r_traefik_s.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.r_traefik_s.entrypoints=websecure"
-      #- "traefik.http.routers.r_traefik_s.tls.certresolver=default"
-      #- "traefik.http.routers.r_traefik_s.tls.domains[0].main=lesagencesdeleau.eu"
-      #- "traefik.http.routers.r_traefik_s.tls.domains[0].sans=geotraefik-dev.lesagencesdeleau.eu"
       - "traefik.http.routers.r_traefik_s.service=s_traefik_s"
       - "traefik.http.services.s_traefik_s.loadbalancer.server.port=8080"
 
