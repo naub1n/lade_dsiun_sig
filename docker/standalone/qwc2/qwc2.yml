@@ -358,7 +358,7 @@ services:
       - "traefik.http.routers.r_qwc2_m_info.priority=1"
       - "traefik.http.routers.r_qwc2_m_info.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_m_info.entrypoints=web"
-      - "traefik.http.routers.r_qwc2_f_info.tls=true"
+      - "traefik.http.routers.r_qwc2_m_info.tls=true"
       - "traefik.http.services.s_qwc2_m_info.loadbalancer.server.port=9090"
       - "traefik.http.routers.r_qwc2_m_info.service=s_qwc2_m_info"
 
