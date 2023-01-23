@@ -58,7 +58,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_ogc.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/ows`)"
-      - "traefik.http.routers.r_qwc2_ogc.priority=1"
+      - "traefik.http.routers.r_qwc2_ogc.priority=10"
       #- "traefik.http.routers.r_qwc2_ogc.entrypoints=web"
       - "traefik.http.routers.r_qwc2_ogc.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_ogc.tls=true"
@@ -81,7 +81,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_data.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/data`)"
-      - "traefik.http.routers.r_qwc2_data.priority=1"
+      - "traefik.http.routers.r_qwc2_data.priority=10"
       - "traefik.http.routers.r_qwc2_data.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_data.entrypoints=web"
       - "traefik.http.routers.r_qwc2_data.tls=true"
@@ -121,7 +121,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_search.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v2/search`)"
-      - "traefik.http.routers.r_qwc2_search.priority=1"
+      - "traefik.http.routers.r_qwc2_search.priority=10"
       - "traefik.http.routers.r_qwc2_search.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_search.entrypoints=web"
       - "traefik.http.routers.r_qwc2_search.tls=true"
@@ -196,7 +196,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_admin.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/qwc_admin`)"
-      - "traefik.http.routers.r_qwc2_admin.priority=1"
+      - "traefik.http.routers.r_qwc2_admin.priority=10"
       - "traefik.http.routers.r_qwc2_admin.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_admin.entrypoints=web"
       - "traefik.http.routers.r_qwc2_admin.tls=true"
@@ -256,7 +256,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_auth.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/auth/`)"
-      - "traefik.http.routers.r_qwc2_auth.priority=1"
+      - "traefik.http.routers.r_qwc2_auth.priority=10"
       - "traefik.http.routers.r_qwc2_auth.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_auth.entrypoints=web"
       - "traefik.http.routers.r_qwc2_auth.tls=true"
@@ -275,7 +275,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_elevation.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/elevation`)"
-      - "traefik.http.routers.r_qwc2_elevation.priority=1"
+      - "traefik.http.routers.r_qwc2_elevation.priority=10"
       - "traefik.http.routers.r_qwc2_elevation.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_elevation.entrypoints=web"
       - "traefik.http.routers.r_qwc2_elevation.tls=true"
@@ -314,7 +314,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_print.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/print`)"
-      - "traefik.http.routers.r_qwc2_print.priority=1"
+      - "traefik.http.routers.r_qwc2_print.priority=10"
       - "traefik.http.routers.r_qwc2_print.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_print.entrypoints=web"
       - "traefik.http.routers.r_qwc2_print.tls=true"
@@ -335,7 +335,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_f_info.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/featureinfo`)"
-      - "traefik.http.routers.r_qwc2_f_info.priority=1"
+      - "traefik.http.routers.r_qwc2_f_info.priority=10"
       - "traefik.http.routers.r_qwc2_f_info.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_f_info.entrypoints=web"
       - "traefik.http.routers.r_qwc2_f_info.tls=true"
@@ -355,7 +355,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_m_info.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/mapinfo`)"
-      - "traefik.http.routers.r_qwc2_m_info.priority=1"
+      - "traefik.http.routers.r_qwc2_m_info.priority=10"
       - "traefik.http.routers.r_qwc2_m_info.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_m_info.entrypoints=web"
       - "traefik.http.routers.r_qwc2_m_info.tls=true"
@@ -375,7 +375,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_legend.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/api/v1/legend`)"
-      - "traefik.http.routers.r_qwc2_legend.priority=1"
+      - "traefik.http.routers.r_qwc2_legend.priority=10"
       - "traefik.http.routers.r_qwc2_legend.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_legend.entrypoints=web"
       - "traefik.http.routers.r_qwc2_legend.tls=true"
@@ -397,7 +397,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_proj_publisher.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/publisher`)"
-      - "traefik.http.routers.r_qwc2_proj_publisher.priority=1"
+      - "traefik.http.routers.r_qwc2_proj_publisher.priority=10"
       #- "traefik.http.routers.r_qwc2_proj_publisher.entrypoints=web"
       - "traefik.http.routers.r_qwc2_proj_publisher.entrypoints=websecure"
       - "traefik.http.routers.r_qwc2_proj_publisher.tls=true"
