@@ -19,6 +19,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qgis_plugins.rule=Host(`${TRAEFIK_PHPQGISREPOSITORY_HOST}`)"
       - "traefik.http.routers.r_qgis_plugins.entrypoints=websecure"
+      - "traefik.http.routers.r_qgis_plugins.tls=true"
       - "traefik.http.routers.r_qgis_plugins.priority=10"
       - "traefik.http.services.s_qgis_plugins.loadbalancer.server.port=80"
       #- "traefik.http.routers.r_qgis_plugins.entrypoints=web"
