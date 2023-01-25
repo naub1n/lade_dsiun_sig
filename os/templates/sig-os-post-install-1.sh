@@ -53,4 +53,4 @@ read DOCKER_USER
 sudo loginctl enable-linger $DOCKER_USER
 
 # Exposer les ports < 1024 notamment pour les ports 80 et 443
-sudo setcap cap_net_bind_service=ep $(which rootlesskit)
+sudo echo "net.ipv4.ip_unprivileged_port_start=0" >> /etc/sysctl.conf
