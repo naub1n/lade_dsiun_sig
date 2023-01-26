@@ -13,6 +13,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_portainer.rule=Host(`${PORTAINER_HOST}`)"
+      - "traefik.http.routers.r_portainer.priority=10"
       - "traefik.http.routers.r_portainer.entrypoints=websecure"
       #- "traefik.http.routers.r_portainer.entrypoints=web"
       - "traefik.http.routers.r_portainer.tls=true"
