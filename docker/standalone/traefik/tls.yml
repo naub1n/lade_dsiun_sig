@@ -2,6 +2,6 @@ tls:
   stores:
     default:
       defaultCertificate:
-        certFile: /certs/wild.ladefr-local.crt
-        keyFile: /certs/wild.ladefr-local.pem
+        certFile: /certs/w_.lade-eu.crt
+        keyFile: /certs/w_.lade-eu.key
 
