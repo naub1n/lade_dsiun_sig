@@ -1,6 +1,6 @@
 
 # Script qui sera lancé au démarrage de QGIS 
-# Son chemin d'accès (github ou autre) est à déclarer dans la variable d'environnement PYQGIS_STARTUP
+# Son chemin d'accès est à déclarer dans la variable d'environnement PYQGIS_STARTUP
 
 import requests
 import os
