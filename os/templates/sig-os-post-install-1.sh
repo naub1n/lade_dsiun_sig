@@ -30,7 +30,7 @@ sudo chmod a+r /etc/apt/keyrings/docker.gpg
 # Mettre à jour l'index des paquets apt
 sudo apt-get update
 # Installation d'une version specifique de Docker-ce
-VERSION_STRING=5:20.10.21~3-0~debian-bullseye
+VERSION_STRING=5:20.10.23~3-0~debian-bullseye
 sudo apt-get install -y docker-ce=$VERSION_STRING docker-ce-cli=$VERSION_STRING containerd.io docker-compose-plugin
 
 ## Executer Docker sans les droits root
@@ -44,6 +44,10 @@ sudo apt-get install -y uidmap \
     slirp4netns \
     docker-ce-rootless-extras \
     iptables
+
+# Ajout des prérequis Post-Docker
+sudo apt-get install -y httpie \
+     python3-pip
 
 # TODO ! A expliquer !
 echo "Indiquer l'utilisateur avec lequel sera lance le daemon Docker"
