@@ -5,6 +5,8 @@ services:
     image: portainer/portainer-ce:latest
     container_name: portainer
     restart: always
+    ports:
+      - "9000:9000"
     volumes:
       - /${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock
       - /app/docker/data/volumes:/var/lib/docker/volumes
