@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - /${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock
+      - /app/docker/data/volumes:/var/lib/docker/volumes
+      - /app/portainer/data:/data
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_portainer.rule=Host(`${PORTAINER_HOST}`)"
+      - "traefik.http.routers.r_portainer.priority=10"
+      - "traefik.http.routers.r_portainer.entrypoints=websecure"
+      #- "traefik.http.routers.r_portainer.entrypoints=web"
+      - "traefik.http.routers.r_portainer.tls=true"
+      - "traefik.http.services.s_portainer.loadbalancer.server.port=9000"
+      - "traefik.http.routers.r_portainer.service=s_portainer"
+
+networks:
+  default:
+    name: sig-net
+    external: true

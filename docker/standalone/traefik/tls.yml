@@ -1,6 +1,7 @@
 tls:
-  certificates:
-    - certFile: /etc/ssl/certs/wild.ladefr-local.crt
-      keyFile: /etc/ssl/private/wild.ladefr-local.pem
-      stores:
-        - default
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/w_.lade-eu.crt
+        keyFile: /certs/w_.lade-eu.key
+

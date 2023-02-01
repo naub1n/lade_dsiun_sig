@@ -6,31 +6,43 @@ services:
     container_name: traefik
     restart: always
     command:
-      #- "--log.level=DEBUG"
+      - --log.level=${TRAEFIK_LOGLEVEL}
       - --accesslog.fields.names.StartUTC=drop
       - --api.insecure=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
-      - --providers.file.directory=/etc/traefik/providers
+      - --providers.file.directory=/providers
+      - --providers.file.watch=true
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
+      #- 8080:8080
     volumes:
       - /${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock:ro
-      - /app/traefik/providers:/etc/traefik/providers
-      - /etc/ssl:/etc/ssl
+      - /app/traefik/providers:/providers
+      - /app/traefik/.certs:/certs
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_traefik.rule=Host(`geotraefik.lesagencesdeleau.eu`) || Host(`geotraefik-int.lesagencesdeleau.eu`) || Host(`geotraefik-dev.lesagencesdeleau.eu`)"
-      #- "traefik.http.routers.r_traefik.entrypoints=websecure"
+
+      # Paramétrage HTTP
+      - "traefik.http.routers.r_traefik.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.r_traefik.entrypoints=web"
-      - "traefik.http.services.s_traefik.loadbalancer.server.port=8080"
-      - "traefik.http.routers.r_traefik.service=s_traefik"
-      #- "traefik.http.routers.r_traefik.tls.certresolver=leresolver"
+      - "traefik.http.routers.r_traefik.middlewares=m_traefik"
+      # Middleware de redirection HTTP vers HTTPS
+      - "traefik.http.middlewares.m_traefik.redirectscheme.scheme=https"
+      # Paramétrage HTTPS
+      - "traefik.http.routers.r_traefik_s.tls=true"
+      - "traefik.http.routers.r_traefik_s.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.r_traefik_s.entrypoints=websecure"
+      - "traefik.http.routers.r_traefik_s.service=s_traefik_s"
+      - "traefik.http.services.s_traefik_s.loadbalancer.server.port=8080"
+
 
 networks:
   default:
