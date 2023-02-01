@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Agences de l'eau",
+    "type": "catalog",
+    "children": [
+      {
+        "name": "IGN",
+        "type": "node",
+        "children": [
+          {
+            "name": "Plan IGN",
+            "type": "layer",
+            "geomtype": "raster",
+            "versions": [
+              {
+                "version": "v2",
+                "formats": [
+                  {
+                    "format": "WMTS",
+                    "link": "url=https://wxs.ign.fr/decouverte/geoportail/wmts?SERVICE%3DWMTS%26REQUEST%3DGetCapabilities&format=image/png&styles=normal&version=1.0.0&crs=EPSG:3857&tileMatrixSet=PM&layers=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2",
+                    "qgisauthconfigid": ""
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
