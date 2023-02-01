@@ -335,7 +335,7 @@ class DeploySIG:
         stacks = self.portainer_get_stacks()
         for stack in stacks:
             if stack['Name'] == stack_name:
-                print("Suppression de la stack %s existante" % stack_name)
+                print("Suppression de la stack %s existante via Portainer" % stack_name)
                 stack_id = stack['Id']
                 response = requests.delete('http://localhost:9000/api/stacks/%s' % stack_id,
                                            headers={"Authorization": "Bearer %s" % self.portainer_get_token()},
@@ -343,6 +343,11 @@ class DeploySIG:
 
                 if response.status_code not in [200, 204]:
                     print("ERREUR : La suppression de la stack %s a échouée : %s" % (stack_name, response.text))
+
+        # Si la stack n'a pas été supprimée par portainer (car non gérable), suppression via docker
+        if self.docker_compose_status(stack_name)['exists']:
+            print("Suppression de la stack %s existante via Docker" % stack_name)
+            self.docker_compose_down(stack_name, [], None)
 
         if self.portainer_endpoint_id:
             response = requests.post('http://localhost:9000/api/stacks',
