@@ -14,111 +14,6 @@ from getpass import getpass
 
 class DeploySIG:
     def __init__(self):
-        self.root_apps_dir = "/app"
-
-        self.pfx_path = '/etc/ssl/certs/w_.lesagencesdeleau.eu-serveurs-internes-Wild-LADE-2022.pfx'
-        self.fullchain_path = '/etc/ssl/certs/LADE-fullchain.pem'
-
-        self.qwc2_subdirs = ['attachments', 'config', 'config-in', 'legends',
-                             'pg_services', 'qgs-resources', 'qwc2', 'solr']
-
-        self.git_sig_org = 'naub1n'
-        self.git_sig_repo = 'lade_dsiun_sig'
-        self.plugin_customcatalog_repo = 'QGIS_CustomCatalog'
-        self.plugin_projectpublisher_repo = 'QGIS_Project_Publisher'
-        
-
-        self.env_data = {
-            '1':
-                {
-                    'env' : 'production',
-                    'git_branch': 'master',
-                    'portainer':
-                        {
-                            'host': 'geoportainer.lesagencesdeleau.eu'
-                        },
-                    'traefik':
-                        {
-                            'host': 'geotraefik.lesagencesdeleau.eu',
-                            'loglevel': 'ERROR'
-                        },
-                    'qwc2':
-                        {
-                            'ldap_host': '',
-                            'ldap_port': '',
-                            'ldap_base_dn': '',
-                            'host_regex': '^geo.*\.lesagencesdeleau\.eu$$',
-                            'tenant_url_re': '^https?://geo-(.+?)\.lesagencesdeleau\.eu',
-                            'flask_debug': '0'
-                        },
-                    'plugins_repo':
-                        {
-                            'host': 'geoplugins.lesagencesdeleau.eu',
-                            'phpqgisrepo_version': 'v1.5'
-                        }
-                },
-            '2':
-                {
-                    'env': 'integration',
-                    'git_branch': 'integration',
-                    'portainer':
-                        {
-                            'host': 'geoportainer-int.lesagencesdeleau.eu'
-                        },
-                    'traefik':
-                        {
-                            'host': 'geotraefik-int.lesagencesdeleau.eu',
-                            'loglevel': 'ERROR'
-                        },
-                    'qwc2':
-                        {
-                            'ldap_host': '',
-                            'ldap_port': '',
-                            'ldap_base_dn': '',
-                            'host_regex': '^geo.*-int\.lesagencesdeleau\.eu$$',
-                            'tenant_url_re': '^https?://geo-(.+?)-int\.lesagencesdeleau\.eu',
-                            'flask_debug': '0'
-                        },
-                    'plugins_repo':
-                        {
-                            'host': 'geoplugins-int.lesagencesdeleau.eu',
-                            'phpqgisrepo_version': 'v1.5'
-                        }
-                },
-            '3':
-                {
-                    'env': 'developpement',
-                    'git_branch': 'developpement',
-                    'portainer':
-                        {
-                            'host': 'geoportainer-dev.lesagencesdeleau.eu'
-                        },
-                    'traefik':
-                        {
-                            'host': 'geotraefik-dev.lesagencesdeleau.eu',
-                            'loglevel': 'DEBUG'
-                        },
-                    'qwc2':
-                        {
-                            'ldap_host': '',
-                            'ldap_port': '',
-                            'ldap_base_dn': '',
-                            'host_regex': '^geo.*-dev\.lesagencesdeleau\.eu$$',
-                            'tenant_url_re': '^https?://geo-(.+?)-dev\.lesagencesdeleau\.eu',
-                            'flask_debug': '0'
-                        },
-                    'plugins_repo':
-                        {
-                            'host': 'geoplugins-dev.lesagencesdeleau.eu',
-                            'phpqgisrepo_version': 'v1.5'
-                        }
-                },
-            '4':
-                {
-                    'env': 'Personnalisé'
-                }
-        }
-
         self.read_config()
 
     def deploy(self):
@@ -335,7 +230,7 @@ class DeploySIG:
         stacks = self.portainer_get_stacks()
         for stack in stacks:
             if stack['Name'] == stack_name:
-                print("Suppression de la stack %s existante" % stack_name)
+                print("Suppression de la stack %s existante via Portainer" % stack_name)
                 stack_id = stack['Id']
                 response = requests.delete('http://localhost:9000/api/stacks/%s' % stack_id,
                                            headers={"Authorization": "Bearer %s" % self.portainer_get_token()},
@@ -343,6 +238,11 @@ class DeploySIG:
 
                 if response.status_code not in [200, 204]:
                     print("ERREUR : La suppression de la stack %s a échouée : %s" % (stack_name, response.text))
+
+        # Si la stack n'a pas été supprimée par portainer (car non gérable), suppression via docker
+        if self.docker_compose_status(stack_name)['exists']:
+            print("Suppression de la stack %s existante via Docker" % stack_name)
+            self.docker_compose_down(stack_name, [], None)
 
         if self.portainer_endpoint_id:
             response = requests.post('http://localhost:9000/api/stacks',
