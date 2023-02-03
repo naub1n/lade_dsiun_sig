@@ -94,7 +94,7 @@
         "db_host": "10.126.106.58",
         "db_port": "5432",
         "db_dbname": "qwc2",
-        "db_user": "qwc2_admin"
+        "db_user": "qwc_admin"
       },
       "plugins_repo": {
         "host": "geoplugins-dev.lesagencesdeleau.eu",
