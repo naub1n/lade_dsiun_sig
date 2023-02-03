@@ -5,8 +5,8 @@ x-qwc-service-variables: &qwc-service-variables
   JWT_COOKIE_CSRF_PROTECT: 'True'
   # Set these to override the UID/GID which runs uwsgi. Useful to ensure uwsgi runs under the same user/group
   # which owns the shared volumes on host, avoiding the need to change the ownership/permissions of those files/folders.
-  #SERVICE_UID: ${UID}
-  #SERVICE_GID: ${GID}
+  SERVICE_UID: ${UID}
+  SERVICE_GID: ${GID}
   PGSERVICEFILE: "/srv/pg_services/pg_service.conf"
   TENANT_URL_RE: ${QWC2_TENANT_URL_RE}
   #TENANT_URL_RE: ^https?://.+?/(.+?)/
