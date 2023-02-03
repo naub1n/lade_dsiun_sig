@@ -5,6 +5,7 @@ import string
 import sys
 import time
 import shutil
+import configparser
 
 from python_on_whales import DockerClient
 from cryptography.hazmat.primitives.serialization.pkcs12 import load_key_and_certificates
@@ -26,6 +27,7 @@ class DeploySIG:
         self.deploy_traefik()
         self.prepare_qwc2()
         self.deploy_qwc2()
+        self.init_db_qwc2()
         self.prepare_plugins_qgis()
         self.deploy_qgis_plugins_repo()
         self.print_recap()
@@ -50,6 +52,7 @@ class DeploySIG:
         self.pfx_path = config['pfx_path']
         self.fullchain_path = config['fullchain_path']
         self.qwc2_subdirs = config['qwc2_subdirs']
+        self.qwc2_pgs_path = os.path.join(self.root_apps_dir, 'qwc2/pg_services/pg_service.conf')
         self.git_sig_org = config['git_sig_org']
         self.git_sig_repo = config['git_sig_repo']
         self.plugin_customcatalog_org = config['plugin_customcatalog_org']
@@ -116,7 +119,7 @@ class DeploySIG:
 
         if self.docker_compose_status('portainer')['exists']:
             print("ATTENTION : La stack Portainer existe déjà.")
-            admin_pass = input("Indiquez le mot de passe du compte 'admin' (sinon laisser vide): ")
+            admin_pass = getpass("Indiquez le mot de passe du compte 'admin' (sinon laisser vide): ")
             if admin_pass:
                 self.portainer_pass = admin_pass
                 return
@@ -322,8 +325,29 @@ class DeploySIG:
         for subdir in self.qwc2_subdirs:
             os.makedirs(os.path.join(self.qwc_app_path, subdir), exist_ok=True)
 
+        print("Création du fichier de configuration pg_services.conf pour QWC2")
+        config = configparser.ConfigParser()
+        config['qwc_configdb'] = {
+            'host': self.app_config['qwc2']['db_host'],
+            'port': self.app_config['qwc2']['db_port'],
+            'dbname': self.app_config['qwc2']['db_dbname'],
+            'user': self.app_config['qwc2']['db_user'],
+            'password': getpass("Indiquez le mot de passe du compte %s: " %
+                                self.app_config['qwc2']['db_user']),
+            'sslmode': 'disable'
+        }
+        with open(self.qwc2_pgs_path, 'w') as f:
+            config.write(f, space_around_delimiters=False)
+
     def deploy_qwc2(self):
         self.portainer_deploy_stack(self.get_qwc2_stack_info(), 'qwc2')
+
+    def init_db_qwc2(self):
+        docker = DockerClient(context='rootless')
+        docker.container.run(image="sourcepole/qwc-config-db:latest",
+                             command=['alembic revision -m "create sample table"',
+                                      'alembic upgrade head'],
+                             volumes=[(self.qwc2_pgs_path, '/root/.pg_service.conf', 'ro')])
 
     def prepare_plugins_qgis(self):
         # Préparation Dépôt plugins QGIS
@@ -438,7 +462,8 @@ class DeploySIG:
             },
             {
                 "name": "LDAP_BIND_USER_PASSWORD",
-                "value": input("Indiquez la valeur de LDAP_BIND_USER_PASSWORD pour qwc2: ")
+                "value": getpass("Indiquez la valeur de LDAP_BIND_USER_PASSWORD pour qwc2: ")
+
             },
             {
                 "name": "TRAEFIK_QWC2_HOST_REGEX",

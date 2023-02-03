@@ -5,7 +5,8 @@
   "qwc2_subdirs": [
     "attachments",
     "config",
-    "config-in",
+    "config-in/default",
+    "config-in/aesn",
     "legends",
     "pg_services",
     "qgs-resources",
@@ -35,7 +36,11 @@
         "ldap_base_dn": "",
         "host_regex": "^geo.*\\.lesagencesdeleau\\.eu$$",
         "tenant_url_re": "^https?://geo-(.+?)\\.lesagencesdeleau\\.eu",
-        "flask_debug": "0"
+        "flask_debug": "0",
+        "db_host": "",
+        "db_port": "",
+        "db_dbname": "",
+        "db_user": ""
       },
       "plugins_repo": {
         "host": "geoplugins.lesagencesdeleau.eu",
@@ -58,7 +63,11 @@
         "ldap_base_dn": "",
         "host_regex": "^geo.*-int\\.lesagencesdeleau\\.eu$$",
         "tenant_url_re": "^https?://geo-(.+?)-int\\.lesagencesdeleau\\.eu",
-        "flask_debug": "0"
+        "flask_debug": "0",
+        "db_host": "",
+        "db_port": "",
+        "db_dbname": "",
+        "db_user": ""
       },
       "plugins_repo": {
         "host": "geoplugins-int.lesagencesdeleau.eu",
@@ -81,7 +90,11 @@
         "ldap_base_dn": "",
         "host_regex": "^geo.*-dev\\.lesagencesdeleau\\.eu$$",
         "tenant_url_re": "^https?://geo-(.+?)-dev\\.lesagencesdeleau\\.eu",
-        "flask_debug": "0"
+        "flask_debug": "0",
+        "db_host": "10.126.106.58",
+        "db_port": "5432",
+        "db_dbname": "qwc2",
+        "db_user": "qwc2_admin"
       },
       "plugins_repo": {
         "host": "geoplugins-dev.lesagencesdeleau.eu",
