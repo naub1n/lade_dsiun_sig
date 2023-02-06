@@ -248,6 +248,7 @@ class DeploySIG:
             self.docker_compose_down(stack_name, [], None)
 
         if self.portainer_endpoint_id:
+            print("Déploiement de la stack %s" % stack_name)
             response = requests.post('http://localhost:9000/api/stacks',
                                      headers={"Authorization": "Bearer %s" % self.portainer_get_token()},
                                      params={'type': 2, 'method': 'repository', 'endpointId': self.portainer_endpoint_id},
@@ -343,11 +344,18 @@ class DeploySIG:
         self.portainer_deploy_stack(self.get_qwc2_stack_info(), 'qwc2')
 
     def init_db_qwc2(self):
-        docker = DockerClient(context='rootless')
-        docker.container.run(image="sourcepole/qwc-config-db:latest",
-                             command=['alembic revision -m "create sample table"',
-                                      'alembic upgrade head'],
-                             volumes=[(self.qwc2_pgs_path, '/root/.pg_service.conf', 'ro')])
+        init_db = input("Souhaitez-vous initialiser les tables dans la BDD QWC2?: ")
+        if init_db in ['yes', 'y', 'oui', 'o']:
+            try:
+                print("Initialisation des données dans la BDD QWC2")
+                docker = DockerClient(context='rootless')
+                docker.container.run(image="sourcepole/qwc-config-db:latest",
+                                     command=['-c',
+                                              'alembic revision -m "create sample table" && alembic upgrade head'],
+                                     volumes=[(self.qwc2_pgs_path, '/root/.pg_service.conf', 'ro')],
+                                     entrypoint='/bin/bash')
+            except Exception as e:
+                print("ATTENTION : Les tables de QWC2 n'ont pas pu être initialisées : \n %s" % str(e))
 
     def prepare_plugins_qgis(self):
         # Préparation Dépôt plugins QGIS
@@ -377,7 +385,8 @@ class DeploySIG:
             file.write(content)
 
     def print_recap(self):
-        print("###########################################################",
+        print("",
+              "###########################################################",
               "#######                 Récapitulatif :             #######",
               "###########################################################",
               "Environnement : %s" % self.app_env,
@@ -392,6 +401,7 @@ class DeploySIG:
               "Etat de la stack QWC2 : %s" % self.docker_compose_status('qwc2')['status'],
               "Etat de la stack QGIS Plugins Repo : %s" % self.docker_compose_status('qgis_plugins_repo')['status'],
               "###########################################################",
+              "",
               sep=os.linesep)
 
     def set_stack_info(self, name, compose_file, env):
@@ -431,14 +441,20 @@ class DeploySIG:
         return traefik_stack_info
 
     def get_qwc2_stack_info(self):
+        if self.app_config['qwc2']['ldap_base_dn']:
+            ldap_base_dn = self.app_config['qwc2']['ldap_base_dn']
+        else:
+            ldap_base_dn = input("Indiquez la valeur de LDAP_BIND_USER_DN pour qwc2: ")
+
+        # N.B. En mode rootless, les droits réels resteront sur le compte spécifique à docker et non root.
         qwc2_env = [
             {
                 "name": "UID",
-                "value": str(os.getuid())
+                "value": "root"
             },
             {
                 "name": "GID",
-                "value": str(os.getuid())
+                "value": "root"
             },
             {
                 "name": "JWT_SECRET_KEY",
@@ -458,7 +474,7 @@ class DeploySIG:
             },
             {
                 "name": "LDAP_BIND_USER_DN",
-                "value": input("Indiquez la valeur de LDAP_BIND_USER_DN pour qwc2: ")
+                "value": ldap_base_dn
             },
             {
                 "name": "LDAP_BIND_USER_PASSWORD",
@@ -517,6 +533,7 @@ def deploy():
 
 def update_cert():
     sig.update_cert()
+
 
 if __name__ == '__main__':
     globals()[sys.argv[1]]()

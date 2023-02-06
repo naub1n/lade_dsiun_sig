@@ -63,7 +63,7 @@
         "ldap_base_dn": "",
         "host_regex": "^geo.*-int\\.lesagencesdeleau\\.eu$$",
         "tenant_url_re": "^https?://geo-(.+?)-int\\.lesagencesdeleau\\.eu",
-        "flask_debug": "0",
+        "flask_debug": "1",
         "db_host": "",
         "db_port": "",
         "db_dbname": "",
@@ -85,9 +85,10 @@
         "loglevel": "DEBUG"
       },
       "qwc2": {
-        "ldap_host": "",
-        "ldap_port": "",
-        "ldap_base_dn": "",
+        "ldap_host": "10.126.100.1",
+        "ldap_port": "389",
+        "ldap_base_dn": "dc=lesagencesdeleau,dc=eu",
+        "ldap_bind_user_dn": "",
         "host_regex": "^geo.*-dev\\.lesagencesdeleau\\.eu$$",
         "tenant_url_re": "^https?://geo-(.+?)-dev\\.lesagencesdeleau\\.eu",
         "flask_debug": "0",
