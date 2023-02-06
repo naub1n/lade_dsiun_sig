@@ -22,6 +22,7 @@ class DeploySIG:
         self.get_config_data()
         self.deploy_portainer()
         self.portainer_add_env()
+        self.portainer_set_ldap()
         self.prepare_traefik()
         self.get_certificats()
         self.deploy_traefik()
@@ -44,8 +45,8 @@ class DeploySIG:
         self.qwc_app_path = os.path.join(self.root_apps_dir, 'qwc2')
         self.qgis_plugins_path = os.path.join(self.root_apps_dir, 'qgis-plugins-repo/plugins')
 
-    def read_config(self):
-        response = requests.get('https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/master/os/templates/sig-os-post-install-3-config.json')
+    def read_config(self, git_branch='master'):
+        response = requests.get('https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/%s/os/templates/sig-os-post-install-3-config.json' % git_branch)
         config = response.json()
 
         self.root_apps_dir = config['root_apps_dir']
@@ -68,6 +69,10 @@ class DeploySIG:
         choice = input("Choisissez l'environnement de déploiement: ")
         while choice not in self.env_data:
             choice = input(f"Indiquez une des valeurs suivante: {', '.join(self.env_data)}: ")
+
+        # Relecture de la configuration sur la bonne branche Git
+        # Cela permet de tester la config en dev et int
+        self.read_config(self.env_data[choice]['git_branch'])
 
         if choice == "4":
             self.portainer_host = input("Indiquez le hostname de Portainer à utiliser: ")
@@ -216,7 +221,8 @@ class DeploySIG:
             return response.json()
 
     def portainer_add_env(self):
-        endpoint_name = 'local'
+        endpoint_name = self.app_config['portainer'].get('endpoint_name', 'local')
+        print("Ajout de l'endpoint '%s' dans Portainer" % endpoint_name)
         if not self.check_endpoint_exists(endpoint_name):
             response = requests.post('http://localhost:9000/api/endpoints',
                                      headers={"Authorization": "Bearer %s" % self.portainer_get_token()},
@@ -228,6 +234,40 @@ class DeploySIG:
                 print("Erreur : La création de l'endpoint Portainer à échoué : %s" % response.text)
                 self.portainer_endpoint_id = None
                 sys.exit(1)
+        else:
+            print("L'endpoint '%s' existe déjà" % endpoint_name)
+
+    def portainer_set_ldap(self):
+        print("Ajout de l'authentification LDAP dans Portainer")
+        portainer_cfg = self.app_config['portainer']
+        endpoint_name = portainer_cfg.get('endpoint_name', 'local')
+        if self.check_endpoint_exists(endpoint_name):
+            response = requests.put('http://localhost:9000/api/settings',
+                                     headers={"Authorization": "Bearer %s" % self.portainer_get_token()},
+                                     json={
+                                         "AuthenticationMethod": 2,
+                                         "ldapsettings": {
+                                             "AnonymousMode": False,
+                                             "AutoCreateUsers": True,
+                                             "Password": getpass("Indiquez la valeur de LDAP_BIND_USER_PASSWORD pour portainer: "),
+                                             "ReaderDN": portainer_cfg.get('ldap_bind_user_dn', ''),
+                                             "SearchSettings": [
+                                                 {
+                                                     "BaseDN": portainer_cfg.get('ldap_base_dn', ''),
+                                                     "Filter": portainer_cfg.get('ldap_search_user_filter', ''),
+                                                     "UserNameAttribute": portainer_cfg.get('ldap_search_user_attr', '')
+                                                 }
+                                             ],
+                                             "URL": portainer_cfg.get('ldap_host', '') + ":" +
+                                                    portainer_cfg.get('ldap_port', '')
+                                         }
+                                     })
+
+            if response.status_code not in [200, 204]:
+                print("ATTENTION : La configuration de l'authentification LDAP a échouée : %s" % str(response.text))
+
+        else:
+            print("ATTENTION : L'endpoint '%s' n'existe pas" % endpoint_name)
 
     def portainer_deploy_stack(self, stack_config, stack_name):
         stacks = self.portainer_get_stacks()
@@ -377,12 +417,18 @@ class DeploySIG:
         self.portainer_deploy_stack(self.get_qgis_plugins_repo_stack_info(), 'qgis_plugins_repo')
 
     def download_plugin(self, org_name, repo_name, plugin_path):
-        git_data = requests.get('https://api.github.com/repos/%s/%s/releases/latest' % (org_name, repo_name))
-        plugin_url = git_data.json()['assets'][0]['browser_download_url']
+        try:
+            git_url = 'https://api.github.com/repos/%s/%s/releases/latest' % (org_name, repo_name)
+            git_data = requests.get(git_url)
+            plugin_url = git_data.json()['assets'][0]['browser_download_url']
 
-        with open(plugin_path, "wb") as file:
-            content = requests.get(plugin_url, stream=True).content
-            file.write(content)
+            with open(plugin_path, "wb") as file:
+                content = requests.get(plugin_url, stream=True).content
+                file.write(content)
+
+        except Exception as e:
+            print("ATTENTION : Un plugin n'a pas pu être téléchargé à partir de l'URL %s : \n %s \n %s" %
+                  (git_url, str(e), git_data.json()))
 
     def print_recap(self):
         print("",
@@ -441,11 +487,6 @@ class DeploySIG:
         return traefik_stack_info
 
     def get_qwc2_stack_info(self):
-        if self.app_config['qwc2']['ldap_base_dn']:
-            ldap_base_dn = self.app_config['qwc2']['ldap_base_dn']
-        else:
-            ldap_base_dn = input("Indiquez la valeur de LDAP_BIND_USER_DN pour qwc2: ")
-
         # N.B. En mode rootless, les droits réels resteront sur le compte spécifique à docker et non root.
         qwc2_env = [
             {
@@ -474,7 +515,7 @@ class DeploySIG:
             },
             {
                 "name": "LDAP_BIND_USER_DN",
-                "value": ldap_base_dn
+                "value": self.app_config['qwc2']['ldap_bind_user_dn']
             },
             {
                 "name": "LDAP_BIND_USER_PASSWORD",
