@@ -24,7 +24,14 @@
       "env": "production",
       "git_branch": "master",
       "portainer": {
-        "host": "geoportainer.lesagencesdeleau.eu"
+        "host": "geoportainer.lesagencesdeleau.eu",
+        "endpoint_name" : "local",
+        "ldap_host": "",
+        "ldap_port": "",
+        "ldap_base_dn": "",
+        "ldap_bind_user_dn": "",
+        "ldap_search_user_filter": "",
+        "ldap_search_user_attr": ""
       },
       "traefik": {
         "host": "geotraefik.lesagencesdeleau.eu",
@@ -34,6 +41,7 @@
         "ldap_host": "",
         "ldap_port": "",
         "ldap_base_dn": "",
+        "ldap_bind_user_dn": "",
         "host_regex": "^geo.*\\.lesagencesdeleau\\.eu$$",
         "tenant_url_re": "^https?://geo-(.+?)\\.lesagencesdeleau\\.eu",
         "flask_debug": "0",
@@ -51,7 +59,14 @@
       "env": "integration",
       "git_branch": "integration",
       "portainer": {
-        "host": "geoportainer-int.lesagencesdeleau.eu"
+        "host": "geoportainer-int.lesagencesdeleau.eu",
+        "endpoint_name" : "local",
+        "ldap_host": "",
+        "ldap_port": "",
+        "ldap_base_dn": "",
+        "ldap_bind_user_dn": "",
+        "ldap_search_user_filter": "",
+        "ldap_search_user_attr": ""
       },
       "traefik": {
         "host": "geotraefik-int.lesagencesdeleau.eu",
@@ -61,6 +76,7 @@
         "ldap_host": "",
         "ldap_port": "",
         "ldap_base_dn": "",
+        "ldap_bind_user_dn": "",
         "host_regex": "^geo.*-int\\.lesagencesdeleau\\.eu$$",
         "tenant_url_re": "^https?://geo-(.+?)-int\\.lesagencesdeleau\\.eu",
         "flask_debug": "1",
@@ -78,7 +94,14 @@
       "env": "developpement",
       "git_branch": "developpement",
       "portainer": {
-        "host": "geoportainer-dev.lesagencesdeleau.eu"
+        "host": "geoportainer-dev.lesagencesdeleau.eu",
+        "endpoint_name" : "local",
+        "ldap_host": "10.126.100.1",
+        "ldap_port": "389",
+        "ldap_base_dn": "dc=lesagencesdeleau,dc=eu",
+        "ldap_bind_user_dn": "SVC_SIG_4AD",
+        "ldap_search_user_filter": "(&(objectClass=person)(memberOf=CN=GRP_SIG_ADM_PORTAINER,OU=SIG,OU=GestionApplicatifs,DC=lesagencesdeleau,DC=eu))",
+        "ldap_search_user_attr": "sAMAccountName"
       },
       "traefik": {
         "host": "geotraefik-dev.lesagencesdeleau.eu",
@@ -88,7 +111,7 @@
         "ldap_host": "10.126.100.1",
         "ldap_port": "389",
         "ldap_base_dn": "dc=lesagencesdeleau,dc=eu",
-        "ldap_bind_user_dn": "",
+        "ldap_bind_user_dn": "SVC_SIG_4AD",
         "host_regex": "^geo.*-dev\\.lesagencesdeleau\\.eu$$",
         "tenant_url_re": "^https?://geo-(.+?)-dev\\.lesagencesdeleau\\.eu",
         "flask_debug": "0",
