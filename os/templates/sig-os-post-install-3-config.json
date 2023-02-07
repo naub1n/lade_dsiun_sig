@@ -100,7 +100,7 @@
         "ldap_port": "389",
         "ldap_base_dn": "dc=lesagencesdeleau,dc=eu",
         "ldap_bind_user_dn": "SVC_SIG_4AD",
-        "ldap_search_user_filter": "(&(objectClass=person)(memberOf=CN=GRP_SIG_ADM_PORTAINER,OU=SIG,OU=GestionApplicatifs,DC=lesagencesdeleau,DC=eu))",
+        "ldap_search_user_filter": "(&(objectClass=person)(memberOf:1.2.840.113556.1.4.1941:=CN=GRP_SIG_ADM_PORTAINER,OU=SIG,OU=GestionApplicatifs,DC=lesagencesdeleau,DC=eu))",
         "ldap_search_user_attr": "sAMAccountName"
       },
       "traefik": {
