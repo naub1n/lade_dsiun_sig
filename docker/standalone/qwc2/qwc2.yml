@@ -28,6 +28,15 @@ services:
       - /app/qgis-server/conf:/etc/apache2/sites-enabled
       - /etc/localtime:/etc/localtime:ro
 
+  qwc-global-config-service:
+    image: naub1n/qwc-global-config-generator:v2023.03.03
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      INPUT_CONFIG_PATH: '/srv/qwc_service/config-in'
+    volumes:
+      - /app/qwc2/config-in:/srv/qwc_service/config-in
+
   qwc-config-service:
     image: sourcepole/qwc-config-generator:v2022.08.22
     # Lightweight variant without qgis, use if you don't need the split_categorized_layers feature
