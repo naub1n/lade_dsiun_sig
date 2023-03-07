@@ -1,7 +1,7 @@
 {
   "environments": [
     {
-      "environment": "developpement",
+      "env_name": "developpement",
       "profile_name": "DSIUN_dev",
       "plugins": {
         "repo_name": "Dépôt DSIUN",
@@ -14,7 +14,9 @@
       "catalogs": [
         {
           "name": "Catalogue DSIUN",
-          "link": "http://github"
+          "type": "json",
+          "link": "http://github",
+          "qgisauthconfigid": ""
         }
       ],
       "authentication": {
@@ -24,17 +26,16 @@
       "qgis": {
         "dsiun_version" : 32214
       },
-      "connections": {
-        "postgresql": [
-          {
-            "name": "DSIUN - Travail",
-            "host": "",
-            "port": 5432,
-            "dbname": "data",
-            "authConfigId": "dsiun01"
-          }
-        ]
-      }
+      "db_connections": [
+        {
+          "qgis_provider": "postgres",
+          "name": "DSIUN - Travail",
+          "host": "",
+          "port": 5432,
+          "dbname": "data",
+          "auth_id": "dsiun01"
+        }
+      ]
     }
   ]
 }
