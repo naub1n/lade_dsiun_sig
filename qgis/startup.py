@@ -5,7 +5,7 @@ import re
 import configparser
 
 from qgis.core import (QgsSettings, QgsApplication, QgsAuthMethodConfig, QgsExpressionContextUtils,
-                       QgsMessageLog, Qgis, QgsUserProfileManager)
+                       QgsMessageLog, Qgis)
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import Qt
 from qgis.utils import iface
@@ -35,8 +35,10 @@ class StartupDSIUN:
         self.pyplugin_inst = pyplugin_installer.instance()
         self.plugins_data = pyplugin_installer.installer_data.plugins
         self.profile_name = None
-        self.qgis_min_version_profile = 32803
-        self.p_mgr = QgsUserProfileManager()
+        # Un bug dans userProfileManager() dans les versions inférieures à 3.30.0 ne permet pas d'interagir correctement
+        # avec les profils utilisateurs : https://github.com/qgis/QGIS/issues/48337
+        self.qgis_min_version_profile = 33000
+        self.p_mgr = iface.userProfileManager()
         self.auth_mgr = QgsApplication.authManager()
         self.current_v = Qgis.QGIS_VERSION_INT
 
