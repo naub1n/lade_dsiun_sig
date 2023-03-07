@@ -32,7 +32,7 @@
           "qgis_provider": "postgres",
           "name": "DSIUN Dev - Travail",
           "host": "",
-          "port": 5432,
+          "port": "5432",
           "dbname": "data",
           "auth_id": "dsiun03"
         }
@@ -70,7 +70,7 @@
           "qgis_provider": "postgres",
           "name": "DSIUN Int - Travail",
           "host": "",
-          "port": 5432,
+          "port": "5432",
           "dbname": "data",
           "auth_id": "dsiun02"
         }
@@ -108,7 +108,7 @@
           "qgis_provider": "postgres",
           "name": "DSIUN - Travail",
           "host": "",
-          "port": 5432,
+          "port": "5432",
           "dbname": "data",
           "auth_id": "dsiun01"
         }
