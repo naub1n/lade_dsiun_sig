@@ -263,6 +263,7 @@ class StartupDSIUN:
         else:
             iface.messageBar().pushMessage(self.qgis_bad_version_message % (self.current_v, self.qgis_version_dsiun),
                                            level=Qgis.Warning, duration=3)
+            self.log(self.qgis_bad_version_message % (self.current_v, self.qgis_version_dsiun), Qgis.Warning)
             return False
 
     def get_paths(self):
