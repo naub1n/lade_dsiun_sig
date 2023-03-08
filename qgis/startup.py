@@ -3,9 +3,10 @@ import json
 import pyplugin_installer
 import re
 import configparser
+import requests
 
 from qgis.core import (QgsSettings, QgsApplication, QgsAuthMethodConfig, QgsExpressionContextUtils,
-                       QgsMessageLog, Qgis)
+                       QgsMessageLog, Qgis, QgsProviderRegistry, QgsDataSourceUri, QgsUserProfileManager)
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import Qt
 from qgis.utils import iface
@@ -15,57 +16,110 @@ from pyplugin_installer.installer_data import repositories, plugins, reposGroup
 class StartupDSIUN:
     def __init__(self):
 
-        #### Variables à paramètrer ####
-        self.repo_dsiun_name = "Dépôt DSIUN"
-        self.repo_dsiun_url = "http://geoplugins-dev.lesagencesdeleau.eu"
-        self.plugin_project_publisher = 'project_publisher'
-        self.plugin_custom_catalog = 'custom_catalog'
-        self.catalog_dsiun_name = 'Catalogue DSIUN'
-        self.catalog_dsiun_link = "http://github"
-        self.auth_id = "dsiun01"
-        self.auth_conf_name = "Authentification individuelle Windows des Agences de l'eau"
-        self.profile_dsiun = "DSIUN"
+        #### Variables à paramétrer ####
+
+        self.conf_url = "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/developpement/qgis/startup_parameters.json"
         self.default_profile_message = "Vous utilisez le profil par défaut. Privilégiez le profil DSIUN."
-        self.qgis_version_dsiun = 32214
         self.qgis_bad_version_message = "Vous utilisez une version (%s) non gérée par la DSIUN (%s). Le paramètrage ne sera pas appliqué."
+
         #################################
 
-        self.plugins_dsiun = [self.plugin_project_publisher,
-                              self.plugin_custom_catalog]
+
+
         self.pyplugin_inst = pyplugin_installer.instance()
         self.plugins_data = pyplugin_installer.installer_data.plugins
-        self.profile_name = None
         # Un bug dans userProfileManager() dans les versions inférieures à 3.30.0 ne permet pas d'interagir correctement
         # avec les profils utilisateurs : https://github.com/qgis/QGIS/issues/48337
         self.qgis_min_version_profile = 33000
-        self.p_mgr = iface.userProfileManager()
         self.auth_mgr = QgsApplication.authManager()
         self.current_v = Qgis.QGIS_VERSION_INT
+
+        if self.current_v >= self.qgis_min_version_profile:
+            self.p_mgr = iface.userProfileManager()
+        else:
+            self.p_mgr = QgsUserProfileManager()
+
 
         self.current_profile_path = None
         self.profiles_path = None
         self.config_profiles_path = None
-        self.qgis_profile_path = None
-        self.config_profile_path = None
-        self.cc_config_path = None
 
         self.qt_auth_dlg = QtWidgets.QDialog(None)
+        self.qt_auth_dlg.setFixedWidth(450)
         self.qt_auth_login = QtWidgets.QLineEdit(self.qt_auth_dlg)
         self.qt_auth_pass = QtWidgets.QLineEdit(self.qt_auth_dlg)
 
-    def start(self):
+        # Préparation des chemins vers les dossiers ou fichiers de config qgis
         self.get_paths()
+        # Lecture du fichier de configuration
+        self.global_config = self.get_global_config()
+        config = self.read_conf(self.global_config)
+        # Initialisation de certains paramètres
+        self.repo_dsiun_name = config.get("plugins", {}).get("repo_name", "")
+        self.repo_dsiun_url = config.get("plugins", {}).get("repo_url", "")
+        self.plugin_project_publisher = 'project_publisher'
+        self.plugin_custom_catalog = 'custom_catalog'
+        self.catalogs = config.get("catalogs", [])
+        self.auth_id = config.get("authentication", {}).get("id", "")
+        self.auth_conf_name = config.get("authentication", {}).get("name", "")
+        self.profile_dsiun = config.get("profile_name", "")
+        self.qgis_version_dsiun = config.get("qgis", {}).get("dsiun_version", "")
+        self.plugins_dsiun = config.get("plugins", {}).get("plugins_names", [])
+        self.database_connections = config.get("db_connections", [])
+        self.current_env = config.get("env_name", "")
+
+    def get_global_config(self):
+        self.log("Lecture de la configuration globale.", Qgis.Info)
+        try:
+            conf_url = self.conf_url
+            resp = requests.get(conf_url, verify=False)
+            config = resp.json()
+
+            return config
+
+        except Exception as e:
+            self.log("Erreur lors de la lecture de la configuration globale: %s" % str(e), Qgis.Critical)
+
+            return {}
+
+    def read_conf(self, config):
+        self.log("Lecture de la configuration de l'environnement.", Qgis.Info)
+        env_config = {}
+        current_profile = self.get_current_profile_name()
+        for key, environment in enumerate(config.get("environments", [])):
+            if environment.get("env_name", "") == "production":
+                env_prod_key = key
+
+            if environment.get("profile_name", "") == current_profile:
+                env_config = environment
+                env_name = environment.get("env_name", "")
+
+        if not env_config:
+            self.log("profil '%s' inconnu, utilisation de la configuration de production" % current_profile, Qgis.Warning)
+            env_config = config.get("environments", [])[env_prod_key]
+        else:
+            self.log("Utilisation de la configuration '%s'" % env_name, Qgis.Info)
+
+        return env_config
+
+    def start(self):
+        profiles = []
+        for env in self.global_config.get("environments", []):
+            profiles.append(env.get("profile_name", ""))
+
         if self.check_version():
-            if self.profile_name == self.profile_dsiun:
+            profile_name = self.get_current_profile_name()
+            if profile_name in profiles:
                 self.check_repo()
                 self.install_plugins()
                 self.get_catalog_config()
                 self.check_auth_cfg()
-                self.check_profil()
+                self.add_connections()
+                self.check_profiles()
             else:
-                self.check_profil()
+                self.check_profiles()
 
-            if self.profile_name == 'default':
+            if profile_name == 'default':
                 iface.messageBar().pushMessage(self.default_profile_message, level=Qgis.Info, duration=10)
 
     def log(self, log_message, log_level):
@@ -123,13 +177,16 @@ class StartupDSIUN:
     def get_catalog_config(self):
         self.log("Paramétrage du catalogue des AE ...", Qgis.Info)
         try:
+            plugin_name = self.plugin_custom_catalog
             # Vérification de la disponibilité du plugin
-            if self.plugin_custom_catalog in self.plugins_data.all().keys():
+            if plugin_name in self.plugins_data.all().keys():
                 # Vérification de son installation
-                if self.plugins_data.all()[self.plugin_custom_catalog]['installed']:
+                if self.plugins_data.all()[plugin_name]['installed']:
                     # Récupération de la configuration actuelle
-                    if os.path.exists(self.cc_config_path):
-                        with open(self.cc_config_path, 'r') as f:
+                    cc_config_path = os.path.join(self.current_profile_path,
+                                           'python/plugins/' + plugin_name + '/conf/settings.json')
+                    if os.path.exists(cc_config_path):
+                        with open(cc_config_path, 'r') as f:
                             catalog_settings = json.load(f)
 
                         # Suppression du catalog par défaut
@@ -139,27 +196,29 @@ class StartupDSIUN:
                                 del catalog_settings['catalogs'][index]
                                 break
 
-                        if not any(catalog.get('name', None) == self.catalog_dsiun_name for catalog in
-                                   catalog_settings['catalogs']):
-                            self.log("Catalogue DSIUN absent - ajout du catalogue", Qgis.Info)
-                            catalog_settings['catalogs'].append(
-                                {
-                                    "name": self.catalog_dsiun_name,
-                                    "type": "json",
-                                    "link": "",
-                                    "qgisauthconfigid": ""
-                                })
+                        for catalog in self.catalogs:
+                            new_catalog_name = catalog.get("name", "")
+                            if not any(local_catalog.get('name', None) == new_catalog_name for local_catalog in
+                                       catalog_settings['catalogs']):
+                                self.log("Catalogue '%s' absent - ajout du catalogue" % new_catalog_name, Qgis.Info)
+                                catalog_settings['catalogs'].append(
+                                    {
+                                        "name": new_catalog_name,
+                                        "type": catalog.get("type", ""),
+                                        "link": catalog.get("link", ""),
+                                        "qgisauthconfigid": catalog.get("qgisauthconfigid", "")
+                                    })
 
-                        with open(self.cc_config_path, 'w') as json_file:
+                        with open(cc_config_path, 'w') as json_file:
                             json.dump(catalog_settings, json_file, indent=2)
 
                         self.log("Paramétrage du catalogue - OK", Qgis.Info)
                     else:
-                        self.log("Le chemin vers le fichier de configuration n'existe pas : %s" % str(self.cc_config_path), Qgis.Warning)
+                        self.log("Le chemin vers le fichier de configuration n'existe pas : %s" % str(cc_config_path), Qgis.Warning)
                 else:
-                    self.log("Le plugin %s n'est pas installé" % str(self.plugin_custom_catalog), Qgis.Warning)
+                    self.log("Le plugin %s n'est pas installé" % str(plugin_name), Qgis.Warning)
             else:
-                self.log("Le plugin %s n'est pas disponible" % str(self.plugin_custom_catalog), Qgis.Warning)
+                self.log("Le plugin %s n'est pas disponible" % str(plugin_name), Qgis.Warning)
         except Exception as e:
             self.log("Erreur lors du paramétrage du catalogue : %s" % str(e), Qgis.Critical)
 
@@ -174,7 +233,7 @@ class StartupDSIUN:
                 self.log("Ajout de la configuration d'authentification %s" % str(self.auth_id), Qgis.Info)
 
                 # Définition du mot de passe par l'utilisateur
-                self.qt_auth_dlg.setWindowTitle("Indiquer votre login et mdp Windows")
+                self.qt_auth_dlg.setWindowTitle("Indiquer votre login et mdp pour l'environnement '%s'" % self.current_env)
                 layout = QtWidgets.QVBoxLayout(self.qt_auth_dlg)
                 self.qt_auth_login.setText(QgsExpressionContextUtils.globalScope().variable('user_account_name'))
                 self.qt_auth_pass.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -203,38 +262,47 @@ class StartupDSIUN:
         self.auth_mgr.storeAuthenticationConfig(config)
         self.qt_auth_dlg.accept()
 
-    def check_profil(self):
-        self.log("Vérification du profile par défaut ...", Qgis.Info)
+    def check_profiles(self):
+        self.log("Vérification des profiles ...", Qgis.Info)
         try:
-            if not self.profile_exists(self.profile_dsiun):
-                self.log("Création du profile %s" % self.profile_dsiun, Qgis.Info)
-                if self.current_v >= self.qgis_min_version_profile:
-                    self.p_mgr.createUserProfile(self.profile_dsiun)
-                else:
-                    self.log("Utilisation de la méthode pour les versions inférieures à %s" %
-                             self.qgis_min_version_profile, Qgis.Info)
-                    # Création du dossier du profile et du fichier de configuration vide
-                    os.makedirs(self.qgis_profile_path, exist_ok=True)
-                    with open(self.config_profile_path, mode='w'):
-                        pass
+            for env in self.global_config.get("environments", []):
+                profile = env.get("profile_name", "")
+                is_default_profile = env.get("profile_default", False)
 
-                # Demande à l'utilisateur d'ouvrir le profile de la DSIUN
-                msg_box = QtWidgets.QMessageBox()
-                msg_box.setText("Le profile DSIUN a été créé.\n" +
-                                "Souhaitez-vous basculer sur le profile DSIUN?")
-                msg_box.setStandardButtons(QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes)
-                open_new_profil = msg_box.exec()
-                if open_new_profil == QtWidgets.QMessageBox.Yes:
-                    self.p_mgr.loadUserProfile(self.profile_dsiun)
-                    QgsApplication.exit() #Ne marche pas !
+                qgis_profile_path = os.path.join(self.profiles_path, profile + '/QGIS')
+                config_profile_path = os.path.join(qgis_profile_path, 'QGIS3.ini').replace('\\', '/')
 
-            # Vérification du profile par défaut
-            if not self.p_mgr.defaultProfileName == self.profile_dsiun:
-                self.set_default_profile(self.profile_dsiun)
+                if not self.profile_exists(profile):
+                    self.log("Création du profile %s" % profile, Qgis.Info)
+                    if self.current_v >= self.qgis_min_version_profile:
+                        self.p_mgr.createUserProfile(profile)
+                    else:
+                        self.log("Utilisation de la méthode pour les versions inférieures à %s" %
+                                 self.qgis_min_version_profile, Qgis.Info)
+                        # Création du dossier du profil et du fichier de configuration vide
+                        os.makedirs(qgis_profile_path, exist_ok=True)
+                        with open(config_profile_path, mode='w'):
+                            pass
 
-            self.log("Vérification du profil par défaut - OK", Qgis.Info)
+                    if is_default_profile:
+                        # Demande à l'utilisateur d'ouvrir le profile de la DSIUN
+                        msg_box = QtWidgets.QMessageBox()
+                        msg_box.setText("Le profile %s a été créé.\n" % profile +
+                                        "Souhaitez-vous basculer sur ce profil?")
+                        msg_box.setStandardButtons(QtWidgets.QMessageBox.No | QtWidgets.QMessageBox.Yes)
+                        open_new_profil = msg_box.exec()
+                        if open_new_profil == QtWidgets.QMessageBox.Yes:
+                            self.p_mgr.loadUserProfile(profile)
+                            QgsApplication.exit() #Ne marche pas !
+
+                # Vérification du profil par défaut
+                if is_default_profile:
+                    if not self.p_mgr.defaultProfileName == profile:
+                        self.set_default_profile(profile)
+
+            self.log("Vérification des profiles - OK", Qgis.Info)
         except Exception as e:
-            self.log("Erreur lors de la vérification du profil par défaut : %s" % str(e), Qgis.Critical)
+            self.log("Erreur lors de la vérification des profiles : %s" % str(e), Qgis.Critical)
 
     def set_default_profile(self, profile_name):
         self.log("Paramétrage du profile par défaut ...", Qgis.Info)
@@ -262,7 +330,7 @@ class StartupDSIUN:
             return True
         else:
             iface.messageBar().pushMessage(self.qgis_bad_version_message % (self.current_v, self.qgis_version_dsiun),
-                                           level=Qgis.Warning, duration=3)
+                                           level=Qgis.Warning, duration=10)
             self.log(self.qgis_bad_version_message % (self.current_v, self.qgis_version_dsiun), Qgis.Warning)
             return False
 
@@ -270,20 +338,16 @@ class StartupDSIUN:
         self.current_profile_path = QgsApplication.qgisSettingsDirPath().replace('\\', '/')
         self.profiles_path = re.search("(.*?profiles/)", self.current_profile_path).group(1)
         self.config_profiles_path = os.path.join(self.profiles_path, 'profiles.ini')
-        self.qgis_profile_path = os.path.join(self.profiles_path, self.profile_dsiun + '/QGIS')
-        self.config_profile_path = os.path.join(self.qgis_profile_path, 'QGIS3.ini').replace('\\', '/')
-        self.cc_config_path = os.path.join(self.current_profile_path,
-                                           'python/plugins/' + self.plugin_custom_catalog + '/conf/settings.json')
 
     def get_current_profile_name(self):
-        # Les versions inférieures de QGIS ont un bug sur la gestion des profiles
+        # Les versions inférieures de QGIS ont un bug sur la gestion des profils
         if self.current_v >= self.qgis_min_version_profile:
             profile = self.p_mgr.userProfile()
-            self.profile_name = profile.name()
+            profile_name = profile.name()
         else:
-            self.log("Utilisation de la méthode pour les versions inférieures à %s" %
-                     self.qgis_min_version_profile, Qgis.Info)
-            self.profile_name = re.search("profiles/(.*?)/", self.current_profile_path).group(1)
+            profile_name = re.search("profiles/(.*?)/", self.current_profile_path).group(1)
+
+        return profile_name
 
     def profile_exists(self, profile_name):
         if self.current_v >= self.qgis_min_version_profile:
@@ -291,6 +355,32 @@ class StartupDSIUN:
 
         else:
             return profile_name in os.listdir(self.profiles_path)
+
+    def add_connections(self):
+        self.log("Vérification de la présence des connections aux BDD.", Qgis.Info)
+        for cnx in self.database_connections:
+            cnx_provider = cnx.get("qgis_provider", "")
+            cnx_name = cnx.get("name", "")
+            cnx_host = cnx.get("host", "")
+            cnx_port = cnx.get("port", "")
+            cnx_dbname = cnx.get("dbname", "")
+            cnx_auth_id = cnx.get("auth_id", "")
+
+            try:
+                provider = QgsProviderRegistry.instance().providerMetadata(cnx_provider)
+                uri = QgsDataSourceUri()
+                uri.setConnection(aHost=cnx_host,
+                                  aPort=cnx_port,
+                                  aDatabase=cnx_dbname,
+                                  aUsername=None,
+                                  aPassword=None,
+                                  authConfigId=cnx_auth_id)
+                self.log("Ajout/Restauration de la connection '%s'." % cnx_name, Qgis.Info)
+                new_conn = provider.createConnection(uri.uri(expandAuthConfig=False), {})
+                # La connexion est ajoutée si inexistante ou remplacée si elle existe déjà
+                provider.saveConnection(new_conn, cnx_name)
+            except Exception as e:
+                self.log("Erreur lors de la l'ajout de la connexion '%s' : %s" % (cnx_name, str(e)), Qgis.Critical)
 
 
 
