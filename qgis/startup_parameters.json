@@ -25,7 +25,7 @@
         "name": "Authentification Agences de l'eau - Dev"
       },
       "qgis": {
-        "dsiun_version" : 32214
+        "dsiun_version" : 32804
       },
       "db_connections": [
         {
