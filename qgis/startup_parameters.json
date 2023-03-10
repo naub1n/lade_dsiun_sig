@@ -63,7 +63,7 @@
         "name": "Authentification Agences de l'eau - Int"
       },
       "qgis": {
-        "dsiun_version" : 32214
+        "dsiun_version" : 32804
       },
       "db_connections": [
         {
@@ -101,7 +101,7 @@
         "name": "Authentification Agences de l'eau"
       },
       "qgis": {
-        "dsiun_version" : 32214
+        "dsiun_version" : 32804
       },
       "db_connections": [
         {
