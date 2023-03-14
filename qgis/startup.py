@@ -293,7 +293,7 @@ class StartupDSIUN:
                         open_new_profil = msg_box.exec()
                         if open_new_profil == QtWidgets.QMessageBox.Yes:
                             self.p_mgr.loadUserProfile(profile)
-                            QgsApplication.exit() #Ne marche pas !
+                            os._exit(0)
 
                 # Vérification du profil par défaut
                 if is_default_profile:
