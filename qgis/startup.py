@@ -174,6 +174,36 @@ class StartupDSIUN:
         except Exception as e:
             self.log("Erreur lors l'installation ou les mise à jour des plugins : %s" % str(e), Qgis.Critical)
 
+    def get_current_customcatalog_settings(self):
+        s = QgsSettings()
+        s.beginGroup("CustomCatalog/catalogs")
+
+        catalogs = []
+        for key in s.childGroups():
+            catalog = {
+                "name": s.value("%s/name" % key, ""),
+                "type": s.value("%s/type" % key, ""),
+                "link": s.value("%s/link" % key, ""),
+                "qgisauthconfigid": s.value("%s/qgisauthconfigid" % key, "")
+            }
+            catalogs.append(catalog)
+
+        settings = {"catalogs": catalogs}
+
+        return settings
+
+    def save_customcatalog_settings(self, settings):
+        s = QgsSettings()
+        s.beginGroup("CustomCatalog")
+        s.remove("CustomCatalog/catalogs")
+
+        for key, catalog in enumerate(settings.get("catalogs", [])):
+            s.setValue("catalogs/%s/name" % key, catalog.get("name", ""))
+            s.setValue("catalogs/%s/type" % key, catalog.get("type", ""))
+            s.setValue("catalogs/%s/link" % key, catalog.get("link", ""))
+            s.setValue("catalogs/%s/qgisauthconfigid" % key, catalog.get("qgisauthconfigid", ""))
+
+
     def get_catalog_config(self):
         self.log("Paramétrage du catalogue des AE ...", Qgis.Info)
         try:
@@ -182,39 +212,31 @@ class StartupDSIUN:
             if plugin_name in self.plugins_data.all().keys():
                 # Vérification de son installation
                 if self.plugins_data.all()[plugin_name]['installed']:
-                    # Récupération de la configuration actuelle
-                    cc_config_path = os.path.join(self.current_profile_path,
-                                           'python/plugins/' + plugin_name + '/conf/settings.json')
-                    if os.path.exists(cc_config_path):
-                        with open(cc_config_path, 'r') as f:
-                            catalog_settings = json.load(f)
+                    catalog_settings = self.get_current_customcatalog_settings()
 
-                        # Suppression du catalog par défaut
-                        for index, catalog in enumerate(catalog_settings['catalogs']):
-                            if catalog['name'] == 'CatalogExample':
-                                self.log("Suppression du catalogue par défaut", Qgis.Info)
-                                del catalog_settings['catalogs'][index]
-                                break
+                    # Suppression du catalog par défaut
+                    for index, catalog in enumerate(catalog_settings['catalogs']):
+                        if catalog['name'] == 'CatalogExample':
+                            self.log("Suppression du catalogue par défaut", Qgis.Info)
+                            del catalog_settings['catalogs'][index]
+                            break
 
-                        for catalog in self.catalogs:
-                            new_catalog_name = catalog.get("name", "")
-                            if not any(local_catalog.get('name', None) == new_catalog_name for local_catalog in
-                                       catalog_settings['catalogs']):
-                                self.log("Catalogue '%s' absent - ajout du catalogue" % new_catalog_name, Qgis.Info)
-                                catalog_settings['catalogs'].append(
-                                    {
-                                        "name": new_catalog_name,
-                                        "type": catalog.get("type", ""),
-                                        "link": catalog.get("link", ""),
-                                        "qgisauthconfigid": catalog.get("qgisauthconfigid", "")
-                                    })
+                    for catalog in self.catalogs:
+                        new_catalog_name = catalog.get("name", "")
+                        if not any(local_catalog.get('name', None) == new_catalog_name for local_catalog in
+                                   catalog_settings['catalogs']):
+                            self.log("Catalogue '%s' absent - ajout du catalogue" % new_catalog_name, Qgis.Info)
+                            catalog_settings['catalogs'].append(
+                                {
+                                    "name": new_catalog_name,
+                                    "type": catalog.get("type", ""),
+                                    "link": catalog.get("link", ""),
+                                    "qgisauthconfigid": catalog.get("qgisauthconfigid", "")
+                                })
 
-                        with open(cc_config_path, 'w') as json_file:
-                            json.dump(catalog_settings, json_file, indent=2)
+                    self.save_customcatalog_settings(catalog_settings)
 
-                        self.log("Paramétrage du catalogue - OK", Qgis.Info)
-                    else:
-                        self.log("Le chemin vers le fichier de configuration n'existe pas : %s" % str(cc_config_path), Qgis.Warning)
+                    self.log("Paramétrage du catalogue - OK", Qgis.Info)
                 else:
                     self.log("Le plugin %s n'est pas installé" % str(plugin_name), Qgis.Warning)
             else:
