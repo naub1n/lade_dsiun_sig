@@ -3,7 +3,7 @@ version: '3.4'
 services:
   qgis-plugins-repository:
     image: webdevops/php-nginx:8.2-alpine
-    user: "${UID}:${GID}"
+    #user: "${UID}:${GID}"
     command:
       - sh
       - -c
