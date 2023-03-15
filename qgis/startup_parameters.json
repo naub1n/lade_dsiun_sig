@@ -16,7 +16,7 @@
         {
           "name": "Catalogue DSIUN",
           "type": "json",
-          "link": "http://github",
+          "link": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/master/qgis/catalogues/dsiun.json",
           "qgisauthconfigid": ""
         }
       ],
