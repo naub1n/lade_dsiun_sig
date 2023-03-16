@@ -223,16 +223,22 @@ class StartupDSIUN:
 
                     for catalog in self.catalogs:
                         new_catalog_name = catalog.get("name", "")
-                        if not any(local_catalog.get('name', None) == new_catalog_name for local_catalog in
-                                   catalog_settings['catalogs']):
-                            self.log("Catalogue '%s' absent - ajout du catalogue" % new_catalog_name, Qgis.Info)
-                            catalog_settings['catalogs'].append(
-                                {
+                        new_catalog_data = {
                                     "name": new_catalog_name,
                                     "type": catalog.get("type", ""),
                                     "link": catalog.get("link", ""),
                                     "qgisauthconfigid": catalog.get("qgisauthconfigid", "")
-                                })
+                                }
+                        if not any(local_catalog.get('name', None) == new_catalog_name for local_catalog in
+                                   catalog_settings['catalogs']):
+                            self.log("Catalogue '%s' absent - ajout du catalogue" % new_catalog_name, Qgis.Info)
+                            catalog_settings['catalogs'].append(new_catalog_data)
+                        else:
+                            self.log("Mise à jour du catalogue '%s'." % new_catalog_name, Qgis.Info)
+                            for key, local_catalog in enumerate(catalog_settings['catalogs']):
+                                if local_catalog.get("name", "") == new_catalog_name:
+                                    catalog_settings['catalogs'][key] = new_catalog_data
+
 
                     self.save_customcatalog_settings(catalog_settings)
 
