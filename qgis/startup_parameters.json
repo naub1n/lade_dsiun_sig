@@ -6,7 +6,7 @@
       "profile_default": false,
       "plugins": {
         "repo_name": "Dépôt DSIUN en développement",
-        "repo_url": "http://geoplugins-dev.lesagencesdeleau.eu",
+        "repo_url": "https://geoplugins-dev.lesagencesdeleau.eu",
         "plugins_names": [
           "project_publisher",
           "custom_catalog"
@@ -44,7 +44,7 @@
       "profile_default": false,
       "plugins": {
         "repo_name": "Dépôt DSIUN en intégration",
-        "repo_url": "http://geoplugins-int.lesagencesdeleau.eu",
+        "repo_url": "https://geoplugins-int.lesagencesdeleau.eu",
         "plugins_names": [
           "project_publisher",
           "custom_catalog"
@@ -54,7 +54,7 @@
         {
           "name": "Catalogue DSIUN Int",
           "type": "json",
-          "link": "http://github",
+          "link": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/integration/qgis/catalogues/dsiun.json",
           "qgisauthconfigid": ""
         }
       ],
@@ -82,7 +82,7 @@
       "profile_default": true,
       "plugins": {
         "repo_name": "Dépôt DSIUN",
-        "repo_url": "http://geoplugins.lesagencesdeleau.eu",
+        "repo_url": "https://geoplugins.lesagencesdeleau.eu",
         "plugins_names": [
           "project_publisher",
           "custom_catalog"
@@ -92,7 +92,7 @@
         {
           "name": "Catalogue DSIUN",
           "type": "json",
-          "link": "http://github",
+          "link": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/master/qgis/catalogues/dsiun.json",
           "qgisauthconfigid": ""
         }
       ],
