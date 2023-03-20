@@ -106,7 +106,7 @@
           "oauth_sso": true,
           "oauth_scopes": "User.Read",
           "oauth_user_identifier": "email"
-        },"
+        }
       },
       "traefik": {
         "host": "geotraefik-int.lesagencesdeleau.eu",
