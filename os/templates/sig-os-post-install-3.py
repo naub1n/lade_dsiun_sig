@@ -294,11 +294,29 @@ class DeploySIG:
                                      params={'type': 2, 'method': 'repository', 'endpointId': self.portainer_endpoint_id},
                                      json=stack_config)
 
-            if not response.status_code == 200:
-                print("ERREUR : Le déploiement de l'application a échoué : %s" % response.text)
+            if response.status_code not in [200, 204]:
+                print("ERREUR : Le déploiement de l'application a échoué - code %s : %s" % (response.status_code, response.text))
+
+            else:
+                # Mise à jour des droits sur la stack
+                response_data = response.json()
+                resource_id = response_data.get("ResourceControl", {}).get("Id", "")
+                self.portainer_update_resource_control(resource_id)
         else:
             print("ERREUR : aucun endpoint défini.")
             sys.exit(1)
+
+    def portainer_update_resource_control(self, resource_id):
+        resource_control = {
+            "administratorsOnly": False,
+            "public": True
+        }
+        response = requests.put('http://localhost:9000/api/resource_controls/%s' % resource_id,
+                                 headers={"Authorization": "Bearer %s" % self.portainer_get_token()},
+                                 json=resource_control)
+
+        if response.status_code not in [200, 204]:
+            print("ERREUR : La modification du contrôle d'accès a échoué pour le ResourceId %s : %s" % (resource_id, response.text))
 
     def prepare_traefik(self):
         print("Mise en place des prérequis pour le déploiement de Traefik.")
