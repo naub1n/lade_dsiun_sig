@@ -38,12 +38,26 @@
       "portainer": {
         "host": "geoportainer.lesagencesdeleau.eu",
         "endpoint_name" : "local",
-        "ldap_host": "",
-        "ldap_port": "",
-        "ldap_base_dn": "",
-        "ldap_bind_user_dn": "",
-        "ldap_search_user_filter": "",
-        "ldap_search_user_attr": ""
+        "auth_ldap": {
+          "ldap_host": "",
+          "ldap_port": "",
+          "ldap_base_dn": "",
+          "ldap_bind_user_dn": "",
+          "ldap_search_user_filter": "",
+          "ldap_search_user_attr": ""
+        },
+        "auth_oauth": {
+          "oauth_token_uri": "https://login.microsoftonline.com/77e27c6b-739c-41db-87e0-01f293bc2f06/oauth2/v2.0/token",
+          "oauth_auth_uri": "https://login.microsoftonline.com/77e27c6b-739c-41db-87e0-01f293bc2f06/oauth2/v2.0/authorize",
+          "oauth_client_id": "3745a4e5-44ca-4c22-af8e-b69d94eee391",
+          "oauth_logout_uri": "",
+          "oauth_autocreateusers": true,
+          "oauth_redirect_uri": "https://geoportainer-dev.lesagencesdeleau.eu",
+          "oauth_resource_uri": "https://graph.microsoft.com/oidc/userinfo",
+          "oauth_sso": true,
+          "oauth_scopes": "User.Read",
+          "oauth_user_identifier": "email"
+        }
       },
       "traefik": {
         "host": "geotraefik.lesagencesdeleau.eu",
@@ -73,12 +87,26 @@
       "portainer": {
         "host": "geoportainer-int.lesagencesdeleau.eu",
         "endpoint_name" : "local",
-        "ldap_host": "",
-        "ldap_port": "",
-        "ldap_base_dn": "",
-        "ldap_bind_user_dn": "",
-        "ldap_search_user_filter": "",
-        "ldap_search_user_attr": ""
+        "auth_ldap": {
+          "ldap_host": "",
+          "ldap_port": "",
+          "ldap_base_dn": "",
+          "ldap_bind_user_dn": "",
+          "ldap_search_user_filter": "",
+          "ldap_search_user_attr": ""
+        },
+        "auth_oauth": {
+          "oauth_token_uri": "https://login.microsoftonline.com/77e27c6b-739c-41db-87e0-01f293bc2f06/oauth2/v2.0/token",
+          "oauth_auth_uri": "https://login.microsoftonline.com/77e27c6b-739c-41db-87e0-01f293bc2f06/oauth2/v2.0/authorize",
+          "oauth_client_id": "3745a4e5-44ca-4c22-af8e-b69d94eee391",
+          "oauth_logout_uri": "",
+          "oauth_autocreateusers": true,
+          "oauth_redirect_uri": "https://geoportainer-dev.lesagencesdeleau.eu",
+          "oauth_resource_uri": "https://graph.microsoft.com/oidc/userinfo",
+          "oauth_sso": true,
+          "oauth_scopes": "User.Read",
+          "oauth_user_identifier": "email"
+        },"
       },
       "traefik": {
         "host": "geotraefik-int.lesagencesdeleau.eu",
@@ -108,12 +136,26 @@
       "portainer": {
         "host": "geoportainer-dev.lesagencesdeleau.eu",
         "endpoint_name" : "local",
-        "ldap_host": "10.126.100.1",
-        "ldap_port": "389",
-        "ldap_base_dn": "dc=lesagencesdeleau,dc=eu",
-        "ldap_bind_user_dn": "SVC_SIG_4AD",
-        "ldap_search_user_filter": "(&(objectClass=person)(memberOf:1.2.840.113556.1.4.1941:=CN=GRP_SIG_ADM_PORTAINER,OU=SIG,OU=GestionApplicatifs,DC=lesagencesdeleau,DC=eu))",
-        "ldap_search_user_attr": "sAMAccountName"
+        "auth_ldap": {
+          "ldap_host": "10.126.100.1",
+          "ldap_port": "389",
+          "ldap_base_dn": "dc=lesagencesdeleau,dc=eu",
+          "ldap_bind_user_dn": "SVC_SIG_4AD",
+          "ldap_search_user_filter": "(&(objectClass=person)(memberOf:1.2.840.113556.1.4.1941:=CN=GRP_SIG_ADM_PORTAINER,OU=SIG,OU=GestionApplicatifs,DC=lesagencesdeleau,DC=eu))",
+          "ldap_search_user_attr": "sAMAccountName"
+        },
+        "auth_oauth": {
+          "oauth_token_uri": "https://login.microsoftonline.com/77e27c6b-739c-41db-87e0-01f293bc2f06/oauth2/v2.0/token",
+          "oauth_auth_uri": "https://login.microsoftonline.com/77e27c6b-739c-41db-87e0-01f293bc2f06/oauth2/v2.0/authorize",
+          "oauth_client_id": "3745a4e5-44ca-4c22-af8e-b69d94eee391",
+          "oauth_logout_uri": "",
+          "oauth_autocreateusers": true,
+          "oauth_redirect_uri": "https://geoportainer-dev.lesagencesdeleau.eu",
+          "oauth_resource_uri": "https://graph.microsoft.com/oidc/userinfo",
+          "oauth_sso": true,
+          "oauth_scopes": "User.Read",
+          "oauth_user_identifier": "email"
+        }
       },
       "traefik": {
         "host": "geotraefik-dev.lesagencesdeleau.eu",
