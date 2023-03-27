@@ -22,7 +22,8 @@ class DeploySIG:
         self.get_config_data()
         self.deploy_portainer()
         self.portainer_add_env()
-        self.portainer_set_ldap()
+        #self.portainer_set_ldap()
+        self.portainer_set_oauth2()
         self.prepare_traefik()
         self.get_certificats()
         self.deploy_traefik()
@@ -148,8 +149,10 @@ class DeploySIG:
                 print("Initialisation du mot de passe Portainer : OK")
             else:
                 print("ERREUR : Initialisation du mot de passe Portainer : Erreur - code %s" % response.status_code)
+                sys.exit(1)
         else:
             print("ERREUR : Le conteneur Portainer n'est pas démarré")
+            sys.exit(1)
 
     def docker_deploy(self, stack_name, stack_file, env_file):
         docker = DockerClient(context='rootless',
@@ -203,8 +206,23 @@ class DeploySIG:
         response = requests.post('http://localhost:9000/api/auth',
                                  json={'Username': 'admin', 'Password': self.portainer_pass})
 
+        msg_error = "ERREUR : L'authentification a échouée."
+
         if response.status_code == 200:
-            return response.json()['jwt']
+            auth_data = response.json()
+            if auth_data.get("message", "") == "Invalid credentials":
+                print(msg_error)
+                sys.exit(1)
+            else:
+                token = auth_data.get("jwt", "")
+                if token:
+                    return token
+                else:
+                    print("ERREUR : Le jeton est vide")
+                    sys.exit(1)
+        else:
+            print(msg_error)
+            sys.exit(1)
 
     def portainer_get_endpoints(self):
         response = requests.get('http://localhost:9000/api/endpoints',
@@ -241,6 +259,7 @@ class DeploySIG:
         print("Ajout de l'authentification LDAP dans Portainer")
         portainer_cfg = self.app_config['portainer']
         endpoint_name = portainer_cfg.get('endpoint_name', 'local')
+        ldap_cfg = portainer_cfg.get("auth_ldap", {})
         if self.check_endpoint_exists(endpoint_name):
             response = requests.put('http://localhost:9000/api/settings',
                                      headers={"Authorization": "Bearer %s" % self.portainer_get_token()},
@@ -250,21 +269,56 @@ class DeploySIG:
                                              "AnonymousMode": False,
                                              "AutoCreateUsers": True,
                                              "Password": getpass("Indiquez la valeur de LDAP_BIND_USER_PASSWORD pour portainer: "),
-                                             "ReaderDN": portainer_cfg.get('ldap_bind_user_dn', ''),
+                                             "ReaderDN": ldap_cfg.get('ldap_bind_user_dn', ''),
                                              "SearchSettings": [
                                                  {
-                                                     "BaseDN": portainer_cfg.get('ldap_base_dn', ''),
-                                                     "Filter": portainer_cfg.get('ldap_search_user_filter', ''),
-                                                     "UserNameAttribute": portainer_cfg.get('ldap_search_user_attr', '')
+                                                     "BaseDN": ldap_cfg.get('ldap_base_dn', ''),
+                                                     "Filter": ldap_cfg.get('ldap_search_user_filter', ''),
+                                                     "UserNameAttribute": ldap_cfg.get('ldap_search_user_attr', '')
                                                  }
                                              ],
-                                             "URL": portainer_cfg.get('ldap_host', '') + ":" +
-                                                    portainer_cfg.get('ldap_port', '')
+                                             "URL": ldap_cfg.get('ldap_host', '') + ":" +
+                                                    ldap_cfg.get('ldap_port', '')
                                          }
                                      })
 
             if response.status_code not in [200, 204]:
                 print("ATTENTION : La configuration de l'authentification LDAP a échouée : %s" % str(response.text))
+
+        else:
+            print("ATTENTION : L'endpoint '%s' n'existe pas" % endpoint_name)
+
+    def portainer_set_oauth2(self):
+        print("Ajout de l'authentification OAuth2.0 dans Portainer")
+        portainer_cfg = self.app_config['portainer']
+        endpoint_name = portainer_cfg.get('endpoint_name', 'local')
+        oauth_cfg = portainer_cfg.get("auth_oauth", {})
+        if self.check_endpoint_exists(endpoint_name):
+            response = requests.put('http://localhost:9000/api/settings',
+                                     headers={"Authorization": "Bearer %s" % self.portainer_get_token()},
+                                     json={
+                                         "AuthenticationMethod": 3,
+                                         "oauthSettings": {
+                                             "AccessTokenURI": oauth_cfg.get('oauth_token_uri', ''),
+                                             "AuthorizationURI": oauth_cfg.get('oauth_auth_uri', ''),
+                                             "ClientID": oauth_cfg.get('oauth_client_id', ''),
+                                             "ClientSecret": getpass("Indiquez le Client Secret Azure pour portainer: "),
+                                             "DefaultTeamID": 0,
+                                             "KubeSecretKey": [
+                                                 0
+                                             ],
+                                             "LogoutURI": oauth_cfg.get('oauth_logout_uri', ''),
+                                             "OAuthAutoCreateUsers": oauth_cfg.get('oauth_autocreateusers', True),
+                                             "RedirectURI": oauth_cfg.get('oauth_redirect_uri', ''),
+                                             "ResourceURI": oauth_cfg.get('oauth_resource_uri', ''),
+                                             "SSO": oauth_cfg.get('oauth_sso', True),
+                                             "Scopes": oauth_cfg.get('oauth_scopes', ''),
+                                             "UserIdentifier": oauth_cfg.get('oauth_user_identifier', '')
+                                         }
+                                     })
+
+            if response.status_code not in [200, 204]:
+                print("ATTENTION : La configuration de l'authentification OAuth2.0 a échouée : %s" % str(response.text))
 
         else:
             print("ATTENTION : L'endpoint '%s' n'existe pas" % endpoint_name)
