@@ -278,7 +278,7 @@ services:
     environment:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/auth'
-      JWT_COOKIE_SAMESITE: 'Strict'
+      JWT_COOKIE_SAMESITE: 'Lax'
     # Suppresion de l'ajout du tenant dans l'url dans le script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
     entrypoint:
       - sh
