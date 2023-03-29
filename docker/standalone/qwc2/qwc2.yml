@@ -232,29 +232,55 @@ services:
   #     # Remplacement du script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
   #     - /app/qwc2/source_code/qwc-service-core/tenant_handler.py:/usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.py
       
+#  qwc-auth-service:
+#    #image: sourcepole/qwc-ldap-auth:v2022.08.22
+#    # Utilisation du service modifié le temps que la correction soit ajoutée au repo de sourcepole
+#    image: naub1n/qwc-ldap-auth:v2023.01.05
+#    restart: always
+#    environment:
+#      <<: *qwc-service-variables
+#      SERVICE_MOUNTPOINT: '/auth'
+#      JWT_COOKIE_SAMESITE: 'Strict'
+#      LDAP_HOST: ${LDAP_HOST}
+#      LDAP_PORT: 389
+#      LDAP_USE_SSL: False
+#      LDAP_BASE_DN: ${LDAP_BASE_DN}
+#      LDAP_USER_DN: 'ou=agents'
+#      LDAP_GROUP_DN: 'ou=groupes'
+#      LDAP_SEARCH_FOR_GROUPS: True
+#      LDAP_GROUP_OBJECT_FILTER: '(objectClass=groupOfUniqueNames)'
+#      LDAP_GROUP_SEARCH_SCOPE: 'SUBTREE'
+#      LDAP_USER_LOGIN_ATTR: 'uid'
+#      LDAP_BIND_USER_DN: ${LDAP_BIND_USER_DN}
+#      LDAP_BIND_USER_PASSWORD: ${LDAP_BIND_USER_PASSWORD}
+#    # Suppresion de l'ajout du tenant dans l'url dans le script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
+#    entrypoint:
+#      - sh
+#      - -c
+#      - |
+#        sed -i 's/return self.service_prefix + self.tenant()/return self.service_prefix/g' /usr/lib/python3.9/site-packages/qwc_services_core/tenant_handler.py
+#        uwsgi --http-socket :9090 --buffer-size $$REQ_HEADER_BUFFER_SIZE --processes $$UWSGI_PROCESSES --threads $$UWSGI_THREADS --plugins python3 $$UWSGI_EXTRA --protocol uwsgi --wsgi-disable-file-wrapper --uid $$SERVICE_UID --gid $$SERVICE_GID --master --chdir /srv/qwc_service --mount $$SERVICE_MOUNTPOINT=server:app --manage-script-name
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.r_qwc2_auth.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/auth/`)"
+#      - "traefik.http.routers.r_qwc2_auth.priority=10"
+#      - "traefik.http.routers.r_qwc2_auth.entrypoints=websecure"
+#      #- "traefik.http.routers.r_qwc2_auth.entrypoints=web"
+#      - "traefik.http.routers.r_qwc2_auth.tls=true"
+#      - "traefik.http.services.s_qwc2_auth.loadbalancer.server.port=9090"
+#      - "traefik.http.routers.r_qwc2_auth.service=s_qwc2_auth"
+
   qwc-auth-service:
-    #image: sourcepole/qwc-ldap-auth:v2022.08.22
-    # Utilisation du service modifié le temps que la correction soit ajoutée au repo de sourcepole
-    image: naub1n/qwc-ldap-auth:v2023.01.05
+    image: sourcepole/qwc-oidc-auth:v2023.02.02
     restart: always
     environment:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/auth'
       JWT_COOKIE_SAMESITE: 'Strict'
-      LDAP_HOST: ${LDAP_HOST}
-      LDAP_PORT: 389
-      LDAP_USE_SSL: False
-      LDAP_BASE_DN: ${LDAP_BASE_DN}
-      LDAP_USER_DN: 'ou=agents'
-      LDAP_GROUP_DN: 'ou=groupes'
-      LDAP_SEARCH_FOR_GROUPS: True
-      LDAP_GROUP_OBJECT_FILTER: '(objectClass=groupOfUniqueNames)'
-      LDAP_GROUP_SEARCH_SCOPE: 'SUBTREE'
-      LDAP_USER_LOGIN_ATTR: 'uid'
-      LDAP_BIND_USER_DN: ${LDAP_BIND_USER_DN}
-      LDAP_BIND_USER_PASSWORD: ${LDAP_BIND_USER_PASSWORD}
     # Suppresion de l'ajout du tenant dans l'url dans le script tenant_handler.py pour prendre en compte le tenant dans le sous-domaine
-    entrypoint: 
+    entrypoint:
       - sh
       - -c
       - |
@@ -262,6 +288,7 @@ services:
         uwsgi --http-socket :9090 --buffer-size $$REQ_HEADER_BUFFER_SIZE --processes $$UWSGI_PROCESSES --threads $$UWSGI_THREADS --plugins python3 $$UWSGI_EXTRA --protocol uwsgi --wsgi-disable-file-wrapper --uid $$SERVICE_UID --gid $$SERVICE_GID --master --chdir /srv/qwc_service --mount $$SERVICE_MOUNTPOINT=server:app --manage-script-name
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_auth.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/auth/`)"
