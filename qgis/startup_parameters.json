@@ -109,6 +109,11 @@
           "id": "dsiun01",
           "name": "Authentification Agences de l'eau",
           "domains" : ["all"]
+        },
+        {
+          "id": "aelb001",
+          "name": "Authentification AELB geodiff en lecture",
+          "domains": ["siege.aelb", "AESN1"]
         }
       ],
       "qgis": {
@@ -123,6 +128,24 @@
           "dbname": "data",
           "auth_id": "dsiun01",
           "domains": ["all"]
+        },
+        {
+          "qgis_provider": "postgres",
+          "name": "AELB - GeoDiff Carto",
+          "host": "DB-HP21.siege.aelb",
+          "port": "11420",
+          "dbname": "carto_aelb",
+          "auth_id": "aelb001",
+          "domains": ["siege.aelb", "AESN1"]
+        },
+        {
+          "qgis_provider": "postgres",
+          "name": "AELB - GeoDiff Habillage",
+          "host": "DB-HP21.siege.aelb",
+          "port": "11420",
+          "dbname": "habillage",
+          "auth_id": "aelb001",
+          "domains": ["siege.aelb"]
         }
       ]
     }
