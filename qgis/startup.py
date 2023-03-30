@@ -277,7 +277,7 @@ class StartupDSIUN:
 
                         self.qt_auth_pass = QtWidgets.QLineEdit(self.qt_auth_dlg)
                         self.qt_auth_pass.setEchoMode(QtWidgets.QLineEdit.Password)
-                        self.qt_auth_pass.setPlaceholderText("Mot de passe")
+                        self.qt_auth_pass.setPlaceholderText("Mot de passe (laisser vide si inconnu)")
 
                         if auth_pass:
                             self.qt_auth_pass.setText(auth_pass)
