@@ -22,99 +22,22 @@
       ],
       "authentications": [
         {
-          "id": "dsiun03",
+          "id": "dsiun01",
           "name": "Authentification Agences de l'eau - Dev",
           "domains": ["all"]
-        }
-      ],
-      "qgis": {
-        "dsiun_version" : 32804
-      },
-      "db_connections": [
-        {
-          "qgis_provider": "postgres",
-          "name": "DSIUN Dev - Travail",
-          "host": "",
-          "port": "5432",
-          "dbname": "data",
-          "auth_id": "dsiun03",
-          "domains": ["all"]
-        }
-      ]
-    },
-    {
-      "env_name": "integration",
-      "profile_name": "DSIUN_int",
-      "profile_default": false,
-      "plugins": {
-        "repo_name": "Dépôt DSIUN en intégration",
-        "repo_url": "https://geoplugins-int.lesagencesdeleau.eu",
-        "plugins_names": [
-          "project_publisher",
-          "custom_catalog"
-        ]
-      },
-      "catalogs": [
-        {
-          "name": "Catalogue DSIUN Int",
-          "type": "json",
-          "link": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/integration/qgis/catalogues/dsiun.json",
-          "qgisauthconfigid": ""
-        }
-      ],
-      "authentications": [
-        {
-          "id": "dsiun02",
-          "name": "Authentification Agences de l'eau - Int",
-          "domains": ["all"]
-        }
-      ],
-      "qgis": {
-        "dsiun_version" : 32804
-      },
-      "db_connections": [
-        {
-          "qgis_provider": "postgres",
-          "name": "DSIUN Int - Travail",
-          "host": "",
-          "port": "5432",
-          "dbname": "data",
-          "auth_id": "dsiun02",
-          "domains": ["all"]
-        }
-      ]
-    },
-    {
-      "env_name": "production",
-      "profile_name": "DSIUN",
-      "profile_default": true,
-      "plugins": {
-        "repo_name": "Dépôt DSIUN",
-        "repo_url": "https://geoplugins.lesagencesdeleau.eu",
-        "plugins_names": [
-          "project_publisher",
-          "custom_catalog"
-        ]
-      },
-      "catalogs": [
-        {
-          "name": "Catalogue DSIUN",
-          "type": "json",
-          "link": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/master/qgis/catalogues/dsiun.json",
-          "qgisauthconfigid": ""
-        }
-      ],
-      "authentications": [
-        {
-          "id": "dsiun01",
-          "name": "Authentification Agences de l'eau",
-          "domains" : ["all"]
         },
         {
           "id": "aelb001",
           "name": "Authentification AELB geodiff en lecture",
           "user": "User",
           "pass": "blabla",
+          "domains": ["siege.aelb", "AESN1"]
+        },
+        {
+          "id": "aelb002",
+          "name": "Authentification AELB geodiff en écriture",
+          "user": "Admin",
+          "pass": "",
           "domains": ["siege.aelb", "AESN1"]
         }
       ],
@@ -149,6 +72,74 @@
           "auth_id": "aelb001",
           "domains": ["siege.aelb"]
         }
+      ]
+    },
+    {
+      "env_name": "integration",
+      "profile_name": "DSIUN_int",
+      "profile_default": false,
+      "plugins": {
+        "repo_name": "Dépôt DSIUN en intégration",
+        "repo_url": "https://geoplugins-int.lesagencesdeleau.eu",
+        "plugins_names": [
+          "project_publisher",
+          "custom_catalog"
+        ]
+      },
+      "catalogs": [
+        {
+          "name": "Catalogue DSIUN Int",
+          "type": "json",
+          "link": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/integration/qgis/catalogues/dsiun.json",
+          "qgisauthconfigid": ""
+        }
+      ],
+      "authentications": [
+        {
+          "id": "dsiun01",
+          "name": "Authentification Agences de l'eau - Int",
+          "domains": ["all"]
+        }
+      ],
+      "qgis": {
+        "dsiun_version" : 32804
+      },
+      "db_connections": [
+
+      ]
+    },
+    {
+      "env_name": "production",
+      "profile_name": "DSIUN",
+      "profile_default": true,
+      "plugins": {
+        "repo_name": "Dépôt DSIUN",
+        "repo_url": "https://geoplugins.lesagencesdeleau.eu",
+        "plugins_names": [
+          "project_publisher",
+          "custom_catalog"
+        ]
+      },
+      "catalogs": [
+        {
+          "name": "Catalogue DSIUN",
+          "type": "json",
+          "link": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/master/qgis/catalogues/dsiun.json",
+          "qgisauthconfigid": ""
+        }
+      ],
+      "authentications": [
+        {
+          "id": "dsiun01",
+          "name": "Authentification Agences de l'eau",
+          "domains" : ["all"]
+        }
+      ],
+      "qgis": {
+        "dsiun_version" : 32804
+      },
+      "db_connections": [
+
       ]
     }
   ]
