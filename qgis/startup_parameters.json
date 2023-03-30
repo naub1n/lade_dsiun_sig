@@ -113,6 +113,8 @@
         {
           "id": "aelb001",
           "name": "Authentification AELB geodiff en lecture",
+          "user": "User",
+          "pass": "blabla",
           "domains": ["siege.aelb", "AESN1"]
         }
       ],

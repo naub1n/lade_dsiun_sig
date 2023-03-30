@@ -24,8 +24,6 @@ class StartupDSIUN:
 
         #################################
 
-
-
         self.pyplugin_inst = pyplugin_installer.instance()
         self.plugins_data = pyplugin_installer.installer_data.plugins
         # Un bug dans userProfileManager() dans les versions inférieures à 3.30.0 ne permet pas d'interagir correctement
@@ -33,19 +31,16 @@ class StartupDSIUN:
         self.qgis_min_version_profile = 33000
         self.auth_mgr = QgsApplication.authManager()
         self.current_v = Qgis.QGIS_VERSION_INT
-        self.user_domain = os.environ.get("userdomain","")
+        self.user_domain = os.environ.get("userdomain", "")
 
         if self.current_v >= self.qgis_min_version_profile:
             self.p_mgr = iface.userProfileManager()
         else:
             self.p_mgr = QgsUserProfileManager()
 
-
         self.current_profile_path = None
         self.profiles_path = None
         self.config_profiles_path = None
-
-
 
         # Préparation des chemins vers les dossiers ou fichiers de config qgis
         self.get_paths()
@@ -92,7 +87,8 @@ class StartupDSIUN:
                 env_name = environment.get("env_name", "")
 
         if not env_config:
-            self.log("profil '%s' inconnu, utilisation de la configuration de production" % current_profile, Qgis.Warning)
+            self.log("profil '%s' inconnu, utilisation de la configuration de production" % current_profile,
+                     Qgis.Warning)
             env_config = config.get("environments", [])[env_prod_key]
         else:
             self.log("Utilisation de la configuration '%s'" % env_name, Qgis.Info)
@@ -200,7 +196,6 @@ class StartupDSIUN:
             s.setValue("catalogs/%s/link" % key, catalog.get("link", ""))
             s.setValue("catalogs/%s/qgisauthconfigid" % key, catalog.get("qgisauthconfigid", ""))
 
-
     def get_catalog_config(self):
         self.log("Paramétrage du catalogue des AE ...", Qgis.Info)
         try:
@@ -221,11 +216,11 @@ class StartupDSIUN:
                     for catalog in self.catalogs:
                         new_catalog_name = catalog.get("name", "")
                         new_catalog_data = {
-                                    "name": new_catalog_name,
-                                    "type": catalog.get("type", ""),
-                                    "link": catalog.get("link", ""),
-                                    "qgisauthconfigid": catalog.get("qgisauthconfigid", "")
-                                }
+                            "name": new_catalog_name,
+                            "type": catalog.get("type", ""),
+                            "link": catalog.get("link", ""),
+                            "qgisauthconfigid": catalog.get("qgisauthconfigid", "")
+                        }
                         if not any(local_catalog.get('name', None) == new_catalog_name for local_catalog in
                                    catalog_settings['catalogs']):
                             self.log("Catalogue '%s' absent - ajout du catalogue" % new_catalog_name, Qgis.Info)
@@ -235,7 +230,6 @@ class StartupDSIUN:
                             for key, local_catalog in enumerate(catalog_settings['catalogs']):
                                 if local_catalog.get("name", "") == new_catalog_name:
                                     catalog_settings['catalogs'][key] = new_catalog_data
-
 
                     self.save_customcatalog_settings(catalog_settings)
 
@@ -256,46 +250,64 @@ class StartupDSIUN:
             for auth_config in self.auth_configs:
                 self.auth_id = auth_config.get("id", "")
                 self.auth_conf_name = auth_config.get("name", "")
+                auth_user = auth_config.get("user", "")
+                auth_pass = auth_config.get("pass", "")
                 auth_domains = auth_config.get("domains", [])
 
                 if self.user_domain in auth_domains or "all" in auth_domains:
                     if self.auth_id in ids:
-                        self.log("La configuration est déjà présente", Qgis.Info)
-
-                        return
+                        self.log("La configuration %s est déjà présente" % str(self.auth_id), Qgis.Info)
 
                     else:
                         self.log("Ajout de la configuration d'authentification %s" % str(self.auth_id), Qgis.Info)
 
                         self.qt_auth_dlg = QtWidgets.QDialog(None)
                         self.qt_auth_dlg.setFixedWidth(450)
+                        self.qt_auth_dlg.setWindowTitle("Indiquer votre login et mdp")
+
                         self.qt_auth_login = QtWidgets.QLineEdit(self.qt_auth_dlg)
+                        self.qt_auth_login.setPlaceholderText("Identifiant")
+
+                        if self.auth_id in ["dsiun01"]:
+                            self.qt_auth_login.setText(
+                                QgsExpressionContextUtils.globalScope().variable('user_account_name'))
+
+                        if auth_user:
+                            self.qt_auth_login.setText(auth_user)
+
                         self.qt_auth_pass = QtWidgets.QLineEdit(self.qt_auth_dlg)
+                        self.qt_auth_pass.setEchoMode(QtWidgets.QLineEdit.Password)
+                        self.qt_auth_pass.setPlaceholderText("Mot de passe")
+
+                        if auth_pass:
+                            self.qt_auth_pass.setText(auth_pass)
+
                         self.qt_info_env = QtWidgets.QLabel(self.qt_auth_dlg)
+
                         self.qt_info_auth_conf_name = QtWidgets.QLabel(self.qt_auth_dlg)
 
                         self.qt_info_env.setText("Environnement : %s" % self.current_env)
+
                         self.qt_info_auth_conf_name.setText("Nom : %s" % self.auth_conf_name)
 
-                        # Définition du mot de passe par l'utilisateur
-                        self.qt_auth_dlg.setWindowTitle("Indiquer votre login et mdp")
-                        layout = QtWidgets.QVBoxLayout(self.qt_auth_dlg)
-                        self.qt_auth_login.setText(QgsExpressionContextUtils.globalScope().variable('user_account_name'))
-                        self.qt_auth_pass.setEchoMode(QtWidgets.QLineEdit.Password)
                         button_save = QtWidgets.QPushButton('Enregistrer', self.qt_auth_dlg)
                         button_save.clicked.connect(self.button_save_clicked)
+
+                        layout = QtWidgets.QVBoxLayout(self.qt_auth_dlg)
                         layout.addWidget(self.qt_info_env)
                         layout.addWidget(self.qt_info_auth_conf_name)
                         layout.addWidget(self.qt_auth_login)
                         layout.addWidget(self.qt_auth_pass)
                         layout.addWidget(button_save)
+
                         self.qt_auth_dlg.setLayout(layout)
                         self.qt_auth_dlg.setWindowModality(Qt.WindowModal)
                         self.qt_auth_dlg.exec_()
 
             self.log("Vérification de la configuration des authentifications - OK", Qgis.Info)
         except Exception as e:
-            self.log("Erreur lors de la vérification de la configuration d'authentification : %s" % str(e), Qgis.Critical)
+            self.log("Erreur lors de la vérification de la configuration d'authentification : %s" % str(e),
+                     Qgis.Critical)
 
     def button_save_clicked(self):
         config = QgsAuthMethodConfig()
@@ -412,23 +424,24 @@ class StartupDSIUN:
             cnx_port = cnx.get("port", "")
             cnx_dbname = cnx.get("dbname", "")
             cnx_auth_id = cnx.get("auth_id", "")
+            cnx_domains = cnx.get("domains", [])
 
-            try:
-                provider = QgsProviderRegistry.instance().providerMetadata(cnx_provider)
-                uri = QgsDataSourceUri()
-                uri.setConnection(aHost=cnx_host,
-                                  aPort=cnx_port,
-                                  aDatabase=cnx_dbname,
-                                  aUsername=None,
-                                  aPassword=None,
-                                  authConfigId=cnx_auth_id)
-                self.log("Ajout/Restauration de la connection '%s'." % cnx_name, Qgis.Info)
-                new_conn = provider.createConnection(uri.uri(expandAuthConfig=False), {})
-                # La connexion est ajoutée si inexistante ou remplacée si elle existe déjà
-                provider.saveConnection(new_conn, cnx_name)
-            except Exception as e:
-                self.log("Erreur lors de la l'ajout de la connexion '%s' : %s" % (cnx_name, str(e)), Qgis.Critical)
-
+            if self.user_domain in cnx_domains or "all" in cnx_domains:
+                try:
+                    provider = QgsProviderRegistry.instance().providerMetadata(cnx_provider)
+                    uri = QgsDataSourceUri()
+                    uri.setConnection(aHost=cnx_host,
+                                      aPort=cnx_port,
+                                      aDatabase=cnx_dbname,
+                                      aUsername=None,
+                                      aPassword=None,
+                                      authConfigId=cnx_auth_id)
+                    self.log("Ajout/Restauration de la connection '%s'." % cnx_name, Qgis.Info)
+                    new_conn = provider.createConnection(uri.uri(expandAuthConfig=False), {})
+                    # La connexion est ajoutée si inexistante ou remplacée si elle existe déjà
+                    provider.saveConnection(new_conn, cnx_name)
+                except Exception as e:
+                    self.log("Erreur lors de la l'ajout de la connexion '%s' : %s" % (cnx_name, str(e)), Qgis.Critical)
 
 
 # Lancement de la procédure
