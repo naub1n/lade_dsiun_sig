@@ -33,6 +33,7 @@ class StartupDSIUN:
         self.qgis_min_version_profile = 33000
         self.auth_mgr = QgsApplication.authManager()
         self.current_v = Qgis.QGIS_VERSION_INT
+        self.user_domain = os.environ.get("userdomain","")
 
         if self.current_v >= self.qgis_min_version_profile:
             self.p_mgr = iface.userProfileManager()
@@ -44,10 +45,7 @@ class StartupDSIUN:
         self.profiles_path = None
         self.config_profiles_path = None
 
-        self.qt_auth_dlg = QtWidgets.QDialog(None)
-        self.qt_auth_dlg.setFixedWidth(450)
-        self.qt_auth_login = QtWidgets.QLineEdit(self.qt_auth_dlg)
-        self.qt_auth_pass = QtWidgets.QLineEdit(self.qt_auth_dlg)
+
 
         # Préparation des chemins vers les dossiers ou fichiers de config qgis
         self.get_paths()
@@ -60,8 +58,7 @@ class StartupDSIUN:
         self.plugin_project_publisher = 'project_publisher'
         self.plugin_custom_catalog = 'custom_catalog'
         self.catalogs = config.get("catalogs", [])
-        self.auth_id = config.get("authentication", {}).get("id", "")
-        self.auth_conf_name = config.get("authentication", {}).get("name", "")
+        self.auth_configs = config.get("authentications", [])
         self.profile_dsiun = config.get("profile_name", "")
         self.qgis_version_dsiun = config.get("qgis", {}).get("dsiun_version", "")
         self.plugins_dsiun = config.get("plugins", {}).get("plugins_names", [])
@@ -253,28 +250,50 @@ class StartupDSIUN:
     def check_auth_cfg(self):
         self.log("Vérification de la configuration d'authentification des AE ...", Qgis.Info)
         try:
+
             ids = self.auth_mgr.availableAuthMethodConfigs().keys()
-            if self.auth_id in ids:
-                self.log("La configuration est déjà présente", Qgis.Info)
-                return
-            else:
-                self.log("Ajout de la configuration d'authentification %s" % str(self.auth_id), Qgis.Info)
 
-                # Définition du mot de passe par l'utilisateur
-                self.qt_auth_dlg.setWindowTitle("Indiquer votre login et mdp pour l'environnement '%s'" % self.current_env)
-                layout = QtWidgets.QVBoxLayout(self.qt_auth_dlg)
-                self.qt_auth_login.setText(QgsExpressionContextUtils.globalScope().variable('user_account_name'))
-                self.qt_auth_pass.setEchoMode(QtWidgets.QLineEdit.Password)
-                button_save = QtWidgets.QPushButton('Enregistrer', self.qt_auth_dlg)
-                button_save.clicked.connect(self.button_save_clicked)
-                layout.addWidget(self.qt_auth_login)
-                layout.addWidget(self.qt_auth_pass)
-                layout.addWidget(button_save)
-                self.qt_auth_dlg.setLayout(layout)
-                self.qt_auth_dlg.setWindowModality(Qt.WindowModal)
-                self.qt_auth_dlg.exec_()
+            for auth_config in self.auth_configs:
+                self.auth_id = auth_config.get("id", "")
+                self.auth_conf_name = auth_config.get("name", "")
+                auth_domains = auth_config.get("domains", [])
 
-            self.log("Vérification de la configuration d'authentification - OK", Qgis.Info)
+                if self.user_domain in auth_domains or "all" in auth_domains:
+                    if self.auth_id in ids:
+                        self.log("La configuration est déjà présente", Qgis.Info)
+
+                        return
+
+                    else:
+                        self.log("Ajout de la configuration d'authentification %s" % str(self.auth_id), Qgis.Info)
+
+                        self.qt_auth_dlg = QtWidgets.QDialog(None)
+                        self.qt_auth_dlg.setFixedWidth(450)
+                        self.qt_auth_login = QtWidgets.QLineEdit(self.qt_auth_dlg)
+                        self.qt_auth_pass = QtWidgets.QLineEdit(self.qt_auth_dlg)
+                        self.qt_info_env = QtWidgets.QLabel(self.qt_auth_dlg)
+                        self.qt_info_auth_conf_name = QtWidgets.QLabel(self.qt_auth_dlg)
+
+                        self.qt_info_env.setText("Environnement : %s" % self.current_env)
+                        self.qt_info_auth_conf_name.setText("Nom : %s" % self.auth_conf_name)
+
+                        # Définition du mot de passe par l'utilisateur
+                        self.qt_auth_dlg.setWindowTitle("Indiquer votre login et mdp")
+                        layout = QtWidgets.QVBoxLayout(self.qt_auth_dlg)
+                        self.qt_auth_login.setText(QgsExpressionContextUtils.globalScope().variable('user_account_name'))
+                        self.qt_auth_pass.setEchoMode(QtWidgets.QLineEdit.Password)
+                        button_save = QtWidgets.QPushButton('Enregistrer', self.qt_auth_dlg)
+                        button_save.clicked.connect(self.button_save_clicked)
+                        layout.addWidget(self.qt_info_env)
+                        layout.addWidget(self.qt_info_auth_conf_name)
+                        layout.addWidget(self.qt_auth_login)
+                        layout.addWidget(self.qt_auth_pass)
+                        layout.addWidget(button_save)
+                        self.qt_auth_dlg.setLayout(layout)
+                        self.qt_auth_dlg.setWindowModality(Qt.WindowModal)
+                        self.qt_auth_dlg.exec_()
+
+            self.log("Vérification de la configuration des authentifications - OK", Qgis.Info)
         except Exception as e:
             self.log("Erreur lors de la vérification de la configuration d'authentification : %s" % str(e), Qgis.Critical)
 

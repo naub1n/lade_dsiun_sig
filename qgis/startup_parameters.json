@@ -20,10 +20,13 @@
           "qgisauthconfigid": ""
         }
       ],
-      "authentication": {
-        "id": "dsiun03",
-        "name": "Authentification Agences de l'eau - Dev"
-      },
+      "authentications": [
+        {
+          "id": "dsiun03",
+          "name": "Authentification Agences de l'eau - Dev",
+          "domains": ["all"]
+        }
+      ],
       "qgis": {
         "dsiun_version" : 32804
       },
@@ -34,7 +37,8 @@
           "host": "",
           "port": "5432",
           "dbname": "data",
-          "auth_id": "dsiun03"
+          "auth_id": "dsiun03",
+          "domains": ["all"]
         }
       ]
     },
@@ -58,10 +62,13 @@
           "qgisauthconfigid": ""
         }
       ],
-      "authentication": {
-        "id": "dsiun02",
-        "name": "Authentification Agences de l'eau - Int"
-      },
+      "authentications": [
+        {
+          "id": "dsiun02",
+          "name": "Authentification Agences de l'eau - Int",
+          "domains": ["all"]
+        }
+      ],
       "qgis": {
         "dsiun_version" : 32804
       },
@@ -72,7 +79,8 @@
           "host": "",
           "port": "5432",
           "dbname": "data",
-          "auth_id": "dsiun02"
+          "auth_id": "dsiun02",
+          "domains": ["all"]
         }
       ]
     },
@@ -96,10 +104,13 @@
           "qgisauthconfigid": ""
         }
       ],
-      "authentication": {
-        "id": "dsiun01",
-        "name": "Authentification Agences de l'eau"
-      },
+      "authentications": [
+        {
+          "id": "dsiun01",
+          "name": "Authentification Agences de l'eau",
+          "domains" : ["all"]
+        }
+      ],
       "qgis": {
         "dsiun_version" : 32804
       },
@@ -110,7 +121,8 @@
           "host": "",
           "port": "5432",
           "dbname": "data",
-          "auth_id": "dsiun01"
+          "auth_id": "dsiun01",
+          "domains": ["all"]
         }
       ]
     }
