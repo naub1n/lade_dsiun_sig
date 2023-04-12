@@ -4,6 +4,9 @@ import pyplugin_installer
 import re
 import configparser
 import requests
+import pkg_resources
+import sys
+import pip
 
 from qgis.core import (QgsSettings, QgsApplication, QgsAuthMethodConfig, QgsExpressionContextUtils,
                        QgsMessageLog, Qgis, QgsProviderRegistry, QgsDataSourceUri, QgsUserProfileManager)
@@ -11,13 +14,13 @@ from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import Qt
 from qgis.utils import iface
 from pyplugin_installer.installer_data import repositories, plugins, reposGroup
+from pathlib import Path
 
 
 class StartupDSIUN:
     def __init__(self):
 
         #### Variables à paramétrer ####
-
         self.conf_url = "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/developpement/qgis/startup_parameters.json"
         self.default_profile_message = "Vous utilisez le profil par défaut. Privilégiez le profil DSIUN."
         self.qgis_bad_version_message = "Vous utilisez une version (%s) non gérée par la DSIUN (%s). Le paramètrage ne sera pas appliqué."
@@ -96,24 +99,25 @@ class StartupDSIUN:
         return env_config
 
     def start(self):
-        profiles = []
-        for env in self.global_config.get("environments", []):
-            profiles.append(env.get("profile_name", ""))
+        if self.check_json():
+            profiles = []
+            for env in self.global_config.get("environments", []):
+                profiles.append(env.get("profile_name", ""))
 
-        if self.check_version():
-            profile_name = self.get_current_profile_name()
-            if profile_name in profiles:
-                self.check_repo()
-                self.install_plugins()
-                self.get_catalog_config()
-                self.check_auth_cfg()
-                self.add_connections()
-                self.check_profiles()
-            else:
-                self.check_profiles()
+            if self.check_version():
+                profile_name = self.get_current_profile_name()
+                if profile_name in profiles:
+                    self.check_repo()
+                    self.install_plugins()
+                    self.get_catalog_config()
+                    self.check_auth_cfg()
+                    self.add_connections()
+                    self.check_profiles()
+                else:
+                    self.check_profiles()
 
-            if profile_name == 'default':
-                iface.messageBar().pushMessage(self.default_profile_message, level=Qgis.Info, duration=10)
+                if profile_name == 'default':
+                    iface.messageBar().pushMessage(self.default_profile_message, level=Qgis.Info, duration=10)
 
     def log(self, log_message, log_level):
         QgsMessageLog.logMessage(log_message, 'Startup DSIUN', level=log_level, notifyUser=False)
@@ -330,7 +334,6 @@ class StartupDSIUN:
 
         self.auth_mgr.storeAuthenticationConfig(config)
 
-
     def check_profiles(self):
         self.log("Vérification des profiles ...", Qgis.Info)
         try:
@@ -452,6 +455,56 @@ class StartupDSIUN:
                     provider.saveConnection(new_conn, cnx_name)
                 except Exception as e:
                     self.log("Erreur lors de la l'ajout de la connexion '%s' : %s" % (cnx_name, str(e)), Qgis.Critical)
+
+    def check_json(self):
+        try:
+            self.install_python_package("jsonschema")
+            import jsonschema
+
+        except Exception as e:
+            msg = "Impossible d'installer les paquets python : %s" % str(e)
+            self.log(msg, Qgis.Critical)
+            return False
+
+        schema_conf_url = self.global_config.get('$schema',
+                                                 'https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/developpement/qgis/startup_parameters_schema.json')
+
+        try:
+            r = requests.get(schema_conf_url,
+                             headers={'Accept': 'application/json'})
+            schema = r.json()
+
+        except Exception as e:
+            msg = "Impossible de lire l'URL du schéma : %s" % str(e)
+            self.log(msg, Qgis.Critical)
+            return False
+
+        if schema:
+            try:
+                jsonschema.validate(self.global_config, schema)
+                self.log("Configuration JSON validée", Qgis.Info)
+                return True
+
+            except Exception as valid_err:
+                msg = "La configuration JSON n'est pas valide:\n%s" % str(valid_err)
+                self.log(msg, Qgis.Critical)
+                return False
+
+        else:
+            self.log("Le schéma de validation est vide - Validation ignorée", Qgis.Warning)
+            return True
+
+    def install_python_package(self, package_name):
+        installed_packages = pkg_resources.working_set
+        installed_packages_list = sorted([i.key for i in installed_packages])
+        if package_name not in installed_packages_list:
+            self.log("Installation de jsonschema", Qgis.Info)
+            import subprocess
+            osgeo4w_env_path = os.path.join(os.getenv('OSGEO4W_ROOT'), 'OSGeo4W.bat')
+            subprocess.check_call(['call', osgeo4w_env_path, ';',
+                                   'python.exe', '-m', 'pip', 'install', '--upgrade', 'pip'], shell=True)
+            subprocess.check_call(['call', osgeo4w_env_path, ';',
+                                     'python.exe', '-m', 'pip', 'install', package_name], shell=True)
 
 
 # Lancement de la procédure

@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/developpement/qgis/startup_parameters_schema.json",
   "environments": [
     {
       "env_name": "developpement",
