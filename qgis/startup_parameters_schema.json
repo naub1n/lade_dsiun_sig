@@ -1,0 +1,138 @@
+{
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "title": "JSON Schema",
+      "description": "Référence vers le schéma JSON pour le fichier de configuration startup_parameters.json",
+      "type": "string",
+      "format": "uri",
+      "default": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/developpement/qgis/startup_parameters_schema.json"
+    },
+    "environments": {
+      "title": "Environnements informatiques",
+      "description": "Liste des environnements informatiques",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "env_name": {
+            "type": "string"
+          },
+          "profile_name": {
+            "type": "string"
+          },
+          "profile_default": {
+            "type": "boolean"
+          },
+          "plugins": {
+            "type": "object",
+            "properties": {
+              "repo_name": {
+                "type": "string"
+              },
+              "repo_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "plugins_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "catalogs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "link": {
+                  "type": "string"
+                },
+                "qgisauthconfigid": {
+                  "type": "string"
+                }
+              },
+              "required": ["name", "type", "link"]
+            }
+          },
+          "authentications": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "user": {
+                  "type": "string"
+                },
+                "pass": {
+                  "type": "string"
+                }
+              },
+              "required": ["id", "name", "domains"]
+            }
+          },
+          "qgis": {
+            "type": "object",
+            "properties": {
+              "dsiun_version": {
+                "type": "integer"
+              }
+            }
+          },
+          "db_connections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "qgis_provider": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "host": {
+                  "type": "string"
+                },
+                "port": {
+                  "type": "string"
+                },
+                "dbname": {
+                  "type": "string"
+                },
+                "auth_id": {
+                  "type": "string"
+                },
+                "domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["environments"]
+}
