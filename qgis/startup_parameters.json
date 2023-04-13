@@ -114,11 +114,10 @@
       "profile_name": "DSIUN",
       "profile_default": true,
       "plugins": {
-        "repo_name": "Dépôt DSIUN",
+        "repo_name": "",
         "repo_url": "https://geoplugins.lesagencesdeleau.eu",
         "plugins_names": [
-          "project_publisher",
-          "custom_catalog"
+
         ]
       },
       "catalogs": [

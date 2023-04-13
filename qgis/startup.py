@@ -5,8 +5,6 @@ import re
 import configparser
 import requests
 import pkg_resources
-import sys
-import pip
 
 from qgis.core import (QgsSettings, QgsApplication, QgsAuthMethodConfig, QgsExpressionContextUtils,
                        QgsMessageLog, Qgis, QgsProviderRegistry, QgsDataSourceUri, QgsUserProfileManager)
@@ -14,7 +12,6 @@ from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import Qt
 from qgis.utils import iface
 from pyplugin_installer.installer_data import repositories, plugins, reposGroup
-from pathlib import Path
 
 
 class StartupDSIUN:
@@ -49,10 +46,10 @@ class StartupDSIUN:
         self.get_paths()
         # Lecture du fichier de configuration
         self.global_config = self.get_global_config()
-        config = self.read_conf(self.global_config)
+        self.env_config = self.read_conf(self.global_config)
+        # à nettoyer et améliorer :
+        config = self.env_config
         # Initialisation de certains paramètres
-        self.repo_dsiun_name = config.get("plugins", {}).get("repo_name", "")
-        self.repo_dsiun_url = config.get("plugins", {}).get("repo_url", "")
         self.plugin_project_publisher = 'project_publisher'
         self.plugin_custom_catalog = 'custom_catalog'
         self.catalogs = config.get("catalogs", [])
@@ -123,24 +120,25 @@ class StartupDSIUN:
         QgsMessageLog.logMessage(log_message, 'Startup DSIUN', level=log_level, notifyUser=False)
 
     def check_repo(self):
-        self.log("Vérification de la présence du dépôt DSIUN ...", Qgis.Info)
-        try:
-            settings = QgsSettings()
-            settings.beginGroup(reposGroup)
-            repos_name = self.repo_dsiun_name
-            repos_url = self.repo_dsiun_url
-            if repos_name in repositories.all():
-                settings.remove(repos_name)
-            # add to settings
-            settings.setValue(repos_name + "/url", repos_url)
-            settings.setValue(repos_name + "/authcfg", None)
-            settings.setValue(repos_name + "/enabled", True)
-            # refresh lists and populate widgets
-            plugins.removeRepository(repos_name)
-            self.pyplugin_inst.reloadAndExportData()
-            self.log("Ajout/Remplacement du dépôt - OK", Qgis.Info)
-        except Exception as e:
-            self.log("Erreur lors de la l'ajout/le remplacement du dépôt : %s" % str(e), Qgis.Critical)
+        repos_name = self.env_config.get("plugins", {}).get("repo_name", "")
+        repos_url = self.env_config.get("plugins", {}).get("repo_url", "")
+        if repos_name and repos_url:
+            self.log("Vérification de la présence du dépôt DSIUN ...", Qgis.Info)
+            try:
+                settings = QgsSettings()
+                settings.beginGroup(reposGroup)
+                if repos_name in repositories.all():
+                    settings.remove(repos_name)
+                # add to settings
+                settings.setValue(repos_name + "/url", repos_url)
+                settings.setValue(repos_name + "/authcfg", None)
+                settings.setValue(repos_name + "/enabled", True)
+                # refresh lists and populate widgets
+                plugins.removeRepository(repos_name)
+                self.pyplugin_inst.reloadAndExportData()
+                self.log("Ajout/Remplacement du dépôt - OK", Qgis.Info)
+            except Exception as e:
+                self.log("Erreur lors de la l'ajout/le remplacement du dépôt : %s" % str(e), Qgis.Critical)
 
     def install_plugins(self):
         self.log("Vérification des plugins requis ...", Qgis.Info)
@@ -365,6 +363,7 @@ class StartupDSIUN:
                         open_new_profil = msg_box.exec()
                         if open_new_profil == QtWidgets.QMessageBox.Yes:
                             self.p_mgr.loadUserProfile(profile)
+                            # Ne fonctionne pas :
                             os._exit(0)
 
                 # Vérification du profil par défaut
@@ -498,13 +497,13 @@ class StartupDSIUN:
         installed_packages = pkg_resources.working_set
         installed_packages_list = sorted([i.key for i in installed_packages])
         if package_name not in installed_packages_list:
-            self.log("Installation de jsonschema", Qgis.Info)
+            self.log("Installation de %s" % package_name, Qgis.Info)
             import subprocess
             osgeo4w_env_path = os.path.join(os.getenv('OSGEO4W_ROOT'), 'OSGeo4W.bat')
             subprocess.check_call(['call', osgeo4w_env_path, ';',
                                    'python.exe', '-m', 'pip', 'install', '--upgrade', 'pip'], shell=True)
             subprocess.check_call(['call', osgeo4w_env_path, ';',
-                                     'python.exe', '-m', 'pip', 'install', package_name], shell=True)
+                                   'python.exe', '-m', 'pip', 'install', package_name], shell=True)
 
 
 # Lancement de la procédure
