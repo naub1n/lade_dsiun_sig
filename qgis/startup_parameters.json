@@ -26,20 +26,6 @@
           "id": "dsiun01",
           "name": "Authentification Agences de l'eau - Dev",
           "domains": ["all"]
-        },
-        {
-          "id": "aelb001",
-          "name": "Authentification AELB geodiff en lecture",
-          "user": "User",
-          "pass": "blabla",
-          "domains": ["siege.aelb", "AESN1"]
-        },
-        {
-          "id": "aelb002",
-          "name": "Authentification AELB geodiff en écriture",
-          "user": "Admin",
-          "pass": "",
-          "domains": ["siege.aelb", "AESN1"]
         }
       ],
       "qgis": {
@@ -80,11 +66,10 @@
       "profile_name": "DSIUN_int",
       "profile_default": false,
       "plugins": {
-        "repo_name": "Dépôt DSIUN en intégration",
+        "repo_name": "",
         "repo_url": "https://geoplugins-int.lesagencesdeleau.eu",
         "plugins_names": [
-          "project_publisher",
-          "custom_catalog"
+
         ]
       },
       "catalogs": [
