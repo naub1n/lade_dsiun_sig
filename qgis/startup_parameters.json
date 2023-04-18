@@ -48,7 +48,7 @@
           "port": "11420",
           "dbname": "carto_aelb",
           "auth_id": "aelb001",
-          "domains": ["siege.aelb", "AESN1"]
+          "domains": []
         },
         {
           "qgis_provider": "postgres",
@@ -57,7 +57,7 @@
           "port": "11420",
           "dbname": "habillage",
           "auth_id": "aelb001",
-          "domains": ["siege.aelb"]
+          "domains": []
         }
       ]
     },
