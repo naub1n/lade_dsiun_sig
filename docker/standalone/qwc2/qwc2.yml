@@ -15,7 +15,7 @@ x-qwc-service-variables: &qwc-service-variables
 
 services:
   qwc-qgis-server:
-    image: sourcepole/qwc-qgis-server:3.22-plugins
+    image: sourcepole/qwc-qgis-server:3.28-plugins
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -38,7 +38,7 @@ services:
       - /app/qwc2/config-in:/srv/qwc_service/config-in
 
   qwc-config-service:
-    image: sourcepole/qwc-config-generator:v2022.08.22
+    image: sourcepole/qwc-config-generator:v2023.3-lts
     # Lightweight variant without qgis, use if you don't need the split_categorized_layers feature
     # image: sourcepole/qwc-config-generator:v2022.08.22-noqgis
     restart: always
@@ -56,7 +56,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
   qwc-ogc-service:
-    image: sourcepole/qwc-ogc-service:v2022.08.22
+    image: sourcepole/qwc-ogc-service:v2023.0-lts
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -75,7 +75,7 @@ services:
       - "traefik.http.routers.r_qwc2_ogc.service=s_qwc2_ogc"
 
   qwc-data-service:
-    image: sourcepole/qwc-data-service:v2022.08.22
+    image: sourcepole/qwc-data-service:v2023.1-lts
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -118,7 +118,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
   qwc-fulltext-search-service:
-    image: sourcepole/qwc-fulltext-search-service:v2022.08.22
+    image: sourcepole/qwc-fulltext-search-service:v2023.0-lts
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -138,7 +138,7 @@ services:
       - "traefik.http.routers.r_qwc2_search.service=s_qwc2_search"
 
   qwc-map-viewer:
-    image: sourcepole/qwc-map-viewer-demo:v2022.08.25
+    image: sourcepole/qwc-map-viewer-demo:v2023.1-lts
     # Update config.json with:
     # curl -o volumes/config-in/config.json https://github.com/qgis/qwc2-demo-app/raw/v2022.01.08/static/config.json
     # and generate service configuration
@@ -174,7 +174,7 @@ services:
       - "traefik.http.routers.r_qwc2_map.service=s_qwc2_map"
 
   qwc-admin-gui:
-    image: sourcepole/qwc-admin-gui:v2022.08.19
+    image: sourcepole/qwc-admin-gui:v2023.0-lts
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -300,7 +300,7 @@ services:
       - "traefik.http.routers.r_qwc2_auth.service=s_qwc2_auth"
 
   qwc-elevation-service:
-    image: sourcepole/qwc-elevation-service:v2022.08.22
+    image: sourcepole/qwc-elevation-service:v2023.0-lts
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -319,7 +319,7 @@ services:
       - "traefik.http.routers.r_qwc2_elevation.service=s_qwc2_elevation"
 
   qwc-permalink-service:
-    image: sourcepole/qwc-permalink-service:v2022.08.22
+    image: sourcepole/qwc-permalink-service:v2023.0-lts
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -339,7 +339,7 @@ services:
       - "traefik.http.routers.r_qwc2_permalink.service=s_qwc2_permalink"
 
   qwc-print-service:
-    image: sourcepole/qwc-print-service:v2022.08.22
+    image: sourcepole/qwc-print-service:v2023.0-lts
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -358,7 +358,7 @@ services:
       - "traefik.http.routers.r_qwc2_print.service=s_qwc2_print"
 
   qwc-feature-info-service:
-    image: sourcepole/qwc-feature-info-service:v2022.08.22
+    image: sourcepole/qwc-feature-info-service:v2023.0-lts
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -379,7 +379,7 @@ services:
       - "traefik.http.routers.r_qwc2_f_info.service=s_qwc2_f_info"
 
   qwc-mapinfo-service:
-    image: sourcepole/qwc-mapinfo-service:v2022.08.22
+    image: sourcepole/qwc-mapinfo-service:v2023.0-lts
     restart: always
     environment:
       <<: *qwc-service-variables
@@ -399,7 +399,7 @@ services:
       - "traefik.http.routers.r_qwc2_m_info.service=s_qwc2_m_info"
 
   qwc-legend-service:
-    image: sourcepole/qwc-legend-service:v2022.08.22
+    image: sourcepole/qwc-legend-service:v2023.0-lts
     restart: always
     environment:
       <<: *qwc-service-variables
