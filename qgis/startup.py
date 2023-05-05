@@ -470,7 +470,8 @@ class StartupDSIUN:
 
         try:
             r = requests.get(schema_conf_url,
-                             headers={'Accept': 'application/json'})
+                             headers={'Accept': 'application/json'},
+                             verify=False)
             schema = r.json()
 
         except Exception as e:
