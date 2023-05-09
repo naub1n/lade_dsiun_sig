@@ -456,14 +456,12 @@ class StartupDSIUN:
                     self.log("Erreur lors de la l'ajout de la connexion '%s' : %s" % (cnx_name, str(e)), Qgis.Critical)
 
     def check_json(self):
-        try:
-            self.install_python_package("jsonschema")
+        if self.install_python_package("jsonschema"):
             import jsonschema
-
-        except Exception as e:
-            msg = "Impossible d'installer les paquets python : %s" % str(e)
-            self.log(msg, Qgis.Critical)
-            return False
+        else:
+            msg = "Le paquet jsonschema n'a pas pû être installé, la validation est ignorée"
+            self.log(msg, Qgis.Warning)
+            return True
 
         schema_conf_url = self.global_config.get('$schema',
                                                  'https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/developpement/qgis/startup_parameters_schema.json')
@@ -476,8 +474,10 @@ class StartupDSIUN:
 
         except Exception as e:
             msg = "Impossible de lire l'URL du schéma : %s" % str(e)
-            self.log(msg, Qgis.Critical)
-            return False
+            self.log(msg, Qgis.Warning)
+            msg = "La validation est ignorée"
+            self.log(msg, Qgis.Warning)
+            return True
 
         if schema:
             try:
@@ -501,10 +501,23 @@ class StartupDSIUN:
             self.log("Installation de %s" % package_name, Qgis.Info)
             import subprocess
             osgeo4w_env_path = os.path.join(os.getenv('OSGEO4W_ROOT'), 'OSGeo4W.bat')
-            subprocess.check_call(['call', osgeo4w_env_path, ';',
-                                   'python.exe', '-m', 'pip', 'install', '--upgrade', 'pip'], shell=True)
-            subprocess.check_call(['call', osgeo4w_env_path, ';',
-                                   'python.exe', '-m', 'pip', 'install', package_name], shell=True)
+            try:
+                subprocess.check_call(['call', osgeo4w_env_path, ';',
+                                       'python.exe', '-m', 'pip', 'install', '--upgrade', 'pip'], shell=True)
+            except Exception as e:
+                msg = "Impossible de mettre à jour Pip : %s" % str(e)
+                self.log(msg, Qgis.Warning)
+                return False
+
+            try:
+                subprocess.check_call(['call', osgeo4w_env_path, ';',
+                                       'python.exe', '-m', 'pip', 'install', package_name], shell=True)
+            except Exception as e:
+                msg = "Impossible d'installer le paquet %s : %s" % (package_name, str(e))
+                self.log(msg, Qgis.Warning)
+                return False
+
+        return True
 
 
 # Lancement de la procédure
