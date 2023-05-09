@@ -76,27 +76,31 @@ class StartupDSIUN:
 
     def read_conf(self, config):
         self.log("Lecture de la configuration de l'environnement.", Qgis.Info)
-        env_config = {}
-        current_profile = self.get_current_profile_name()
-        for key, environment in enumerate(config.get("environments", [])):
-            if environment.get("env_name", "") == "production":
-                env_prod_key = key
-
-            if environment.get("profile_name", "") == current_profile:
-                env_config = environment
-                env_name = environment.get("env_name", "")
-
-        if not env_config:
-            self.log("profil '%s' inconnu, utilisation de la configuration de production" % current_profile,
-                     Qgis.Warning)
-            env_config = config.get("environments", [])[env_prod_key]
+        if config == {}:
+            self.log("Erreur lors de la lecture de la configuration de l'environnement", Qgis.Critical)
+            return {}
         else:
-            self.log("Utilisation de la configuration '%s'" % env_name, Qgis.Info)
+            env_config = {}
+            current_profile = self.get_current_profile_name()
+            for key, environment in enumerate(config.get("environments", [])):
+                if environment.get("env_name", "") == "production":
+                    env_prod_key = key
 
-        return env_config
+                if environment.get("profile_name", "") == current_profile:
+                    env_config = environment
+                    env_name = environment.get("env_name", "")
+
+            if not env_config:
+                self.log("profil '%s' inconnu, utilisation de la configuration de production" % current_profile,
+                         Qgis.Warning)
+                env_config = config.get("environments", [])[env_prod_key]
+            else:
+                self.log("Utilisation de la configuration '%s'" % env_name, Qgis.Info)
+
+            return env_config
 
     def start(self):
-        if self.check_json():
+        if self.check_json() and self.global_config and self.env_config:
             profiles = []
             for env in self.global_config.get("environments", []):
                 profiles.append(env.get("profile_name", ""))
