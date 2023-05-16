@@ -19,12 +19,9 @@ services:
     restart: always
     environment:
       <<: *qwc-service-variables
-      #QGIS_SERVER_LOG_LEVEL: DEBUG
-      #QGIS_SERVER_LOG_PROFILE: true
     volumes:
       - /app/qwc2/qgs-resources:/data:ro
       - /app/qwc2/pg_services:/etc/postgresql-common:ro
-      #- /app/qgis-server/auth-db:/qgs-server-auth-db
       - /app/qgis-server/conf:/etc/apache2/sites-enabled
       - /etc/localtime:/etc/localtime:ro
       - /app/qgis-server/auth-db:/var/lib/qgis/profiles/default/qgs-server-auth-db
