@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  azure-to-ldap:
+    image: ahaen/azuread-ldap-wrapper
+    restart: always
+    environment:
+      TZ: "Europe/Paris" # optional
+      AZURE_TENANTID: ${AZURE2LDAP_TENANT_ID}
+      AZURE_APP_ID: ${AZURE2LDAP_APP_ID}
+      AZURE_APP_SECRET: ${AZURE2LDAP_APP_SECRET}
+      LDAP_DOMAIN: ${AZURE2LDAP_DOMAIN}
+      LDAP_BASEDN: ${AZURE2LDAP_BASEDN}
+      LDAP_BINDUSER: ${AZURE2LDAP_BINDUSER}
+      LDAP_DEBUG: ${AZURE2LDAP_DEBUG} # set this to true for more logs
+      GRAPH_IGNORE_MFA_ERRORS: "false" # set this to true to bypass MFA
+      DSM7: "true" # set this to false if you are running DSM 6 or lower
+      LDAP_SAMBANTPWD_MAXCACHETIME: 0
+    ports:
+      - 389:13389
+    volumes:
+      - "/app/azuread-ldap/app:/app/.cache"
+
+networks:
+  default:
+    name: sig-net
+    external: true
