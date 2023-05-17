@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  azure-to-ldap:
+    image: dalibo/ldap2pg:latest
+    restart: always
+    volumes:
+      - "/app/ldap2pg/workspace:/workspace"
+
+networks:
+  default:
+    name: sig-net
+    external: true

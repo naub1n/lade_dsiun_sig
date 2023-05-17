@@ -46,6 +46,7 @@ class DeploySIG:
         self.traefik_providers_path = os.path.join(self.root_apps_dir, 'traefik/providers')
         self.traefik_certs_path = os.path.join(self.root_apps_dir, 'traefik/.certs')
         self.qwc_app_path = os.path.join(self.root_apps_dir, 'qwc2')
+        self.ldap2pg_app_path = os.path.join(self.root_apps_dir, 'ldap2pg')
         self.qgis_plugins_path = os.path.join(self.root_apps_dir, 'qgis-plugins-repo/plugins')
 
     def read_config(self, git_branch='master'):
@@ -63,7 +64,8 @@ class DeploySIG:
         self.plugin_customcatalog_repo = config['plugin_customcatalog_repo']
         self.plugin_projectpublisher_org = config['plugin_projectpublisher_org']
         self.plugin_projectpublisher_repo = config['plugin_projectpublisher_repo']
-        self.azure2ldap_subdirs = config.get('azure2ldap_subdirs', '')
+        self.azure2ldap_subdirs = config.get('azure2ldap_subdirs', [])
+        self.ldap2pg_subdirs = config.get('ldap2pg_subdirs', [])
         self.env_data = config['env_data']
 
     def get_config_data(self):
@@ -512,6 +514,26 @@ class DeploySIG:
     def deploy_azure2ldap(self):
         self.portainer_deploy_stack(self.get_azure2ldap_stack_info(), 'azure2ldap')
 
+    def prepare_ldap2pg(self):
+        for subdir in self.ldap2pg_subdirs:
+            os.makedirs(os.path.join(self.ldap2pg_app_path, subdir), exist_ok=True)
+
+        # Création du dossier qui contiendra les mdp PG et LDAP.
+        pass_path = os.path.join(self.ldap2pg_app_path, "pass")
+        os.makedirs(pass_path, exist_ok=True)
+
+        pg_pass_path = os.path.join(pass_path, "pg_pass")
+        ldap_pass_path = os.path.join(pass_path, "ldap_pass")
+
+        with open(pg_pass_path, 'w') as f:
+            f.write(getpass("Indiquez le mot de passe du compte postgresql '%s' pour ldap2pg: " % self.app_config['ldap2pg']['ldap2pg_pg_user']))
+
+        with open(ldap_pass_path, 'w') as f:
+            f.write(getpass("Indiquez le mot de passe du compte ldap '%s' pour ldap2pg: " % self.app_config['ldap2pg']['ldap2pg_ldap_user']))
+
+    def deploy_ldap2pg(self):
+        self.portainer_deploy_stack(self.get_ldap2pg_stack_info(), 'ldap2pg')
+
     def print_recap(self):
         print("",
               "###########################################################",
@@ -691,6 +713,49 @@ class DeploySIG:
                                                     'docker/standalone/azure2ldap/azure2ldap.yml',
                                                     azure2ldap_env)
         return azure2ldap_stack_info
+
+    def get_ldap2pg_stack_info(self):
+        ldap2pg_env = [
+            {
+                "name": "PGDSN",
+                "value": "postgres://%s@%s:%s/" % (
+                    self.app_config['ldap2pg']['ldap2pg_pg_user'],
+                    self.app_config['ldap2pg']['ldap2pg_pg_host'],
+                    self.app_config['ldap2pg']['ldap2pg_pg_port'])
+            },
+            {
+                "name": "PGPASSWORD_FILE",
+                "value": "/pass/pg_pass"
+            },
+            {
+                "name": "LDAPBINDDN",
+                "value": self.app_config['ldap2pg']['ldap2pg_ldap_binddn']
+            },
+            {
+                "name": "LDAPPASSWORD_FILE",
+                "value": "/pass/ldap_pass"
+            }
+        ]
+
+        if self.app_config['ldap2pg'].get('ldap2pg_ldap_use_secure', False):
+            protocol = "ldaps"
+        else:
+            protocol = "ldap"
+
+        ldap2pg_env.append({
+            "name": "LDAPURI",
+            "value": "%s://%s:%s" % (
+                protocol,
+                self.app_config['ldap2pg']['ldap2pg_ldap_host'],
+                str(self.app_config['ldap2pg'].get('ldap2pg_ldap_port', 389))
+            )
+        })
+
+        ldap2pg_stack_info = self.set_stack_info('ldap2pg',
+                                                    'docker/standalone/ldap2pg/ldap2pg.yml',
+                                                    ldap2pg_env)
+
+        return ldap2pg_stack_info
 
 
 sig = DeploySIG()

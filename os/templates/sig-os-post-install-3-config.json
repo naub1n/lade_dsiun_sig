@@ -28,6 +28,9 @@
   "azure2ldap_subdirs": [
     "azuread-ldap/app"
   ],
+  "ldap2pg_subdirs": [
+    "workspace"
+  ],
   "git_sig_org": "naub1n",
   "git_sig_repo": "lade_dsiun_sig",
   "plugin_customcatalog_org": "naub1n",
@@ -92,6 +95,15 @@
         "azure2ldap_search_user": "",
         "azure2ldap_root_user": "",
         "azure2ldap_debug": false
+      },
+      "ldap2pg": {
+        "ldap2pg_pg_host": "",
+        "ldap2pg_pg_port": "",
+        "ldap2pg_pg_user": "",
+        "ldap2pg_ldap_use_secure": false,
+        "ldap2pg_ldap_host": "",
+        "ldap2pg_ldap_port": "",
+        "ldap2pg_ldap_binddn": ""
       }
     },
     "2": {
@@ -151,6 +163,15 @@
         "azure2ldap_search_user": "",
         "azure2ldap_root_user": "",
         "azure2ldap_debug": false
+      },
+      "ldap2pg": {
+        "ldap2pg_pg_host": "",
+        "ldap2pg_pg_port": "",
+        "ldap2pg_pg_user": "",
+        "ldap2pg_ldap_use_secure": false,
+        "ldap2pg_ldap_host": "",
+        "ldap2pg_ldap_port": "",
+        "ldap2pg_ldap_binddn": ""
       }
     },
     "3": {
@@ -210,6 +231,15 @@
         "azure2ldap_search_user": "ldapsearch",
         "azure2ldap_root_user": "root",
         "azure2ldap_debug": false
+      },
+      "ldap2pg": {
+        "ldap2pg_pg_host": "",
+        "ldap2pg_pg_port": "",
+        "ldap2pg_pg_user": "",
+        "ldap2pg_ldap_use_secure": false,
+        "ldap2pg_ldap_host": "",
+        "ldap2pg_ldap_port": "",
+        "ldap2pg_ldap_binddn": ""
       }
     },
     "4": {
