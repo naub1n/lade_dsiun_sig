@@ -25,6 +25,9 @@
     "qwc2",
     "solr"
   ],
+  "azure2ldap_subdirs": [
+    "azuread-ldap/app"
+  ],
   "git_sig_org": "naub1n",
   "git_sig_repo": "lade_dsiun_sig",
   "plugin_customcatalog_org": "naub1n",
@@ -79,6 +82,15 @@
       "plugins_repo": {
         "host": "geoplugins.lesagencesdeleau.eu",
         "phpqgisrepo_version": "v1.5"
+      },
+      "azure2ldap": {
+        "azure2ldap_tenant_id": "",
+        "azure2ldap_app_id": "",
+        "azure2ldap_domain": "",
+        "azure2ldap_basedn": "",
+        "azure2ldap_search_user": "",
+        "azure2ldap_root_user": "",
+        "azure2ldap_debug": false
       }
     },
     "2": {
@@ -128,6 +140,15 @@
       "plugins_repo": {
         "host": "geoplugins-int.lesagencesdeleau.eu",
         "phpqgisrepo_version": "v1.5"
+      },
+      "azure2ldap": {
+        "azure2ldap_tenant_id": "",
+        "azure2ldap_app_id": "",
+        "azure2ldap_domain": "",
+        "azure2ldap_basedn": "",
+        "azure2ldap_search_user": "",
+        "azure2ldap_root_user": "",
+        "azure2ldap_debug": false
       }
     },
     "3": {
@@ -177,6 +198,15 @@
       "plugins_repo": {
         "host": "geoplugins-dev.lesagencesdeleau.eu",
         "phpqgisrepo_version": "v1.5"
+      },
+      "azure2ldap": {
+        "azure2ldap_tenant_id": "77e27c6b-739c-41db-87e0-01f293bc2f06",
+        "azure2ldap_app_id": "d324b24c-18ac-4689-a8b4-5c0cce9b843d",
+        "azure2ldap_domain": "dc57.sig",
+        "azure2ldap_basedn": "dc=dc57,dc=sig",
+        "azure2ldap_search_user": "ldapsearch",
+        "azure2ldap_root_user": "root",
+        "azure2ldap_debug": false
       }
     },
     "4": {
