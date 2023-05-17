@@ -67,7 +67,7 @@
         "loglevel": "ERROR"
       },
       "qwc2": {
-        "use_ldap": true,
+        "use_ldap": false,
         "ldap_host": "",
         "ldap_port": "",
         "ldap_base_dn": "",
@@ -126,7 +126,7 @@
         "loglevel": "ERROR"
       },
       "qwc2": {
-        "use_ldap": true,
+        "use_ldap": false,
         "ldap_host": "",
         "ldap_port": "",
         "ldap_base_dn": "",
@@ -185,7 +185,7 @@
         "loglevel": "DEBUG"
       },
       "qwc2": {
-        "use_ldap": true,
+        "use_ldap": false,
         "ldap_host": "10.126.100.1",
         "ldap_port": "389",
         "ldap_base_dn": "dc=lesagencesdeleau,dc=eu",
