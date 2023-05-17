@@ -32,6 +32,8 @@ class DeploySIG:
         self.init_db_qwc2()
         self.prepare_plugins_qgis()
         self.deploy_qgis_plugins_repo()
+        self.prepare_azure2ldap()
+        self.deploy_azure2ldap()
         self.print_recap()
 
     def update_cert(self):
@@ -61,6 +63,7 @@ class DeploySIG:
         self.plugin_customcatalog_repo = config['plugin_customcatalog_repo']
         self.plugin_projectpublisher_org = config['plugin_projectpublisher_org']
         self.plugin_projectpublisher_repo = config['plugin_projectpublisher_repo']
+        self.azure2ldap_subdirs = config.get('azure2ldap_subdirs', '')
         self.env_data = config['env_data']
 
     def get_config_data(self):
@@ -502,6 +505,13 @@ class DeploySIG:
             print("ATTENTION : Un plugin n'a pas pu être téléchargé à partir de l'URL %s : \n %s \n %s" %
                   (git_url, str(e), git_data.json()))
 
+    def prepare_azure2ldap(self):
+        for subdir in self.azure2ldap_subdirs:
+            os.makedirs(os.path.join(self.root_apps_dir, subdir), exist_ok=True)
+
+    def deploy_azure2ldap(self):
+        self.portainer_deploy_stack(self.get_azure2ldap_stack_info(), 'azure2ldap')
+
     def print_recap(self):
         print("",
               "###########################################################",
@@ -518,6 +528,7 @@ class DeploySIG:
               "Etat de la stack Traefik : %s" % self.docker_compose_status('traefik')['status'],
               "Etat de la stack QWC2 : %s" % self.docker_compose_status('qwc2')['status'],
               "Etat de la stack QGIS Plugins Repo : %s" % self.docker_compose_status('qgis_plugins_repo')['status'],
+              "Etat de la stack Azure2LDAP : %s" % self.docker_compose_status('azure2ldap')['status'],
               "###########################################################",
               "",
               sep=os.linesep)
@@ -635,6 +646,45 @@ class DeploySIG:
                                                            plugins_repo_env)
 
         return qgis_plugins_repo_stack_info
+
+    def get_azure2ldap_stack_info(self):
+        azure2ldap_env = [
+            {
+                "name": "AZURE2LDAP_TENANT_ID",
+                "value": self.app_config['azure2ldap']['azure2ldap_tenant_id']
+            },
+            {
+                "name": "AZURE2LDAP_APP_ID",
+                "value": self.app_config['azure2ldap']['azure2ldap_app_id']
+            },
+            {
+                "name": "AZURE2LDAP_APP_SECRET",
+                "value": getpass("Indiquez le secret Azure pour AZURE2LDAP: ")
+            },
+            {
+                "name": "AZURE2LDAP_DOMAIN",
+                "value": self.app_config['azure2ldap']['azure2ldap_domain']
+            },
+            {
+                "name": "AZURE2LDAP_BASEDN",
+                "value": self.app_config['azure2ldap']['azure2ldap_basedn']
+            },
+            {
+                "name": "AZURE2LDAP_BINDUSER",
+                "value": "%s|%s||%s|%s" % (self.app_config['azure2ldap']['azure2ldap_search_user'],
+                                           getpass("Indiquez le mot de passe du compte ldap_search_user pour AZURE2LDAP: "),
+                                           self.app_config['azure2ldap']['azure2ldap_root_user'],
+                                           getpass("Indiquez le mot de passe du compte ldap_root_user pour AZURE2LDAP: "))
+            },
+            {
+                "name": "AZURE2LDAP_DEBUG",
+                "value": str(self.app_config['azure2ldap']['azure2ldap_debug'])
+            }
+        ]
+        azure2ldap_stack_info = self.set_stack_info('azure2ldap',
+                                                    'docker/standalone/azure2ldap/azure2ldap.yml',
+                                                    azure2ldap_env)
+        return azure2ldap_stack_info
 
 
 sig = DeploySIG()
