@@ -551,6 +551,7 @@ class DeploySIG:
               "Etat de la stack QWC2 : %s" % self.docker_compose_status('qwc2')['status'],
               "Etat de la stack QGIS Plugins Repo : %s" % self.docker_compose_status('qgis_plugins_repo')['status'],
               "Etat de la stack Azure2LDAP : %s" % self.docker_compose_status('azure2ldap')['status'],
+              "Etat de la stack LDAP2PG : %s" % self.docker_compose_status('ldap2pg')['status'],
               "###########################################################",
               "",
               sep=os.linesep)
