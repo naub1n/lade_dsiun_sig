@@ -744,6 +744,10 @@ class DeploySIG:
             {
                 "name": "LDAPPASSWORD_FILE",
                 "value": "/workspace/ldap_pass"
+            },
+            {
+                "name": "VERBOSITY",
+                "value": self.app_config['ldap2pg']['ldap2pg_verbosity']
             }
         ]
 
