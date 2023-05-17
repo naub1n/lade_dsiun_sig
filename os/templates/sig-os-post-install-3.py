@@ -520,12 +520,10 @@ class DeploySIG:
         for subdir in self.ldap2pg_subdirs:
             os.makedirs(os.path.join(self.ldap2pg_app_path, subdir), exist_ok=True)
 
-        # Création du dossier qui contiendra les mdp PG et LDAP.
-        pass_path = os.path.join(self.ldap2pg_app_path, "pass")
-        os.makedirs(pass_path, exist_ok=True)
+        workspace_path = os.path.join(self.ldap2pg_app_path, "workspace")
 
-        pg_pass_path = os.path.join(pass_path, "pg_pass")
-        ldap_pass_path = os.path.join(pass_path, "ldap_pass")
+        pg_pass_path = os.path.join(workspace_path, "pg_pass")
+        ldap_pass_path = os.path.join(workspace_path, "ldap_pass")
 
         with open(pg_pass_path, 'w') as f:
             f.write(getpass("Indiquez le mot de passe du compte postgresql '%s' pour ldap2pg: " % self.app_config['ldap2pg']['ldap2pg_pg_user']))
@@ -737,7 +735,7 @@ class DeploySIG:
             },
             {
                 "name": "PGPASSWORD_FILE",
-                "value": "/pass/pg_pass"
+                "value": "/workspace/pg_pass"
             },
             {
                 "name": "LDAPBINDDN",
@@ -745,7 +743,7 @@ class DeploySIG:
             },
             {
                 "name": "LDAPPASSWORD_FILE",
-                "value": "/pass/ldap_pass"
+                "value": "/workspace/ldap_pass"
             }
         ]
 
