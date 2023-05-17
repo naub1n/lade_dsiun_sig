@@ -34,6 +34,8 @@ class DeploySIG:
         self.deploy_qgis_plugins_repo()
         self.prepare_azure2ldap()
         self.deploy_azure2ldap()
+        self.prepare_ldap2pg()
+        self.deploy_ldap2pg()
         self.print_recap()
 
     def update_cert(self):
@@ -529,7 +531,7 @@ class DeploySIG:
             f.write(getpass("Indiquez le mot de passe du compte postgresql '%s' pour ldap2pg: " % self.app_config['ldap2pg']['ldap2pg_pg_user']))
 
         with open(ldap_pass_path, 'w') as f:
-            f.write(getpass("Indiquez le mot de passe du compte ldap '%s' pour ldap2pg: " % self.app_config['ldap2pg']['ldap2pg_ldap_user']))
+            f.write(getpass("Indiquez le mot de passe du compte ldap '%s' pour ldap2pg: " % self.app_config['ldap2pg']['ldap2pg_ldap_binddn']))
 
     def deploy_ldap2pg(self):
         self.portainer_deploy_stack(self.get_ldap2pg_stack_info(), 'ldap2pg')
@@ -718,11 +720,20 @@ class DeploySIG:
     def get_ldap2pg_stack_info(self):
         ldap2pg_env = [
             {
-                "name": "PGDSN",
-                "value": "postgres://%s@%s:%s/" % (
-                    self.app_config['ldap2pg']['ldap2pg_pg_user'],
-                    self.app_config['ldap2pg']['ldap2pg_pg_host'],
-                    self.app_config['ldap2pg']['ldap2pg_pg_port'])
+                "name": "PGHOST",
+                "value": self.app_config['ldap2pg']['ldap2pg_pg_host']
+            },
+            {
+                "name": "PGPORT",
+                "value": self.app_config['ldap2pg']['ldap2pg_pg_port']
+            },
+            {
+                "name": "PGDATABASE",
+                "value": self.app_config['ldap2pg']['ldap2pg_pg_db']
+            },
+            {
+                "name": "PGUSER",
+                "value": self.app_config['ldap2pg']['ldap2pg_pg_user']
             },
             {
                 "name": "PGPASSWORD_FILE",

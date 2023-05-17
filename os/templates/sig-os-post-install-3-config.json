@@ -99,11 +99,13 @@
       "ldap2pg": {
         "ldap2pg_pg_host": "",
         "ldap2pg_pg_port": "",
+        "ldap2pg_pg_db": "",
         "ldap2pg_pg_user": "",
         "ldap2pg_ldap_use_secure": false,
         "ldap2pg_ldap_host": "",
         "ldap2pg_ldap_port": "",
-        "ldap2pg_ldap_binddn": ""
+        "ldap2pg_ldap_binddn": "",
+        "ldap2pg_verbosity": ""
       }
     },
     "2": {
@@ -167,11 +169,13 @@
       "ldap2pg": {
         "ldap2pg_pg_host": "",
         "ldap2pg_pg_port": "",
+        "ldap2pg_pg_db": "",
         "ldap2pg_pg_user": "",
         "ldap2pg_ldap_use_secure": false,
         "ldap2pg_ldap_host": "",
         "ldap2pg_ldap_port": "",
-        "ldap2pg_ldap_binddn": ""
+        "ldap2pg_ldap_binddn": "",
+        "ldap2pg_verbosity": ""
       }
     },
     "3": {
@@ -235,11 +239,13 @@
       "ldap2pg": {
         "ldap2pg_pg_host": "10.126.106.58",
         "ldap2pg_pg_port": "5432",
+        "ldap2pg_pg_db": "ref_ext",
         "ldap2pg_pg_user": "SVC_SIG_4AD@lesagencesdeleau.eu",
         "ldap2pg_ldap_use_secure": false,
         "ldap2pg_ldap_host": "azure2ldap",
         "ldap2pg_ldap_port": "13389",
-        "ldap2pg_ldap_binddn": "uid=ldapsearch"
+        "ldap2pg_ldap_binddn": "ldapsearch",
+        "ldap2pg_verbosity": "DEBUG"
       }
     },
     "4": {

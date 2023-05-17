@@ -4,6 +4,16 @@ services:
   azure-to-ldap:
     image: dalibo/ldap2pg:latest
     restart: always
+    environment:
+      - PGHOST=${PGHOST}
+      - PGPORT=${PGPORT}
+      - PGDATABASE=${PGDATABASE}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD_FILE=${PGPASSWORD_FILE}
+      - LDAPBINDDN=uid=${LDAPBINDDN}
+      - LDAPPASSWORD_FILE=${LDAPPASSWORD_FILE}
+      - LDAPURI=${LDAPURI}
+      - VERBOSITY=${VERBOSITY}
     volumes:
       - "/app/ldap2pg/workspace:/workspace"
 
