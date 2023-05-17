@@ -585,27 +585,6 @@ class DeploySIG:
                 "value": secrets.token_urlsafe(16)
             },
             {
-                "name": "LDAP_HOST",
-                "value": self.app_config['qwc2']['ldap_host']
-            },
-            {
-                "name": "LDAP_PORT",
-                "value": self.app_config['qwc2']['ldap_port']
-            },
-            {
-                "name": "LDAP_BASE_DN",
-                "value": self.app_config['qwc2']['ldap_base_dn']
-            },
-            {
-                "name": "LDAP_BIND_USER_DN",
-                "value": self.app_config['qwc2']['ldap_bind_user_dn']
-            },
-            {
-                "name": "LDAP_BIND_USER_PASSWORD",
-                "value": getpass("Indiquez la valeur de LDAP_BIND_USER_PASSWORD pour qwc2: ")
-
-            },
-            {
                 "name": "TRAEFIK_QWC2_HOST_REGEX",
                 "value": self.app_config['qwc2']['host_regex']
             },
@@ -618,6 +597,33 @@ class DeploySIG:
                 "value": self.app_config['qwc2']['flask_debug']
             }
         ]
+
+        if self.app_config['qwc2'].get('use_ldap', False):
+            qwc2_env_ldap = [
+                {
+                    "name": "LDAP_HOST",
+                    "value": self.app_config['qwc2']['ldap_host']
+                },
+                {
+                    "name": "LDAP_PORT",
+                    "value": self.app_config['qwc2']['ldap_port']
+                },
+                {
+                    "name": "LDAP_BASE_DN",
+                    "value": self.app_config['qwc2']['ldap_base_dn']
+                },
+                {
+                    "name": "LDAP_BIND_USER_DN",
+                    "value": self.app_config['qwc2']['ldap_bind_user_dn']
+                },
+                {
+                    "name": "LDAP_BIND_USER_PASSWORD",
+                    "value": getpass("Indiquez la valeur de LDAP_BIND_USER_PASSWORD pour qwc2: ")
+
+                }
+            ]
+            qwc2_env = qwc2_env + qwc2_env_ldap
+
         qwc2_stack_info = self.set_stack_info('qwc2', 'docker/standalone/qwc2/qwc2.yml', qwc2_env)
 
         return qwc2_stack_info
