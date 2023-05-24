@@ -16,6 +16,7 @@ services:
       - VERBOSITY=${VERBOSITY}
     volumes:
       - "/app/ldap2pg/workspace:/workspace"
+      - "/etc/localtime:/etc/localtime:ro"
 
 networks:
   default:
