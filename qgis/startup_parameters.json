@@ -59,6 +59,12 @@
           "auth_id": "aelb001",
           "domains": []
         }
+      ],
+      "favorites": [
+        {
+          "path": "C:\\Qgis-Mut",
+          "domains": ["aesn1"]
+        }
       ]
     },
     {
@@ -92,6 +98,11 @@
       },
       "db_connections": [
 
+      ],
+      "favorites": [
+        {
+
+        }
       ]
     },
     {
@@ -124,6 +135,9 @@
         "dsiun_version" : 32804
       },
       "db_connections": [
+
+      ],
+      "favorites": [
 
       ]
     }

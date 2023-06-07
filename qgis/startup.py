@@ -459,6 +459,21 @@ class StartupDSIUN:
                 except Exception as e:
                     self.log("Erreur lors de la l'ajout de la connexion '%s' : %s" % (cnx_name, str(e)), Qgis.Critical)
 
+    def add_favorites(self):
+        self.log("Vérification des marques-pages.", Qgis.Info)
+        favorites = self.env_config.get("favorites", [])
+        for favorite in favorites:
+            f_path = favorite.get("path", "")
+            f_domains = [x.lower() for x in favorite.get("domains", [])]
+
+            if self.user_domain in f_domains or "all" in f_domains:
+                try:
+                    self.log("Ajout/Restauration du marque-page '%s'." % f_path, Qgis.Info)
+                    bm = iface.browserModel()
+                    bm.addFavoriteDirectory(f_path)
+                except Exception as e:
+                    self.log("Erreur lors de la l'ajout du marque-page '%s' : %s" % (f_path, str(e)), Qgis.Critical)
+
     def check_json(self):
         if self.install_python_package("jsonschema"):
             import jsonschema
