@@ -113,6 +113,7 @@ class StartupDSIUN:
                     self.get_catalog_config()
                     self.check_auth_cfg()
                     self.add_connections()
+                    self.add_favorites()
                     self.check_profiles()
                 else:
                     self.check_profiles()
