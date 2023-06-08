@@ -7,7 +7,8 @@ import requests
 import pkg_resources
 
 from qgis.core import (QgsSettings, QgsApplication, QgsAuthMethodConfig, QgsExpressionContextUtils,
-                       QgsMessageLog, Qgis, QgsProviderRegistry, QgsDataSourceUri, QgsUserProfileManager)
+                       QgsMessageLog, Qgis, QgsProviderRegistry, QgsDataSourceUri, QgsUserProfileManager,
+                       QgsFavoritesItem)
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import Qt
 from qgis.utils import iface
@@ -463,15 +464,23 @@ class StartupDSIUN:
     def add_favorites(self):
         self.log("Vérification des marques-pages.", Qgis.Info)
         favorites = self.env_config.get("favorites", [])
+
         for favorite in favorites:
             f_path = favorite.get("path", "")
+            f_name = favorite.get("name", f_path)
             f_domains = [x.lower() for x in favorite.get("domains", [])]
 
             if self.user_domain in f_domains or "all" in f_domains:
+                fi = QgsFavoritesItem(None, "")
+
+                # Vérification de la présence du marque-page
+                for item in fi.createChildren():
+                    if item.name() == f_name:
+                        return
+
                 try:
                     self.log("Ajout/Restauration du marque-page '%s'." % f_path, Qgis.Info)
-                    bm = iface.browserModel()
-                    bm.addFavoriteDirectory(f_path)
+                    fi.addDirectory(f_path, f_name)
                 except Exception as e:
                     self.log("Erreur lors de la l'ajout du marque-page '%s' : %s" % (f_path, str(e)), Qgis.Critical)
 
