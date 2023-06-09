@@ -113,9 +113,10 @@ class StartupDSIUN:
                     self.install_plugins()
                     self.get_catalog_config()
                     self.check_auth_cfg()
-                    self.add_connections()
+                    self.add_db_connections()
                     self.add_favorites()
-                    self.add_wfs_connection()
+                    self.add_wfs_connections()
+                    self.add_wms_connections()
                     self.check_profiles()
                 else:
                     self.check_profiles()
@@ -434,7 +435,7 @@ class StartupDSIUN:
         else:
             return profile_name in os.listdir(self.profiles_path)
 
-    def add_connections(self):
+    def add_db_connections(self):
         self.log("Vérification de la présence des connections aux BDD.", Qgis.Info)
         for cnx in self.database_connections:
             cnx_provider = cnx.get("qgis_provider", "")
@@ -485,7 +486,7 @@ class StartupDSIUN:
                 except Exception as e:
                     self.log("Erreur lors de la l'ajout du marque-page '%s' : %s" % (f_path, str(e)), Qgis.Critical)
 
-    def add_wfs_connection(self):
+    def add_wfs_connections(self):
         self.log("Vérification des connexions WFS.", Qgis.Info)
         wfs_connections = self.env_config.get("wfs_connections", [])
 
@@ -526,7 +527,7 @@ class StartupDSIUN:
                 s.setValue("%s/password" % cnx_name, cnx_password)
 
 
-    def add_wms_connection(self):
+    def add_wms_connections(self):
         self.log("Vérification des connexions WMS/WMTS.", Qgis.Info)
         wms_connections = self.env_config.get("wms_connections", [])
 
