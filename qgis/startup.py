@@ -115,6 +115,7 @@ class StartupDSIUN:
                     self.check_auth_cfg()
                     self.add_connections()
                     self.add_favorites()
+                    self.add_wfs_connection()
                     self.check_profiles()
                 else:
                     self.check_profiles()
@@ -483,6 +484,36 @@ class StartupDSIUN:
                     fi.addDirectory(f_path, f_name)
                 except Exception as e:
                     self.log("Erreur lors de la l'ajout du marque-page '%s' : %s" % (f_path, str(e)), Qgis.Critical)
+
+    def add_wfs_connection(self):
+        self.log("Vérification des connexions WFS.", Qgis.Info)
+        wfs_connections = self.env_config.get("wfs_connections", [])
+
+        for wfs_c in wfs_connections:
+            cnx_name = wfs_c.get("name", "")
+            cnx_ignoreaxisorientation = wfs_c.get("ignoreAxisOrientation", False)
+            cnx_invertaxisorientation = wfs_c.get("invertAxisOrientation", False)
+            cnx_maxnumfeatures = wfs_c.get("maxnumfeatures", "")
+            cnx_pagesize = wfs_c.get("pagesize", 1000)
+            cnx_pagingenabled = wfs_c.get("pagingenabled", True)
+            cnx_prefercoordinatesforwfst11 = wfs_c.get("preferCoordinatesForWfsT11", False)
+            cnx_url = wfs_c.get("url", "")
+            cnx_version = wfs_c.get("version", "auto")
+            cnx_domains = [x.lower() for x in wfs_c.get("domains", [])]
+
+            if self.user_domain in cnx_domains or "all" in cnx_domains:
+                s = QgsSettings()
+                s.beginGroup('qgis')
+                s.beginGroup('connections-wfs')
+
+                s.setValue("%s/ignoreAxisOrientation" % cnx_name, cnx_ignoreaxisorientation)
+                s.setValue("%s/invertAxisOrientation" % cnx_name, cnx_invertaxisorientation)
+                s.setValue("%s/maxnumfeatures" % cnx_name, cnx_maxnumfeatures)
+                s.setValue("%s/pagesize" % cnx_name, cnx_pagesize)
+                s.setValue("%s/pagingenabled" % cnx_name, cnx_pagingenabled)
+                s.setValue("%s/preferCoordinatesForWfsT11" % cnx_name, cnx_prefercoordinatesforwfst11)
+                s.setValue("%s/url" % cnx_name, cnx_url)
+                s.setValue("%s/version" % cnx_name, cnx_version)
 
     def check_json(self):
         if self.install_python_package("jsonschema"):
