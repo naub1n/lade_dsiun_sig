@@ -562,7 +562,7 @@ class StartupDSIUN:
 
                 s = QgsSettings()
                 s.beginGroup('qgis')
-                s.beginGroup('WFS')
+                s.beginGroup('WMS')
 
                 s.setValue("%s/authcfg" % cnx_name, cnx_authcfg)
                 s.setValue("%s/username" % cnx_name, cnx_username)
