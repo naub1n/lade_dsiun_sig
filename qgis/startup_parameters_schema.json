@@ -146,6 +146,48 @@
                 }
               }
             }
+          },
+          "wfs_connections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "ignoreAxisOrientation": {
+                  "type": "boolean"
+                },
+                "invertAxisOrientation": {
+                  "type": "boolean"
+                },
+                "maxnumfeatures": {
+                  "type": "integer"
+                },
+                "pagesize": {
+                  "type": "integer"
+                },
+                "pagingenabled": {
+                  "type": "boolean"
+                },
+                "preferCoordinatesForWfsT11": {
+                  "type": "boolean"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["name"]
+            }
           }
         }
       }
