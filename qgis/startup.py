@@ -499,6 +499,9 @@ class StartupDSIUN:
             cnx_prefercoordinatesforwfst11 = wfs_c.get("preferCoordinatesForWfsT11", False)
             cnx_url = wfs_c.get("url", "")
             cnx_version = wfs_c.get("version", "auto")
+            cnx_authcfg = wfs_c.get("authcfg", "")
+            cnx_username = wfs_c.get("username", "")
+            cnx_password = wfs_c.get("password", "")
             cnx_domains = [x.lower() for x in wfs_c.get("domains", [])]
 
             if self.user_domain in cnx_domains or "all" in cnx_domains:
@@ -514,6 +517,55 @@ class StartupDSIUN:
                 s.setValue("%s/preferCoordinatesForWfsT11" % cnx_name, cnx_prefercoordinatesforwfst11)
                 s.setValue("%s/url" % cnx_name, cnx_url)
                 s.setValue("%s/version" % cnx_name, cnx_version)
+
+                s = QgsSettings()
+                s.beginGroup('qgis')
+                s.beginGroup('WFS')
+                s.setValue("%s/authcfg" % cnx_name, cnx_authcfg)
+                s.setValue("%s/username" % cnx_name, cnx_username)
+                s.setValue("%s/password" % cnx_name, cnx_password)
+
+
+    def add_wms_connection(self):
+        self.log("Vérification des connexions WMS/WMTS.", Qgis.Info)
+        wms_connections = self.env_config.get("wms_connections", [])
+
+        for wms_c in wms_connections:
+            cnx_name = wms_c.get("name", "")
+            cnx_dpimode = wms_c.get("dpiMode", 7)
+            cnx_ignoreaxisorientation = wms_c.get("ignoreAxisOrientation", False)
+            cnx_ignoregetfeatureinfouri = wms_c.get("ignoreGetFeatureInfoURI", False)
+            cnx_ignoregetmapuri = wms_c.get("ignoreGetMapURI", False)
+            cnx_invertaxisorientation = wms_c.get("invertAxisOrientation", False)
+            cnx_reportedlayerextents = wms_c.get("reportedLayerExtents", False)
+            cnx_smoothpixmaptransform = wms_c.get("smoothPixmapTransform", False)
+            cnx_url = wms_c.get("url", "")
+            cnx_authcfg = wms_c.get("authcfg", "")
+            cnx_username = wms_c.get("username", "")
+            cnx_password = wms_c.get("password", "")
+            cnx_domains = [x.lower() for x in wms_c.get("domains", [])]
+
+            if self.user_domain in cnx_domains or "all" in cnx_domains:
+                s = QgsSettings()
+                s.beginGroup('qgis')
+                s.beginGroup('connections-wms')
+
+                s.setValue("%s/dpiMode" % cnx_name, cnx_dpimode)
+                s.setValue("%s/ignoreAxisOrientation" % cnx_name, cnx_ignoreaxisorientation)
+                s.setValue("%s/invertAxisOrientation" % cnx_name, cnx_invertaxisorientation)
+                s.setValue("%s/ignoreGetFeatureInfoURI" % cnx_name, cnx_ignoregetfeatureinfouri)
+                s.setValue("%s/ignoreGetMapURI" % cnx_name, cnx_ignoregetmapuri)
+                s.setValue("%s/reportedLayerExtents" % cnx_name, cnx_reportedlayerextents)
+                s.setValue("%s/smoothPixmapTransform" % cnx_name, cnx_smoothpixmaptransform)
+                s.setValue("%s/url" % cnx_name, cnx_url)
+
+                s = QgsSettings()
+                s.beginGroup('qgis')
+                s.beginGroup('WFS')
+
+                s.setValue("%s/authcfg" % cnx_name, cnx_authcfg)
+                s.setValue("%s/username" % cnx_name, cnx_username)
+                s.setValue("%s/password" % cnx_name, cnx_password)
 
     def check_json(self):
         if self.install_python_package("jsonschema"):

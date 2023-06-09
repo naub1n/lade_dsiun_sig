@@ -75,6 +75,15 @@
           "ignoreAxisOrientation": false,
           "domains": ["aesn1"]
         }
+      ],
+      "wms_connections": [
+        {
+          "name": "IGN - Essentiels",
+          "url" : "https://wxs.ign.fr/essentiels/geoportail/r/wms?",
+          "ignoreAxisOrientation": true,
+          "authcfg": "dsiun01",
+          "domains": ["aesn1"]
+        }
       ]
     },
     {

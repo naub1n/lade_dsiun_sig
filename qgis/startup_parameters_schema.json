@@ -179,6 +179,66 @@
                 "version": {
                   "type": "string"
                 },
+                "authcfg": {
+                  "type": "string"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["name"]
+            }
+          },
+          "wms_connections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "dpiMode": {
+                  "type": "integer"
+                },
+                "ignoreAxisOrientation": {
+                  "type": "boolean"
+                },
+                "ignoreGetFeatureInfoURI": {
+                  "type": "boolean"
+                },
+                "ignoreGetMapURI": {
+                  "type": "boolean"
+                },
+                "invertAxisOrientation": {
+                  "type": "boolean"
+                },
+                "reportedLayerExtents": {
+                  "type": "boolean"
+                },
+                "smoothPixmapTransform": {
+                  "type": "boolean"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "authcfg": {
+                  "type": "string"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
                 "domains": {
                   "type": "array",
                   "items": {
