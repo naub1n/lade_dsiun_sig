@@ -26,6 +26,19 @@
           "id": "dsiun01",
           "name": "Authentification Agences de l'eau - Dev",
           "domains": ["all"]
+        },
+        {
+          "id": "aeap001",
+          "name": "AEAP - Consultation Ref. Geo.",
+          "user": "lecsig",
+          "pass": "lecsig",
+          "domains": ["eauap"]
+        },
+        {
+          "id": "aeap002",
+          "name": "AEAP - Administration Ref. Geo.",
+          "user": "sig",
+          "domains": ["eauap"]
         }
       ],
       "qgis": {
@@ -58,12 +71,31 @@
           "dbname": "habillage",
           "auth_id": "aelb001",
           "domains": []
+        },
+        {
+          "qgis_provider": "oracle",
+          "name": "AEAP - Ref. Geo - Consultation",
+          "host": "rh77-ora12-prd.eauap.com",
+          "port": "1521",
+          "dbname": "aeap.eauap.com",
+          "auth_id": "aeap001",
+          "domains": ["eauap"]
+        },
+        {
+          "qgis_provider": "oracle",
+          "name": "AEAP - Ref. Geo - Administration",
+          "host": "rh77-ora12-prd.eauap.com",
+          "port": "1521",
+          "dbname": "aeap.eauap.com",
+          "auth_id": "aeap002",
+          "domains": ["eauap"]
         }
       ],
       "favorites": [
         {
-          "path": "C:\\Qgis-Mut",
-          "domains": ["aesn1"]
+          "path": "c:\\mnt\\gisuser\\DATAGEO ",
+          "name": "DATAGEO",
+          "domains": ["eauap"]
         }
       ],
       "wfs_connections": [
@@ -83,6 +115,11 @@
           "ignoreAxisOrientation": true,
           "authcfg": "dsiun01",
           "domains": ["aesn1"]
+        },
+        {
+          "name": "AEAP - Portail de bassin",
+          "url": "https://artois-picardie.eaufrance.fr/geoserver/TEST_IDG/wms?",
+          "domains": ["eauap"]
         }
       ]
     },
