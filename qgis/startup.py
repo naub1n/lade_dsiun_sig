@@ -458,9 +458,10 @@ class StartupDSIUN:
                                       aPassword=None,
                                       authConfigId=cnx_auth_id)
                     self.log("Ajout/Restauration de la connection '%s'." % cnx_name, Qgis.Info)
-                    new_conn = provider.createConnection(uri.uri(expandAuthConfig=False), {})
+                    new_conn = provider.createConnection(None, {})
+                    new_conn.setUri(uri.uri(expandAuthConfig=False))
                     # La connexion est ajoutée si inexistante ou remplacée si elle existe déjà
-                    provider.saveConnection(new_conn, cnx_name)
+                    new_conn.store(cnx_name)
                 except Exception as e:
                     self.log("Erreur lors de la l'ajout de la connexion '%s' : %s" % (cnx_name, str(e)), Qgis.Critical)
 
