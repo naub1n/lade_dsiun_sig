@@ -116,21 +116,43 @@
           "ignoreAxisOrientation": false,
           "domains": ["aesn1"],
           "users": ["aubin_ni"]
+        },
+        {
+          "name": "IGN - Géoplateforme",
+          "url" : "https://wfs.geopf.fr/geoserver/ows?",
+          "version" : "2.0.0",
+          "domains": ["all"]
         }
       ],
       "wms_connections": [
         {
           "name": "IGN - Essentiels",
           "url" : "https://wxs.ign.fr/essentiels/geoportail/r/wms?",
-          "ignoreAxisOrientation": true,
-          "authcfg": "dsiun01",
-          "domains": ["aesn1"],
+          "domains": [],
           "users": ["aubin_ni"]
         },
         {
           "name": "AEAP - Portail de bassin",
           "url": "https://artois-picardie.eaufrance.fr/geoserver/TEST_IDG/wms?",
           "domains": ["eauap"],
+          "users": ["aubin_ni"]
+        },
+        {
+          "name": "IGN - Géoplateforme - WMTS",
+          "url": "https://wmts.geopf.fr/rok4/wmts?",
+          "domains": [],
+          "users": ["aubin_ni"]
+        },
+        {
+          "name": "IGN - Géoplateforme - WMS Raster",
+          "url": "https://wms-r.geopf.fr/rok4/wms?",
+          "domains": [],
+          "users": ["aubin_ni"]
+        },
+        {
+          "name": "IGN - Géoplateforme - WMS Raster",
+          "url": "https://wms-v.geopf.fr/geoserver/ows?",
+          "domains": [],
           "users": ["aubin_ni"]
         }
       ]
