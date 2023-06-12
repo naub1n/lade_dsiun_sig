@@ -25,20 +25,23 @@
         {
           "id": "dsiun01",
           "name": "Authentification Agences de l'eau - Dev",
-          "domains": ["all"]
+          "domains": ["all"],
+          "users": ["aubin_ni"]
         },
         {
           "id": "aeap001",
           "name": "AEAP - Consultation Ref. Geo.",
           "user": "lecsig",
           "pass": "lecsig",
-          "domains": ["eauap"]
+          "domains": ["eauap"],
+          "users": ["aubin_ni"]
         },
         {
           "id": "aeap002",
           "name": "AEAP - Administration Ref. Geo.",
           "user": "sig",
-          "domains": ["eauap"]
+          "domains": ["eauap"],
+          "users": ["aubin_ni"]
         }
       ],
       "qgis": {
@@ -52,7 +55,8 @@
           "port": "5432",
           "dbname": "data",
           "auth_id": "dsiun01",
-          "domains": ["all"]
+          "domains": ["all"],
+          "users": ["aubin_ni"]
         },
         {
           "qgis_provider": "postgres",
@@ -61,7 +65,8 @@
           "port": "11420",
           "dbname": "carto_aelb",
           "auth_id": "aelb001",
-          "domains": []
+          "domains": [],
+          "users": ["aubin_ni"]
         },
         {
           "qgis_provider": "postgres",
@@ -70,7 +75,8 @@
           "port": "11420",
           "dbname": "habillage",
           "auth_id": "aelb001",
-          "domains": []
+          "domains": [],
+          "users": ["aubin_ni"]
         },
         {
           "qgis_provider": "oracle",
@@ -79,7 +85,8 @@
           "port": "1521",
           "dbname": "aeap.eauap.com",
           "auth_id": "aeap001",
-          "domains": ["eauap"]
+          "domains": ["eauap"],
+          "users": ["aubin_ni"]
         },
         {
           "qgis_provider": "oracle",
@@ -88,14 +95,16 @@
           "port": "1521",
           "dbname": "aeap.eauap.com",
           "auth_id": "aeap002",
-          "domains": ["eauap"]
+          "domains": ["eauap"],
+          "users": ["aubin_ni"]
         }
       ],
       "favorites": [
         {
           "path": "c:\\mnt\\gisuser\\DATAGEO ",
           "name": "DATAGEO",
-          "domains": ["eauap"]
+          "domains": ["eauap"],
+          "users": ["aubin_ni"]
         }
       ],
       "wfs_connections": [
@@ -105,7 +114,8 @@
           "version" : "2.0.0",
           "pagesize": 1000,
           "ignoreAxisOrientation": false,
-          "domains": ["aesn1"]
+          "domains": ["aesn1"],
+          "users": ["aubin_ni"]
         }
       ],
       "wms_connections": [
@@ -114,12 +124,14 @@
           "url" : "https://wxs.ign.fr/essentiels/geoportail/r/wms?",
           "ignoreAxisOrientation": true,
           "authcfg": "dsiun01",
-          "domains": ["aesn1"]
+          "domains": ["aesn1"],
+          "users": ["aubin_ni"]
         },
         {
           "name": "AEAP - Portail de bassin",
           "url": "https://artois-picardie.eaufrance.fr/geoserver/TEST_IDG/wms?",
-          "domains": ["eauap"]
+          "domains": ["eauap"],
+          "users": ["aubin_ni"]
         }
       ]
     },

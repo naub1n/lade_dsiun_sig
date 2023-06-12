@@ -32,7 +32,6 @@ class StartupDSIUN:
         self.qgis_min_version_profile = 33000
         self.auth_mgr = QgsApplication.authManager()
         self.current_v = Qgis.QGIS_VERSION_INT
-        self.user_domain = os.environ.get("userdomain", "").lower()
 
         if self.current_v >= self.qgis_min_version_profile:
             self.p_mgr = iface.userProfileManager()
@@ -263,8 +262,9 @@ class StartupDSIUN:
                 auth_user = auth_config.get("user", "")
                 auth_pass = auth_config.get("pass", "")
                 auth_domains = [x.lower() for x in auth_config.get("domains", [])]
+                auth_users = [x.lower() for x in auth_config.get("users", [])]
 
-                if self.user_domain in auth_domains or "all" in auth_domains:
+                if self.check_users_and_domains(auth_users, auth_domains):
                     if self.auth_id in ids:
                         self.log("La configuration %s est déjà présente" % str(self.auth_id), Qgis.Info)
 
@@ -445,8 +445,9 @@ class StartupDSIUN:
             cnx_dbname = cnx.get("dbname", "")
             cnx_auth_id = cnx.get("auth_id", "")
             cnx_domains = [x.lower() for x in cnx.get("domains", [])]
+            cnx_users = [x.lower() for x in cnx.get("users", [])]
 
-            if self.user_domain in cnx_domains or "all" in cnx_domains:
+            if self.check_users_and_domains(cnx_users, cnx_domains):
                 try:
                     provider = QgsProviderRegistry.instance().providerMetadata(cnx_provider)
                     uri = QgsDataSourceUri()
@@ -471,8 +472,9 @@ class StartupDSIUN:
             f_path = favorite.get("path", "")
             f_name = favorite.get("name", f_path)
             f_domains = [x.lower() for x in favorite.get("domains", [])]
+            f_users = [x.lower() for x in favorite.get("users", [])]
 
-            if self.user_domain in f_domains or "all" in f_domains:
+            if self.check_users_and_domains(f_users, f_domains):
                 fi = QgsFavoritesItem(None, "")
 
                 # Vérification de la présence du marque-page
@@ -504,8 +506,9 @@ class StartupDSIUN:
             cnx_username = wfs_c.get("username", "")
             cnx_password = wfs_c.get("password", "")
             cnx_domains = [x.lower() for x in wfs_c.get("domains", [])]
+            cnx_users = [x.lower() for x in wfs_c.get("users", [])]
 
-            if self.user_domain in cnx_domains or "all" in cnx_domains:
+            if self.check_users_and_domains(cnx_users, cnx_domains):
                 s = QgsSettings()
                 s.beginGroup('qgis')
                 s.beginGroup('connections-wfs')
@@ -545,8 +548,9 @@ class StartupDSIUN:
             cnx_username = wms_c.get("username", "")
             cnx_password = wms_c.get("password", "")
             cnx_domains = [x.lower() for x in wms_c.get("domains", [])]
+            cnx_users = [x.lower() for x in wms_c.get("users", [])]
 
-            if self.user_domain in cnx_domains or "all" in cnx_domains:
+            if self.check_users_and_domains(cnx_users, cnx_domains):
                 s = QgsSettings()
                 s.beginGroup('qgis')
                 s.beginGroup('connections-wms')
@@ -631,6 +635,15 @@ class StartupDSIUN:
                 return False
 
         return True
+
+    def check_users_and_domains(self, users=[], domains=[]):
+        user = os.environ.get("username", "").lower()
+        domain = os.environ.get("userdomain", "").lower()
+        if domain in domains or "all" in domains or user in users:
+            return True
+        else:
+            return False
+
 
 
 # Lancement de la procédure
