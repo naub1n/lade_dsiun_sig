@@ -481,7 +481,7 @@ class StartupDSIUN:
                 # Vérification de la présence du marque-page
                 for item in fi.createChildren():
                     if item.name() == f_name:
-                        return
+                        fi.removeDirectory(item)
 
                 try:
                     self.log("Ajout/Restauration du marque-page '%s'." % f_path, Qgis.Info)
