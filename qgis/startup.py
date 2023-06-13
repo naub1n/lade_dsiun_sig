@@ -116,6 +116,7 @@ class StartupDSIUN:
                     self.add_favorites()
                     self.add_wfs_connections()
                     self.add_wms_connections()
+                    self.add_layout_templates()
                     self.check_profiles()
                 else:
                     self.check_profiles()
@@ -572,6 +573,29 @@ class StartupDSIUN:
                 s.setValue("%s/authcfg" % cnx_name, cnx_authcfg)
                 s.setValue("%s/username" % cnx_name, cnx_username)
                 s.setValue("%s/password" % cnx_name, cnx_password)
+
+    def add_layout_templates(self):
+        self.log("Vérification des modèles.", Qgis.Info)
+        layout_templates = self.env_config.get("composer_templates", [])
+
+        for template in layout_templates:
+            t_path = template.get("path", "")
+            t_domains = [x.lower() for x in template.get("domains", [])]
+            t_users = [x.lower() for x in template.get("users", [])]
+
+            layouts = QgsApplication.layoutTemplatePaths()
+
+            if t_path and self.check_users_and_domains(t_users, t_domains):
+
+                if t_path not in layouts:
+                    layouts.append(t_path)
+
+                    s = QgsSettings()
+                    s.beginGroup('core')
+                    s.beginGroup('Layout')
+
+                    s.setValue("searchPathsForTemplates", layouts)
+
 
     def check_json(self):
         if self.install_python_package("jsonschema"):

@@ -168,6 +168,13 @@
           "domains": ["all"],
           "users": ["aubin_ni"]
         }
+      ],
+      "composer_templates": [
+        {
+          "path": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/11_presentation/113_mise_en_page_qgis",
+          "domains": ["aelb"],
+          "users": ["aubin_ni"]
+        }
       ]
     },
     {
