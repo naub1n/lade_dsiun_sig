@@ -114,7 +114,7 @@
           "version" : "2.0.0",
           "pagesize": 1000,
           "ignoreAxisOrientation": false,
-          "domains": ["aesn1"],
+          "domains": [],
           "users": ["aubin_ni"]
         },
         {
@@ -127,7 +127,7 @@
           "name": "SANDRE",
           "url": "https://services.sandre.eaufrance.fr/geo/sandre",
           "version" : "2.0.0",
-          "domains": [],
+          "domains": ["all"],
           "users": ["aubin_ni"]
         }
       ],
@@ -135,7 +135,7 @@
         {
           "name": "IGN - Essentiels",
           "url" : "https://wxs.ign.fr/essentiels/geoportail/r/wms?",
-          "domains": [],
+          "domains": ["all"],
           "users": ["aubin_ni"]
         },
         {
@@ -147,25 +147,25 @@
         {
           "name": "IGN - Géoplateforme - WMTS",
           "url": "https://wmts.geopf.fr/rok4/wmts?",
-          "domains": [],
+          "domains": ["all"],
           "users": ["aubin_ni"]
         },
         {
           "name": "IGN - Géoplateforme - WMS Raster",
           "url": "https://wms-r.geopf.fr/rok4/wms?",
-          "domains": [],
+          "domains": ["all"],
           "users": ["aubin_ni"]
         },
         {
           "name": "IGN - Géoplateforme - WMS Raster",
           "url": "https://wms-v.geopf.fr/geoserver/ows?",
-          "domains": [],
+          "domains": ["all"],
           "users": ["aubin_ni"]
         },
         {
           "name": "SANDRE",
           "url": "https://services.sandre.eaufrance.fr/geo/sandre",
-          "domains": [],
+          "domains": ["all"],
           "users": ["aubin_ni"]
         }
       ]
