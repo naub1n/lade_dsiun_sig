@@ -122,6 +122,13 @@
           "url" : "https://wfs.geopf.fr/geoserver/ows?",
           "version" : "2.0.0",
           "domains": ["all"]
+        },
+        {
+          "name": "SANDRE",
+          "url": "https://services.sandre.eaufrance.fr/geo/sandre",
+          "version" : "2.0.0",
+          "domains": [],
+          "users": ["aubin_ni"]
         }
       ],
       "wms_connections": [
@@ -152,6 +159,12 @@
         {
           "name": "IGN - Géoplateforme - WMS Raster",
           "url": "https://wms-v.geopf.fr/geoserver/ows?",
+          "domains": [],
+          "users": ["aubin_ni"]
+        },
+        {
+          "name": "SANDRE",
+          "url": "https://services.sandre.eaufrance.fr/geo/sandre",
           "domains": [],
           "users": ["aubin_ni"]
         }
