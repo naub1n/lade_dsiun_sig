@@ -56,7 +56,6 @@ class StartupDSIUN:
         self.auth_configs = config.get("authentications", [])
         self.profile_dsiun = config.get("profile_name", "")
         self.qgis_version_dsiun = config.get("qgis", {}).get("dsiun_version", "")
-        self.plugins_dsiun = config.get("plugins", {}).get("plugins_names", [])
         self.database_connections = config.get("db_connections", [])
         self.current_env = config.get("env_name", "")
 
@@ -129,35 +128,41 @@ class StartupDSIUN:
         QgsMessageLog.logMessage(log_message, 'Startup DSIUN', level=log_level, notifyUser=False)
 
     def check_repo(self):
-        repos_name = self.env_config.get("plugins", {}).get("repo_name", "")
-        repos_url = self.env_config.get("plugins", {}).get("repo_url", "")
-        if repos_name and repos_url:
-            self.log("Vérification de la présence du dépôt DSIUN ...", Qgis.Info)
-            try:
-                settings = QgsSettings()
-                settings.beginGroup(reposGroup)
-                if repos_name in repositories.all():
-                    settings.remove(repos_name)
-                # add to settings
-                settings.setValue(repos_name + "/url", repos_url)
-                settings.setValue(repos_name + "/authcfg", None)
-                settings.setValue(repos_name + "/enabled", True)
-                # refresh lists and populate widgets
-                plugins.removeRepository(repos_name)
-                self.pyplugin_inst.reloadAndExportData()
-                self.log("Ajout/Remplacement du dépôt - OK", Qgis.Info)
-            except Exception as e:
-                self.log("Erreur lors de la l'ajout/le remplacement du dépôt : %s" % str(e), Qgis.Critical)
+        self.log("Vérification des dépôts de plugins ...", Qgis.Info)
+        repos = self.env_config.get("plugins", {}).get("repositories", [])
+
+        for repo in repos:
+            repo_name = repo.get("name", "")
+            repo_url = repo.get("url", "")
+            repo_authcfg = repo.get("authcfg", "")
+
+            if repo_name and repo_url:
+                try:
+                    settings = QgsSettings()
+                    settings.beginGroup(reposGroup)
+                    if repo_name in repositories.all():
+                        settings.remove(repo_name)
+                    # add to settings
+                    settings.setValue(repo_name + "/url", repo_url)
+                    settings.setValue(repo_name + "/authcfg", repo_authcfg)
+                    settings.setValue(repo_name + "/enabled", True)
+                    # refresh lists and populate widgets
+                    plugins.removeRepository(repo_name)
+                    self.pyplugin_inst.reloadAndExportData()
+                    self.log("Ajout/Remplacement du dépôt %s - OK" % repo_name, Qgis.Info)
+                except Exception as e:
+                    self.log("Erreur lors de la l'ajout/le remplacement du dépôt %s : %s" % (repo_name, str(e)), Qgis.Critical)
 
     def install_plugins(self):
         self.log("Vérification des plugins requis ...", Qgis.Info)
         try:
+            plugins_dsiun = self.env_config.get("plugins", {}).get("plugins_names", [])
             available_plugins_keys = self.plugins_data.all().keys()
             upgradable_plugins_keys = self.plugins_data.allUpgradeable().keys()
 
             errors = False
 
-            for plugin_dsiun in self.plugins_dsiun:
+            for plugin_dsiun in plugins_dsiun:
 
                 if plugin_dsiun in available_plugins_keys:
 
