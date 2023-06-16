@@ -115,7 +115,7 @@
           "qgis_provider": "postgres",
           "name": "AERMC - Ref. Geo - Consultation",
           "host": "postgis.domntade.eaurmc.fr",
-          "port": "1521",
+          "port": "5432",
           "dbname": "exig",
           "auth_id": "aermc01",
           "domains": ["domntade"],
