@@ -203,6 +203,13 @@
           "domains": ["domntade"],
           "users": ["aubin_ni"]
         }
+      ],
+      "svg_paths": [
+        {
+          "path": "N:/Applis/SIG/_Commun_sig/QGis/svg",
+          "domains": ["domntade"],
+          "users": ["aubin_ni"]
+        }
       ]
     },
     {
