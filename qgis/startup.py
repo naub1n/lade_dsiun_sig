@@ -634,6 +634,9 @@ class StartupDSIUN:
                 s.beginGroup('qgis')
 
                 current_custom_vars = s.value("customEnvVars")
+                if isinstance(current_custom_vars, str):
+                    current_custom_vars = [current_custom_vars]
+
                 new_custom_vars = []
 
                 for current_var in current_custom_vars:
