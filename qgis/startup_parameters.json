@@ -6,8 +6,13 @@
       "profile_name": "DSIUN_dev",
       "profile_default": false,
       "plugins": {
-        "repo_name": "Dépôt DSIUN en développement",
-        "repo_url": "https://geoplugins-dev.lesagencesdeleau.eu",
+        "repositories": [
+          {
+            "name": "Dépôt DSIUN en développement",
+            "url": "https://geoplugins-dev.lesagencesdeleau.eu",
+            "authcfg": ""
+          }
+        ],
         "plugins_names": [
           "project_publisher",
           "custom_catalog"
@@ -41,6 +46,14 @@
           "name": "AEAP - Administration Ref. Geo.",
           "user": "sig",
           "domains": ["eauap"],
+          "users": ["aubin_ni"]
+        },
+        {
+          "id": "aermc01",
+          "name": "AERMC - Consultation Ref. Geo.",
+          "user": "lecig",
+          "pass": "leciglec",
+          "domains": [""],
           "users": ["aubin_ni"]
         }
       ],
@@ -96,6 +109,16 @@
           "dbname": "aeap.eauap.com",
           "auth_id": "aeap002",
           "domains": ["eauap"],
+          "users": ["aubin_ni"]
+        },
+        {
+          "qgis_provider": "postgres",
+          "name": "AERMC - Ref. Geo - Consultation",
+          "host": "postgis.domntade.eaurmc.fr",
+          "port": "1521",
+          "dbname": "exig",
+          "auth_id": "aermc01",
+          "domains": [""],
           "users": ["aubin_ni"]
         }
       ],
@@ -173,6 +196,11 @@
         {
           "path": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/11_presentation/113_mise_en_page_qgis",
           "domains": ["aelb"],
+          "users": ["aubin_ni"]
+        },
+        {
+          "path": "N:/Applis/SIG/_Commun_sig/QGis/modele_composeur",
+          "domains": [""],
           "users": ["aubin_ni"]
         }
       ]
