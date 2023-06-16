@@ -117,6 +117,7 @@ class StartupDSIUN:
                     self.add_wfs_connections()
                     self.add_wms_connections()
                     self.add_layout_templates()
+                    self.add_svg_paths()
                     self.check_profiles()
                 else:
                     self.check_profiles()
@@ -595,6 +596,22 @@ class StartupDSIUN:
                     s.beginGroup('Layout')
 
                     s.setValue("searchPathsForTemplates", layouts)
+
+    def add_svg_paths(self):
+        self.log("Ajout des symboles SVG.", Qgis.Info)
+        svg_paths = self.env_config.get("svg_paths", [])
+
+        for item in svg_paths:
+            svg_path = item.get("path", "")
+            svg_domains = [x.lower() for x in item.get("domains", [])]
+            svg_users = [x.lower() for x in item.get("users", [])]
+
+            qgs_svg_paths = QgsApplication.svgPaths()
+
+            if svg_path and self.check_users_and_domains(svg_users, svg_domains):
+                if svg_path not in qgs_svg_paths:
+                    qgs_svg_paths.append(svg_path)
+                    QgsApplication.setDefaultSvgPaths(qgs_svg_paths)
 
 
     def check_json(self):
