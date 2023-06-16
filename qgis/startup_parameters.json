@@ -53,7 +53,7 @@
           "name": "AERMC - Consultation Ref. Geo.",
           "user": "lecig",
           "pass": "leciglec",
-          "domains": [""],
+          "domains": ["domntade"],
           "users": ["aubin_ni"]
         }
       ],
@@ -118,7 +118,7 @@
           "port": "1521",
           "dbname": "exig",
           "auth_id": "aermc01",
-          "domains": [""],
+          "domains": ["domntade"],
           "users": ["aubin_ni"]
         }
       ],
@@ -200,7 +200,7 @@
         },
         {
           "path": "N:/Applis/SIG/_Commun_sig/QGis/modele_composeur",
-          "domains": [""],
+          "domains": ["domntade"],
           "users": ["aubin_ni"]
         }
       ]
