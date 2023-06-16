@@ -107,6 +107,7 @@ class StartupDSIUN:
             if self.check_version():
                 profile_name = self.get_current_profile_name()
                 if profile_name in profiles:
+                    self.add_custom_env_vars()
                     self.check_repo()
                     self.install_plugins()
                     self.get_catalog_config()
@@ -617,6 +618,32 @@ class StartupDSIUN:
                 if svg_path not in qgs_svg_paths:
                     qgs_svg_paths.append(svg_path)
                     QgsApplication.setDefaultSvgPaths(qgs_svg_paths)
+
+    def add_custom_env_vars(self):
+        self.log("Définition des variables d'environnement personnalisées", Qgis.Info)
+        custom_env_vars = self.env_config.get("custom_env_vars", [])
+
+        for var in custom_env_vars:
+            var_name = var.get("name", "")
+            var_value = var.get("value", "")
+            var_domains = [x.lower() for x in var.get("domains", [])]
+            var_users = [x.lower() for x in var.get("users", [])]
+
+            if var_name and self.check_users_and_domains(var_users, var_domains):
+                s = QgsSettings()
+                s.beginGroup('qgis')
+
+                current_custom_vars = s.value("customEnvVars")
+                new_custom_vars = []
+
+                for current_var in current_custom_vars:
+                    if "|" + var_name + "=" not in current_var:
+                        new_custom_vars.append(current_var)
+
+                new_custom_vars.append("overwrite|%s=%s" % (var_name, var_value))
+
+                s.setValue("customEnvVars", new_custom_vars)
+
 
 
     def check_json(self):
