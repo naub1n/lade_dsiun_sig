@@ -19,6 +19,7 @@ services:
     restart: always
     environment:
       <<: *qwc-service-variables
+      QGIS_AUTH_PASSWORD_FILE: /var/lib/qgis/password.txt
     ports:
       - 8081:80
     volumes:
