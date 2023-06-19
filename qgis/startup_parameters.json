@@ -216,7 +216,7 @@
           "name": "QGIS_PLUGINPATH",
           "value": "\\\\domntade.eaurmc.fr\\aermc\\applis\\SIG\\_Commun_sig\\QGis\\plugins_rmc",
           "domains": ["domntade"],
-          "users": ["aubin_ni"]
+          "users": [""]
         }
       ]
     },
