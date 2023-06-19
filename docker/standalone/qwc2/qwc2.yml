@@ -19,6 +19,8 @@ services:
     restart: always
     environment:
       <<: *qwc-service-variables
+    ports:
+      - 8081:80
     volumes:
       - /app/qwc2/qgs-resources:/data:ro
       - /app/qwc2/pg_services:/etc/postgresql-common:ro
