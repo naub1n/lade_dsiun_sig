@@ -19,13 +19,12 @@ services:
     restart: always
     environment:
       <<: *qwc-service-variables
-      QGIS_AUTH_PASSWORD_FILE: /var/lib/qgis/password.txt
     ports:
       - 8081:80
     volumes:
       - /app/qwc2/qgs-resources:/data:ro
       - /app/qwc2/pg_services:/etc/postgresql-common:ro
-      - /app/qgis-server/conf:/etc/apache2/sites-enabled
+      - /app/qgis-server/conf:/etc/apache2/templates/
       - /etc/localtime:/etc/localtime:ro
       - /app/qgis-server/auth-db:/var/lib/qgis/
     labels:
