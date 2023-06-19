@@ -26,7 +26,7 @@ services:
       - /app/qwc2/pg_services:/etc/postgresql-common:ro
       - /app/qgis-server/conf:/etc/apache2/sites-enabled
       - /etc/localtime:/etc/localtime:ro
-      - /app/qgis-server/auth-db:/var/lib/qgis/profiles/default/qgs-server-auth-db
+      - /app/qgis-server/auth-db:/var/lib/qgis/
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.r_qwc2_qgsserver.rule=Host(`${TRAEFIK_QGISSERVER_HOST}`)"
