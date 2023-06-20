@@ -19,8 +19,6 @@ services:
     restart: always
     environment:
       <<: *qwc-service-variables
-    ports:
-      - 8081:80
     volumes:
       - /app/qwc2/qgs-resources:/data:ro
       - /app/qwc2/pg_services:/etc/postgresql-common:ro
@@ -29,7 +27,7 @@ services:
       - /app/qgis-server/auth-db:/var/lib/qgis/auth
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.r_qwc2_qgsserver.rule=Host(`${TRAEFIK_QGISSERVER_HOST}`)"
+      - "traefik.http.routers.r_qwc2_qgsserver.rule=HostRegexp(`{name:${TRAEFIK_QWC2_HOST_REGEX}}`) && PathPrefix(`/cgi-bin`)"
       - "traefik.http.routers.r_qwc2_qgsserver.priority=10"
       #- "traefik.http.routers.r_qwc2_qgsserver.entrypoints=web"
       - "traefik.http.routers.r_qwc2_qgsserver.entrypoints=websecure"
