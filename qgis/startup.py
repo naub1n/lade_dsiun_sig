@@ -772,10 +772,10 @@ class StartupDSIUN:
             s.endGroup()
 
         for key, project in enumerate(projects, start=start):
-            s.setValue("projects/%s/%s" %s (key, "file"), project.get("file", ""))
-            s.setValue("projects/%s/%s" % s(key, "location"), project.get("location", ""))
-            s.setValue("projects/%s/%s" % s(key, "name"), project.get("name", ""))
-            s.setValue("projects/%s/%s" % s(key, "type_storage"), project.get("type_storage", ""))
+            s.setValue("projects/%s/%s" % (key, "file"), project.get("file", ""))
+            s.setValue("projects/%s/%s" % (key, "location"), project.get("location", ""))
+            s.setValue("projects/%s/%s" % (key, "name"), project.get("name", ""))
+            s.setValue("projects/%s/%s" % (key, "type_storage"), project.get("type_storage", ""))
 
         s.beginGroup("projects")
         s.setValue("size" , len(s.childGroups()))

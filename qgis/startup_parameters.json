@@ -63,7 +63,7 @@
                 "optionLoadAll": true,
                 "optionSourceMD": "ogc"
               },
-              "replace_projects": false,
+              "replace_projects": true,
               "projects": [
                 {
                   "file": "C:/Users/aubin_ni/Desktop/Gaulois.qgz",
