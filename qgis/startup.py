@@ -157,27 +157,36 @@ class StartupDSIUN:
     def install_plugins(self):
         self.log("Vérification des plugins requis ...", Qgis.Info)
         try:
-            plugins_dsiun = self.env_config.get("plugins", {}).get("plugins_names", [])
+            plugins = []
+            plugins_items = self.env_config.get("plugins", {}).get("plugins_names", [])
+            # Ajout des plugins dans la liste de ceux à installer sur l'utilisateur fait partie du bon domain
+            for item in plugins_items:
+                plugins_list = item.get("names", [])
+                plugins_domains = [x.lower() for x in item.get("domains", [])]
+                plugins_users = [x.lower() for x in item.get("users", [])]
+                if self.check_users_and_domains(plugins_users, plugins_domains):
+                    plugins.extend(plugins_list)
+
             available_plugins_keys = self.plugins_data.all().keys()
             upgradable_plugins_keys = self.plugins_data.allUpgradeable().keys()
 
             errors = False
 
-            for plugin_dsiun in plugins_dsiun:
+            for plugin in plugins:
 
-                if plugin_dsiun in available_plugins_keys:
+                if plugin in available_plugins_keys:
 
-                    is_installed = self.plugins_data.all()[plugin_dsiun]['installed']
-                    is_upgradable = plugin_dsiun in upgradable_plugins_keys
+                    is_installed = self.plugins_data.all()[plugin]['installed']
+                    is_upgradable = plugin in upgradable_plugins_keys
 
                     if not is_installed or is_upgradable:
-                        self.log("Installation/Mise à jour du paquet %s" % str(plugin_dsiun), Qgis.Info)
-                        self.pyplugin_inst.installPlugin(plugin_dsiun)
+                        self.log("Installation/Mise à jour du paquet %s" % str(plugin), Qgis.Info)
+                        self.pyplugin_inst.installPlugin(plugin)
                     else:
-                        self.log("Le paquet %s est installé et à jour" % str(plugin_dsiun), Qgis.Info)
+                        self.log("Le paquet %s est installé et à jour" % str(plugin), Qgis.Info)
                 else:
                     errors = True
-                    self.log("Le paquet %s est indisponible" % str(plugin_dsiun), Qgis.Critical)
+                    self.log("Le paquet %s est indisponible" % str(plugin), Qgis.Critical)
 
             if not errors:
                 self.log("Vérification des plugins - OK", Qgis.Info)
