@@ -36,6 +36,46 @@
             "domains": [""],
             "users": [""]
           }
+        ],
+        "configs": [
+          {
+            "plugin_name": "custom_catalog",
+            "config": {
+              "catalogs": [
+                {
+                  "name": "Catalogue DSIUN",
+                  "type": "json",
+                  "link": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/developpement/qgis/catalogues/dsiun.json",
+                  "qgisauthconfigid": ""
+                }
+              ]
+            },
+            "domains": [""],
+            "users": ["aubin_ni"]
+          },
+          {
+            "plugin_name": "menu_from_project",
+            "config": {
+              "options": {
+                "is_setup_visible": true,
+                "optionTooltip": true,
+                "optionCreateGroup": false,
+                "optionLoadAll": true,
+                "optionSourceMD": "ogc"
+              },
+              "replace_projects": false,
+              "projects": [
+                {
+                  "file": "C:/Users/aubin_ni/Desktop/Gaulois.qgz",
+                  "location": "new",
+                  "name": "Gaulois",
+                  "type_storage": "file"
+                }
+              ]
+            },
+            "domains": [""],
+            "users": ["aubin_ni"]
+          }
         ]
       },
       "catalogs": [

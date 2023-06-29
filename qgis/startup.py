@@ -109,9 +109,9 @@ class StartupDSIUN:
                 if profile_name in profiles:
                     self.add_custom_env_vars()
                     self.check_repo()
-                    self.install_plugins()
-                    self.get_catalog_config()
                     self.check_auth_cfg()
+                    self.install_plugins()
+                    self.set_plugins_config()
                     self.add_db_connections()
                     self.add_favorites()
                     self.add_wfs_connections()
@@ -193,6 +193,23 @@ class StartupDSIUN:
         except Exception as e:
             self.log("Erreur lors l'installation ou les mise à jour des plugins : %s" % str(e), Qgis.Critical)
 
+    def set_plugins_config(self):
+        self.log("Configuration des plugins", Qgis.Info)
+        plugins_configs = self.env_config.get("plugins", {}).get("configs", [])
+        for config in plugins_configs:
+            plugin_name = config.get("plugin_name", "")
+            plugin_config_domains = [x.lower() for x in config.get("domains", [])]
+            plugin_config_users = [x.lower() for x in config.get("users", [])]
+
+            if self.check_users_and_domains(plugin_config_users, plugin_config_domains):
+                if plugin_name == "custom_catalog":
+                    catalogs = config.get("config", {}).get("catalogs", [])
+                    self.get_catalog_config(catalogs)
+
+                if plugin_name == "menu_from_project":
+                    self.set_menu_from_project_config(config.get("config", {}))
+
+
     def get_current_customcatalog_settings(self):
         s = QgsSettings()
         s.beginGroup("CustomCatalog/catalogs")
@@ -222,8 +239,8 @@ class StartupDSIUN:
             s.setValue("catalogs/%s/link" % key, catalog.get("link", ""))
             s.setValue("catalogs/%s/qgisauthconfigid" % key, catalog.get("qgisauthconfigid", ""))
 
-    def get_catalog_config(self):
-        self.log("Paramétrage du catalogue des AE ...", Qgis.Info)
+    def get_catalog_config(self, catalogs):
+        self.log("Paramétrage du plugin custom_catalog", Qgis.Info)
         try:
             plugin_name = self.plugin_custom_catalog
             # Vérification de la disponibilité du plugin
@@ -239,7 +256,7 @@ class StartupDSIUN:
                             del catalog_settings['catalogs'][index]
                             break
 
-                    for catalog in self.catalogs:
+                    for catalog in catalogs:
                         new_catalog_name = catalog.get("name", "")
                         new_catalog_data = {
                             "name": new_catalog_name,
@@ -729,6 +746,43 @@ class StartupDSIUN:
             return True
         else:
             return False
+
+    def set_menu_from_project_config(self, config):
+        self.log("Paramétrage du plugin menu_from_project", Qgis.Info)
+
+        options = config.get("options", {})
+
+        s = QgsSettings()
+        s.beginGroup('menu_from_project')
+
+        s.setValue("is_setup_visible", options.get("is_setup_visible", True))
+        s.setValue("optionTooltip", options.get("optionTooltip", True))
+        s.setValue("optionCreateGroup", options.get("optionCreateGroup", False))
+        s.setValue("optionLoadAll", options.get("optionLoadAll", False))
+        s.setValue("optionSourceMD", options.get("optionSourceMD", "ogc"))
+
+        projects = config.get("projects", [])
+
+        if config.get("replace_projects", False):
+            s.remove("projects")
+            start = 1
+        else:
+            s.beginGroup("projects")
+            start = len(s.childGroups()) + 1
+            s.endGroup()
+
+        for key, project in enumerate(projects, start=start):
+            s.setValue("projects/%s/%s" %s (key, "file"), project.get("file", ""))
+            s.setValue("projects/%s/%s" % s(key, "location"), project.get("location", ""))
+            s.setValue("projects/%s/%s" % s(key, "name"), project.get("name", ""))
+            s.setValue("projects/%s/%s" % s(key, "type_storage"), project.get("type_storage", ""))
+
+        s.beginGroup("projects")
+        s.setValue("size" , len(s.childGroups()))
+
+
+
+
 
 
 
