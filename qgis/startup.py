@@ -823,7 +823,7 @@ class StartupDSIUN:
                 for setting in settings:
                     setting_path = setting.get("path", "")
                     setting_value = setting.get("value", "")
-                    if setting_path and setting_value:
+                    if setting_path:
                         s.setValue(setting_path, setting_value)
 
 
