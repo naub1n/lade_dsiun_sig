@@ -650,6 +650,10 @@ class StartupDSIUN:
         self.log("Définition des variables d'environnement personnalisées", Qgis.Info)
         custom_env_vars = self.env_config.get("custom_env_vars", [])
 
+        s = QgsSettings()
+        s.beginGroup('qgis')
+        s.setValue("customEnvVarsUse", True)
+
         for var in custom_env_vars:
             var_name = var.get("name", "")
             var_value = var.get("value", "")
@@ -657,9 +661,6 @@ class StartupDSIUN:
             var_users = [x.lower() for x in var.get("users", [])]
 
             if var_name and self.check_users_and_domains(var_users, var_domains):
-                s = QgsSettings()
-                s.beginGroup('qgis')
-
                 current_custom_vars = s.value("customEnvVars", [])
                 if isinstance(current_custom_vars, str):
                     current_custom_vars = [current_custom_vars]
