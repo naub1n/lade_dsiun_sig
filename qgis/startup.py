@@ -119,6 +119,7 @@ class StartupDSIUN:
                     self.add_layout_templates()
                     self.add_svg_paths()
                     self.set_default_crs()
+                    self.set_global_settings()
                     self.check_profiles()
                 else:
                     self.check_profiles()
@@ -805,6 +806,26 @@ class StartupDSIUN:
         s.setValue("app/projections/unknownCrsBehavior", "UseDefaultCrs")
         s.setValue("app/projections/newProjectCrsBehavior", "UsePresetCrs")
         s.setValue("app/projections/crsAccuracyWarningThreshold", 0.0)
+
+    def set_global_settings(self):
+        self.log("Mise en place des paramètres globaux de QGIS", Qgis.Info)
+
+        global_settings = self.env_config.get("qgis", {}).get("global_settings", [])
+
+        s = QgsSettings()
+
+        for global_setting in global_settings:
+            settings = global_setting.get("settings", [])
+            settings_domains = [x.lower() for x in global_setting.get("domains", [])]
+            settings_users = [x.lower() for x in global_setting.get("users", [])]
+
+            if self.check_users_and_domains(settings_users, settings_domains):
+                for setting in settings:
+                    setting_path = setting.get("path", "")
+                    setting_value = setting.get("value", "")
+                    if setting_path and setting_value:
+                        s.setValue(setting_path, setting_value)
+
 
 
 # Lancement de la procédure

@@ -126,7 +126,23 @@
         }
       ],
       "qgis": {
-        "dsiun_version" : 32804
+        "dsiun_version" : 32804,
+        "global_settings": [
+          {
+            "settings": [
+              {
+                "path": "qgis/checkVersion",
+                "value": false
+              },
+              {
+                "path" : "core/NewsFeed/httpsfeedqgisorg/disabled",
+                "value": true
+              }
+            ],
+            "domains": [""],
+            "users": ["aubin_ni"]
+          }
+        ]
       },
       "db_connections": [
         {
@@ -277,6 +293,11 @@
           "path": "N:/Applis/SIG/_Commun_sig/QGis/svg",
           "domains": ["domntade"],
           "users": ["aubin_ni"]
+        },
+        {
+          "path": "R:/Espace_Correspondants_SIG/Astuces_Outils/SVG_symboles",
+          "domains": ["dag"],
+          "users": [""]
         }
       ],
       "custom_env_vars": [
