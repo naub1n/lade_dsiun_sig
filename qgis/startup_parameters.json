@@ -24,16 +24,29 @@
           },
           {
             "names": [
+              "menu_from_project",
+              "SpreadsheetLayers"
+            ],
+            "domains": ["dag"],
+            "users": [""]
+          },
+          {
+            "names": [
+              "searchlayers"
+            ],
+            "domains": ["aelb"],
+            "users": [""]
+          },
+          {
+            "names": [
               "Hotlink",
               "aeag",
               "aeag_search",
               "mask",
-              "SpreadsheetLayers",
-              "menu_from_project",
               "creer_menus",
               "MemoryLayerSaver"
             ],
-            "domains": [""],
+            "domains": ["dag"],
             "users": [""]
           }
         ],
@@ -66,34 +79,99 @@
               "replace_projects": true,
               "projects": [
                 {
-                  "file": "C:/Users/aubin_ni/Desktop/Gaulois.qgz",
+                  "file": "R:/Espace_Correspondants_SIG/Astuces_Outils/QGIS310_PLUGINS/DonneesAEAG_1.qgs",
                   "location": "new",
-                  "name": "Gaulois",
+                  "name": "DONNEES",
+                  "type_storage": "file"
+                },
+                {
+                  "file": "R:/Espace_Correspondants_SIG/Astuces_Outils/QGIS310_PLUGINS/DonneesAEAG_2.qgs",
+                  "location": "merge",
+                  "name": "DonneesAEAG_2",
+                  "type_storage": "file"
+                },
+                {
+                  "file": "R:/Espace_Correspondants_SIG/Astuces_Outils/QGIS310_PLUGINS/DonneesAEAG_3.qgs",
+                  "location": "merge",
+                  "name": "DonneesAEAG_3",
+                  "type_storage": "file"
+                },
+                {
+                  "file": "R:/Espace_Correspondants_SIG/Astuces_Outils/QGIS310_PLUGINS/DCE.qgs",
+                  "location": "new",
+                  "name": "DCE",
                   "type_storage": "file"
                 }
               ]
             },
-            "domains": [""],
-            "users": ["aubin_ni"]
+            "domains": ["dag"],
+            "users": [""]
           },
           {
             "plugin_name": "creer_menus",
             "config": {
               "fileMenus": "\\\\nas02\\groupe\\Refgeo\\Espace_Correspondants_SIG\\Astuces_Outils\\QGIS310_PLUGINS\\Menu_carte_AEAG_310.xml"
             },
-            "domains": [""],
-            "users": ["aubin_ni"]
+            "domains": ["dag"],
+            "users": [""]
+          },
+          {
+            "plugin_name": "menu_from_project",
+            "config": {
+              "options": {
+                "optionSourceMD": "ogc"
+              },
+              "replace_projects": true,
+              "projects": [
+                {
+                  "file": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/14_extension/layer_menu_from_projet/projet/projet_donnees_A_E.qgz",
+                  "location": "new",
+                  "name": "DONNEES",
+                  "type_storage": "file"
+                },
+                {
+                  "file": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/14_extension/layer_menu_from_projet/projet/projet_donnees_F_M.qgz",
+                  "location": "merge",
+                  "name": "projet_donnees_F_M",
+                  "type_storage": "file"
+                },
+                {
+                  "file": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/14_extension/layer_menu_from_projet/projet/projet_donnees_N_Q.qgz",
+                  "location": "merge",
+                  "name": "projet_donnees_N_Q",
+                  "type_storage": "file"
+                },
+                {
+                  "file": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/14_extension/layer_menu_from_projet/projet/projet_donnees_R_Z.qgz",
+                  "location": "merge",
+                  "name": "projet_donnees _R_Z",
+                  "type_storage": "file"
+                },
+                {
+                  "file": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/14_extension/layer_menu_from_projet/projet/projet_edl2019.qgz",
+                  "location": "new",
+                  "name": "EDL_2019",
+                  "type_storage": "file"
+                },
+                {
+                  "file": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/14_extension/layer_menu_from_projet/projet/projet_littoral.qgz",
+                  "location": "new",
+                  "name": "LITTORAL",
+                  "type_storage": "file"
+                },
+                {
+                  "file": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/14_extension/layer_menu_from_projet/projet/projet_geoservices.qgz",
+                  "location": "new",
+                  "name": "GEOSERVICES",
+                  "type_storage": "file"
+                }
+              ]
+            },
+            "domains": ["aelb"],
+            "users": [""]
           }
         ]
       },
-      "catalogs": [
-        {
-          "name": "Catalogue DSIUN",
-          "type": "json",
-          "link": "https://raw.githubusercontent.com/naub1n/lade_dsiun_sig/developpement/qgis/catalogues/dsiun.json",
-          "qgisauthconfigid": ""
-        }
-      ],
       "authentications": [
         {
           "id": "dsiun01",
@@ -122,6 +200,14 @@
           "user": "lecig",
           "pass": "leciglec",
           "domains": ["domntade"],
+          "users": ["aubin_ni"]
+        },
+        {
+          "id": "aelb001",
+          "name": "AELB - Consultation GeoDiff",
+          "user": "bdgeo_diff_visus",
+          "pass": "V1susPr0d",
+          "domains": ["aelb"],
           "users": ["aubin_ni"]
         }
       ],
@@ -207,6 +293,36 @@
           "dbname": "exig",
           "auth_id": "aermc01",
           "domains": ["domntade"],
+          "users": ["aubin_ni"]
+        },
+        {
+          "qgis_provider": "postgres",
+          "name": "AELB - Carto AELB - Consultation",
+          "host": "bdgeodiff.siege.aelb",
+          "port": "11410",
+          "dbname": "carto_aelb",
+          "auth_id": "aelb001",
+          "domains": ["aelb"],
+          "users": ["aubin_ni"]
+        },
+        {
+          "qgis_provider": "postgres",
+          "name": "AELB - Habillage - Consultation",
+          "host": "bdgeodiff.siege.aelb",
+          "port": "11410",
+          "dbname": "habillage",
+          "auth_id": "aelb001",
+          "domains": ["aelb"],
+          "users": ["aubin_ni"]
+        },
+        {
+          "qgis_provider": "postgres",
+          "name": "AELB - PSC - Consultation",
+          "host": "bdgeodiff.siege.aelb",
+          "port": "11410",
+          "dbname": "psc",
+          "auth_id": "aelb001",
+          "domains": ["aelb"],
           "users": ["aubin_ni"]
         }
       ],
