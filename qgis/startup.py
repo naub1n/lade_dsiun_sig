@@ -792,7 +792,7 @@ class StartupDSIUN:
 
         if file_menus:
             s = QgsSettings()
-            s.setValue("PluginCreerMenus/fileMenus", )
+            s.setValue("PluginCreerMenus/fileMenus", file_menus)
 
     def set_default_crs(self):
         self.log("Paramétrage du système de projection par défaut", Qgis.Info)
