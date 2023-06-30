@@ -131,7 +131,7 @@
           {
             "settings": [
               {
-                "path": "qgis/checkVersion",
+                "path": "qgis/allowVersionCheck",
                 "value": false
               },
               {
