@@ -77,7 +77,7 @@
             "users": ["aubin_ni"]
           },
           {
-            "plugin_name": "creer_menu",
+            "plugin_name": "creer_menus",
             "config": {
               "fileMenus": "\\\\nas02\\groupe\\Refgeo\\Espace_Correspondants_SIG\\Astuces_Outils\\QGIS310_PLUGINS\\Menu_carte_AEAG_310.xml"
             },
