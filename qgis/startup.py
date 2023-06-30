@@ -210,6 +210,9 @@ class StartupDSIUN:
                 if plugin_name == "menu_from_project":
                     self.set_menu_from_project_config(config.get("config", {}))
 
+                if plugin_name == "creer_menus":
+                    self.set_creer_menus_config(config.get("config", {}))
+
 
     def get_current_customcatalog_settings(self):
         s = QgsSettings()
@@ -781,6 +784,15 @@ class StartupDSIUN:
 
         s.beginGroup("projects")
         s.setValue("size" , len(s.childGroups()))
+
+    def set_creer_menus_config(self, config):
+        self.log("Paramétrage du plugin créer menu", Qgis.Info)
+
+        file_menus = config.get("fileMenus", "")
+
+        if file_menus:
+            s = QgsSettings()
+            s.setValue("PluginCreerMenus/fileMenus", )
 
     def set_default_crs(self):
         self.log("Paramétrage du système de projection par défaut", Qgis.Info)

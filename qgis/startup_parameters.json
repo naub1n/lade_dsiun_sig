@@ -75,6 +75,14 @@
             },
             "domains": [""],
             "users": ["aubin_ni"]
+          },
+          {
+            "plugin_name": "creer_menu",
+            "config": {
+              "fileMenus": "\\\\nas02\\groupe\\Refgeo\\Espace_Correspondants_SIG\\Astuces_Outils\\QGIS310_PLUGINS\\Menu_carte_AEAG_310.xml"
+            },
+            "domains": [""],
+            "users": ["aubin_ni"]
           }
         ]
       },
