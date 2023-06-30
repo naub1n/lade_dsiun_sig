@@ -118,6 +118,7 @@ class StartupDSIUN:
                     self.add_wms_connections()
                     self.add_layout_templates()
                     self.add_svg_paths()
+                    self.set_default_crs()
                     self.check_profiles()
                 else:
                     self.check_profiles()
@@ -780,10 +781,17 @@ class StartupDSIUN:
         s.beginGroup("projects")
         s.setValue("size" , len(s.childGroups()))
 
+    def set_default_crs(self):
+        self.log("Paramétrage du système de projection par défaut", Qgis.Info)
 
+        default_crs = self.env_config.get("default_crs", "EPSG:4326")
 
-
-
+        s = QgsSettings()
+        s.setValue("Projections/layerDefaultCrs", default_crs)
+        s.setValue("app/projections/defaultProjectCrs", default_crs)
+        s.setValue("app/projections/unknownCrsBehavior", "UseDefaultCrs")
+        s.setValue("app/projections/newProjectCrsBehavior", "UsePresetCrs")
+        s.setValue("app/projections/crsAccuracyWarningThreshold", 0.0)
 
 
 # Lancement de la procédure

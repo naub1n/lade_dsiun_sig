@@ -284,7 +284,8 @@
           "domains": ["dag"],
           "users": [""]
         }
-      ]
+      ],
+      "default_crs": "EPSG:2154"
     },
     {
       "env_name": "integration",
