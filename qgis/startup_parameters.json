@@ -135,6 +135,10 @@
                 "value": false
               },
               {
+                "path": "qgis/checkVersion",
+                "value": false
+              },
+              {
                 "path" : "core/NewsFeed/httpsfeedqgisorg/disabled",
                 "value": true
               }
