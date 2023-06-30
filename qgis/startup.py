@@ -5,6 +5,7 @@ import re
 import configparser
 import requests
 import pkg_resources
+import subprocess
 
 from qgis.core import (QgsSettings, QgsApplication, QgsAuthMethodConfig, QgsExpressionContextUtils,
                        QgsMessageLog, Qgis, QgsProviderRegistry, QgsDataSourceUri, QgsUserProfileManager,
@@ -324,8 +325,7 @@ class StartupDSIUN:
                             self.qt_auth_login.setPlaceholderText("Identifiant")
 
                             if self.auth_id in ["dsiun01"]:
-                                self.qt_auth_login.setText(
-                                    QgsExpressionContextUtils.globalScope().variable('user_account_name'))
+                                self.qt_auth_login.setText(self.get_user_email())
 
                             if auth_user:
                                 self.qt_auth_login.setText(auth_user)
@@ -825,6 +825,12 @@ class StartupDSIUN:
                     setting_value = setting.get("value", "")
                     if setting_path:
                         s.setValue(setting_path, setting_value)
+
+    def get_user_email(self):
+        if os.name == 'nt':
+            email = subprocess.check_output(['whoami', '/upn'], shell=True, universal_newlines=True).split('\n')[0]
+
+            return email
 
 
 
