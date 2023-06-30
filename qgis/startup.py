@@ -660,7 +660,7 @@ class StartupDSIUN:
                 s = QgsSettings()
                 s.beginGroup('qgis')
 
-                current_custom_vars = s.value("customEnvVars")
+                current_custom_vars = s.value("customEnvVars", [])
                 if isinstance(current_custom_vars, str):
                     current_custom_vars = [current_custom_vars]
 
