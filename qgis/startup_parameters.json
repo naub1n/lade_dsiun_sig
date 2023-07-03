@@ -27,7 +27,7 @@
               "menu_from_project",
               "SpreadsheetLayers"
             ],
-            "domains": ["dag"],
+            "domains": ["dag", "aelb"],
             "users": [""]
           },
           {
