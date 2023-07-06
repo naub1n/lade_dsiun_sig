@@ -227,6 +227,14 @@
               {
                 "path" : "core/NewsFeed/httpsfeedqgisorg/disabled",
                 "value": true
+              },
+              {
+                "path" : "qgis/stylesheet/fontPointSize",
+                "value": 8
+              },
+              {
+                "path" : "qgis/iconSize",
+                "value": 24
               }
             ],
             "domains": [""],
