@@ -9,16 +9,16 @@
       "$schema": "https://github.com/qwc-services/qwc-config-generator/raw/master/schemas/qwc-config-generator.json",
       "service": "config-generator",
       "config": {
-        "default_qgis_server_url": "http://qwc-qgis-server/ows/default/",
+        "default_qgis_server_url": "http://qwc-qgis-server/ows/%tenant%/",
         "config_db_url": "postgresql:///?service=qwc_configdb",
         "permissions_default_allow": true,
-        "qgis_projects_base_dir": "/data/default",
-        "qgis_projects_scan_base_dir": "/data/default/scan",
-        "qgis_projects_gen_base_dir": "/data/default/gen",
+        "qgis_projects_base_dir": "/data/%tenant%",
+        "qgis_projects_scan_base_dir": "/data/%tenant%/scan",
+        "qgis_projects_gen_base_dir": "/data/%tenant%/gen",
         "qwc2_base_dir": "/qwc2",
         "validate_schema": true,
         "autogen_keyvaltable_datasets": false,
-        "generate_wfs_services": false
+        "generate_wfs_services": true
       },
       "themesConfig": {
         "defaultBackgroundLayers":[
@@ -62,24 +62,24 @@
           "name": "mapViewer",
           "generator_config": {
             "qwc2_config": {
-              "qwc2_config_file": "/srv/qwc_service/config-in/default/config.json",
-              "qwc2_index_file": "/srv/qwc_service/config-in/default/index.html"
+              "qwc2_config_file": "/srv/qwc_service/config-in/%tenant%/config.json",
+              "qwc2_index_file": "/srv/qwc_service/config-in/%tenant%/index.html"
             }
           },
           "config": {
             "qwc2_path": "/qwc2/",
-            "auth_service_url": "/default/auth/",
-            "data_service_url": "/default/api/v1/data/",
-            "#document_service_url": "/default/api/v1/document/",
-            "elevation_service_url": "/default/elevation/",
-            "info_service_url": "/default/api/v1/featureinfo/",
-            "legend_service_url": "/default/api/v1/legend/",
-            "mapinfo_service_url": "/default/api/v1/mapinfo/",
-            "ogc_service_url": "/default/ows/",
-            "permalink_service_url": "/default/api/v1/permalink/",
-            "#print_service_url": "/default/api/v1/print/",
-            "search_service_url": "/default/api/v2/search/",
-            "search_data_service_url": "/default/api/v2/search/geom/"
+            "auth_service_url": "/auth/",
+            "data_service_url": "/%tenant%/api/v1/data/",
+            "#document_service_url": "/%tenant%/api/v1/document/",
+            "elevation_service_url": "/%tenant%/elevation/",
+            "info_service_url": "/%tenant%/api/v1/featureinfo/",
+            "legend_service_url": "/%tenant%/api/v1/legend/",
+            "mapinfo_service_url": "/%tenant%/api/v1/mapinfo/",
+            "ogc_service_url": "/%tenant%/ows/",
+            "permalink_service_url": "/%tenant%/api/v1/permalink/",
+            "#print_service_url": "/%tenant%/api/v1/print/",
+            "search_service_url": "/%tenant%/api/v2/search/",
+            "search_data_service_url": "/%tenant%/api/v2/search/geom/"
           }
         },
         {
@@ -94,7 +94,7 @@
           "name": "print",
           "config": {
             "ogc_service_url": "http://qwc-ogc-service:9090/",
-            "qgis_server_version": "3.16"
+            "qgis_server_version": "3.28"
           }
         },
         {
@@ -148,7 +148,7 @@
             "proxy_url_whitelist": [],
             "proxy_timeout": 60,
         "plugins": ["themes"],
-        "input_config_path": "/srv/qwc_service/config-in/default",
+        "input_config_path": "/srv/qwc_service/config-in/%tenant%",
         "qgs_resources_path": "/data",
         "ogc_service_url": "http://qwc-ogc-service:9090/"
           }
@@ -998,55 +998,31 @@
   },
   "specific_configs": [
     {
-      "tenant": "aesn",
-      "config-generator-service": {
-        "config": {
-          "default_qgis_server_url": "http://qwc-qgis-server/ows/aesn/",
-          "qgis_projects_base_dir": "/data/aesn",
-          "qgis_projects_scan_base_dir": "/data/aesn/scan",
-          "qgis_projects_gen_base_dir": "/data/aesn/gen"
-        },
-        "themesConfig": {
-
-        },
-        "services" : [
-          {
-            "name": "mapViewer",
-            "generator_config": {
-              "qwc2_config": {
-                "qwc2_config_file": "/srv/qwc_service/config-in/aesn/config.json",
-                "qwc2_index_file": "/srv/qwc_service/config-in/aesn/index.html"
-              }
-            },
-            "config": {
-              "qwc2_path": "/qwc2/",
-              "auth_service_url": "/aesn/auth/",
-              "data_service_url": "/aesn/api/v1/data/",
-              "#document_service_url": "/aesn/api/v1/document/",
-              "elevation_service_url": "/aesn/elevation/",
-              "info_service_url": "/aesn/api/v1/featureinfo/",
-              "legend_service_url": "/aesn/api/v1/legend/",
-              "mapinfo_service_url": "/aesn/api/v1/mapinfo/",
-              "ogc_service_url": "/aesn/ows/",
-              "permalink_service_url": "/aesn/api/v1/permalink/",
-              "#print_service_url": "/aesn/api/v1/print/",
-              "search_service_url": "/aesn/api/v2/search/",
-              "search_data_service_url": "/aesn/api/v2/search/geom/"
-            }
-          }
-        ]
-      },
-      "qwc2config": {
-
-      }
+      "tenant": "aeag"
     },
-	{
-	  "tenant": "default",
-    "config-generator-service": {
-      "config": {
-        "generate_wfs_services": true
-      }
+    {
+      "tenant": "aeap"
+    },
+    {
+      "tenant": "aelb"
+    },
+    {
+      "tenant": "aerm"
+    },
+    {
+      "tenant": "aermc"
+    },
+    {
+      "tenant": "aesn"
+    },
+    {
+      "tenant": "commun"
+    },
+    {
+      "tenant": "default"
+    },
+    {
+      "tenant": "dsiun"
     }
-	}
   ]
 }
