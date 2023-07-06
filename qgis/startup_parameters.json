@@ -237,8 +237,8 @@
                 "value": 24
               }
             ],
-            "domains": [""],
-            "users": ["aubin_ni"]
+            "domains": ["all"],
+            "users": []
           }
         ]
       },
