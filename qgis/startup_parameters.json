@@ -7,9 +7,14 @@
       "profile_default": false,
       "network_drives": [
         {
-          "drives": [ "X:\\", "R:\\"],
+          "drives": ["X:\\", "R:\\"],
           "domains": [""],
           "users": ["aubin_ni"]
+        },
+        {
+          "drives": ["W:\\"],
+          "domains": ["aelb"],
+          "users": [""]
         }
       ],
       "plugins": {
