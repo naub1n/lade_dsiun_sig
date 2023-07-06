@@ -5,6 +5,13 @@
       "env_name": "developpement",
       "profile_name": "DSIUN_dev",
       "profile_default": false,
+      "network_drives": [
+        {
+          "drives": [ "X:\\", "R:\\"],
+          "domains": [""],
+          "users": ["aubin_ni"]
+        }
+      ],
       "plugins": {
         "repositories": [
           {
