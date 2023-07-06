@@ -109,6 +109,7 @@ class StartupDSIUN:
                 profile_name = self.get_current_profile_name()
                 if profile_name in profiles:
                     self.add_custom_env_vars()
+                    self.open_network_drives()
                     self.check_repo()
                     self.check_auth_cfg()
                     self.install_plugins()
@@ -831,6 +832,21 @@ class StartupDSIUN:
             email = subprocess.check_output(['whoami', '/upn'], shell=True, universal_newlines=True).split('\n')[0]
 
             return email
+
+    def open_network_drives(self):
+        self.log("Ouverture des lecteurs réseau pour les activer.", Qgis.Info)
+
+        network_drives = self.env_config.get("network_drives", [])
+
+        for nd in network_drives:
+            drives = nd.get("drives", [])
+            nd_domains = [x.lower() for x in nd.get("domains", [])]
+            nd_users = [x.lower() for x in nd.get("users", [])]
+
+            if self.check_users_and_domains(nd_users, nd_domains):
+                for d in drives:
+                    subprocess.run("explorer %s" % d)
+                    subprocess.run(["C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe","-Command",'(New-Object -ComObject Shell.Application).Windows() | Where-Object{$_.Document.Folder.Self.Path -eq "%s" } | ForEach-Object{ $_.Quit() }' % d], shell=True)
 
 
 
