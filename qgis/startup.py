@@ -845,7 +845,7 @@ class StartupDSIUN:
 
             if self.check_users_and_domains(nd_users, nd_domains):
                 for d in drives:
-                    subprocess.run("explorer %s" % d)
+                    subprocess.run(["start","/min", "explorer", "%s" % d], shell=True)
                     subprocess.run(["C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe","-Command",'(New-Object -ComObject Shell.Application).Windows() | Where-Object{$_.Document.Folder.Self.Path -eq "%s" } | ForEach-Object{ $_.Quit() }' % d], shell=True)
 
 
