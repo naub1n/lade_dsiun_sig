@@ -450,6 +450,19 @@
           "users": [""]
         }
       ],
+      "color_schemes": [
+        {
+          "name": "Test",
+          "colors": [
+            {
+              "code": "#5555FF",
+              "name": "Light blueeee"
+            }
+          ],
+          "domains": [""],
+          "users": ["aubin_ni"]
+        }
+      ],
       "default_crs": "EPSG:2154"
     },
     {
