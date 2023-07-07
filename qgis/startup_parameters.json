@@ -452,11 +452,31 @@
       ],
       "color_schemes": [
         {
-          "name": "Test",
+          "name": "Etat écologique de surface",
           "colors": [
             {
-              "code": "#5555FF",
-              "name": "Light blueeee"
+              "code": "#19d9cc",
+              "name": "Très bon état"
+            },
+            {
+              "code": "#66e680",
+              "name": "Bon état"
+            },
+            {
+              "code": "#ffe659",
+              "name": "Etat moyen"
+            },
+            {
+              "code": "#ff9900",
+              "name": "Etat médiocre"
+            },
+            {
+              "code": "#ff0000",
+              "name": "Très bon état"
+            },
+            {
+              "code": "#b2b2b2",
+              "name": "Etat indéterminé"
             }
           ],
           "domains": [""],
