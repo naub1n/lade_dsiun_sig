@@ -479,7 +479,7 @@
               "name": "Etat indéterminé"
             }
           ],
-          "domains": [""],
+          "domains": ["aelb"],
           "users": ["aubin_ni"]
         },
         {
@@ -498,7 +498,7 @@
               "name": "Etat indéterminé"
             }
           ],
-          "domains": [""],
+          "domains": ["aelb"],
           "users": ["aubin_ni"]
         },
         {
@@ -517,7 +517,7 @@
               "name": "Etat indéterminé"
             }
           ],
-          "domains": [""],
+          "domains": ["aelb"],
           "users": ["aubin_ni"]
         },
         {
@@ -540,7 +540,7 @@
               "name": "Pas d'information"
             }
           ],
-          "domains": [""],
+          "domains": ["aelb"],
           "users": ["aubin_ni"]
         },
         {
@@ -571,7 +571,7 @@
               "name": "Non qualifiée"
             }
           ],
-          "domains": [""],
+          "domains": ["aelb"],
           "users": ["aubin_ni"]
         }
       ],
