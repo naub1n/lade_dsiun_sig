@@ -9,9 +9,10 @@ import subprocess
 
 from qgis.core import (QgsSettings, QgsApplication, QgsAuthMethodConfig, QgsExpressionContextUtils,
                        QgsMessageLog, Qgis, QgsProviderRegistry, QgsDataSourceUri, QgsUserProfileManager,
-                       QgsFavoritesItem)
+                       QgsFavoritesItem, QgsColorScheme, QgsColorSchemeRegistry)
 from qgis.PyQt import QtWidgets
 from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QColor
 from qgis.utils import iface
 from pyplugin_installer.installer_data import repositories, plugins, reposGroup
 
@@ -122,6 +123,7 @@ class StartupDSIUN:
                     self.add_svg_paths()
                     self.set_default_crs()
                     self.set_global_settings()
+                    self.add_colors()
                     self.check_profiles()
                 else:
                     self.check_profiles()
@@ -848,7 +850,47 @@ class StartupDSIUN:
                     subprocess.run(["start","/min", "explorer", "%s" % d], shell=True)
                     subprocess.run(["C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe","-Command",'(New-Object -ComObject Shell.Application).Windows() | Where-Object{$_.Document.Folder.Self.Path -eq "%s" } | ForEach-Object{ $_.Quit() }' % d], shell=True)
 
+    def add_colors(self):
+        self.log("Ajout des palettes de couleurs", Qgis.Info)
 
+        color_schemes = self.env_config.get("color_schemes", [])
+
+        for color_scheme in color_schemes:
+            cs_name = color_scheme.get("name", "")
+            cs_colors = color_scheme.get("colors", [])
+            cs_domains = [x.lower() for x in color_scheme.get("domains", [])]
+            cs_users = [x.lower() for x in color_scheme.get("users", [])]
+
+            if self.check_users_and_domains(cs_users, cs_domains):
+                new_color_scheme = NewColorScheme(name=cs_name, json_colors=cs_colors)
+                csr = QgsApplication.colorSchemeRegistry()
+                csr.addColorScheme(new_color_scheme)
+
+class NewColorScheme(QgsColorScheme):
+    def __init__(self, parent=None, name="", json_colors=[]):
+        QgsColorScheme.__init__(self)
+        self.name = name
+        self.colors = json_colors
+
+    def schemeName(self):
+        return self.name
+
+    def fetchColors(self,context='', basecolor=QColor()):
+        new_colors = []
+        for color in self.colors:
+            new_color = []
+            new_color.append(QColor(color.get("code", "#FFFFFF")))
+            new_color.append(color.get("name", "unknown"))
+
+            new_colors.append(new_color)
+
+        return new_colors
+
+    def flags(self):
+        return QgsColorScheme.ShowInAllContexts
+
+    def clone(self):
+        return NewColorScheme()
 
 # Lancement de la procédure
 startup = StartupDSIUN()
