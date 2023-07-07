@@ -472,11 +472,103 @@
             },
             {
               "code": "#ff0000",
-              "name": "Très bon état"
+              "name": "Mauvais état"
             },
             {
               "code": "#b2b2b2",
               "name": "Etat indéterminé"
+            }
+          ],
+          "domains": [""],
+          "users": ["aubin_ni"]
+        },
+        {
+          "name": "Etat chimique de surface",
+          "colors": [
+            {
+              "code": "#19d9cc",
+              "name": "Bon état"
+            },
+            {
+              "code": "#ff0000",
+              "name": "Mauvais état"
+            },
+            {
+              "code": "#b2b2b2",
+              "name": "Etat indéterminé"
+            }
+          ],
+          "domains": [""],
+          "users": ["aubin_ni"]
+        },
+        {
+          "name": "Etat chimique souterrain",
+          "colors": [
+            {
+              "code": "#66e680",
+              "name": "Bon état"
+            },
+            {
+              "code": "#ff0000",
+              "name": "Etat médiocre"
+            },
+            {
+              "code": "#b2b2b2",
+              "name": "Etat indéterminé"
+            }
+          ],
+          "domains": [""],
+          "users": ["aubin_ni"]
+        },
+        {
+          "name": "Niveau de confiance de l'état",
+          "colors": [
+            {
+              "code": "#8Bff4d",
+              "name": "Elevé"
+            },
+            {
+              "code": "#e7f2b3",
+              "name": "Moyen"
+            },
+            {
+              "code": "#ff80bf",
+              "name": "Faible"
+            },
+            {
+              "code": "#b2b2b2",
+              "name": "Pas d'information"
+            }
+          ],
+          "domains": [""],
+          "users": ["aubin_ni"]
+        },
+        {
+          "name": "Pression à l'origine du risque",
+          "colors": [
+            {
+              "code": "#4c0073",
+              "name": "Très forte"
+            },
+            {
+              "code": "#8400a8",
+              "name": "Forte"
+            },
+            {
+              "code": "#c500ff",
+              "name": "Moyenne"
+            },
+            {
+              "code": "#df73ff",
+              "name": "Faible"
+            },
+            {
+              "code": "#e8beff",
+              "name": "Très faible"
+            },
+            {
+              "code": "#c8c8c8",
+              "name": "Non qualifiée"
             }
           ],
           "domains": [""],
