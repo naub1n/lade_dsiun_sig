@@ -133,7 +133,7 @@
               "options": {
                 "optionSourceMD": "ogc"
               },
-              "replace_projects": true,
+              "replace_projects": false,
               "projects": [
                 {
                   "file": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/14_extension/layer_menu_from_projet/projet/projet_donnees_A_E.qgz",
