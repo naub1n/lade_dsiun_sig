@@ -772,15 +772,38 @@ class StartupDSIUN:
 
         projects = config.get("projects", [])
 
-        if config.get("replace_projects", False):
-            s.remove("projects")
-            start = 1
-        else:
-            s.beginGroup("projects")
-            start = len(s.childGroups()) + 1
-            s.endGroup()
+        # Liste des noms de projets à ajouter (ils seront placés au début)
+        project_names = []
+        for project in projects:
+            project_names.append(project.get("name", ""))
 
-        for key, project in enumerate(projects, start=start):
+        # Lecture des projets existants
+        current_projects = []
+        cs = QgsSettings()
+        cs.beginGroup('menu_from_project')
+        cs.beginGroup("projects")
+        for current_project_id in cs.childGroups():
+            cs.beginGroup(current_project_id)
+            # Si le nom du projet ne fait pas partie de ceux à ajouter alors il est conservé
+            cpn = cs.value("name")
+            if not cpn in project_names:
+                project = {
+                    "file": cs.value("file"),
+                    "location": cs.value("location"),
+                    "name": cpn,
+                    "type_storage": cs.value("type_storage")
+                }
+                current_projects.append(project)
+                self.log("Le projet '%s' est conservé" % cpn, Qgis.Info)
+
+            cs.endGroup()
+
+        s.remove("projects")
+
+        if not config.get("replace_projects", False):
+            projects.extend(current_projects)
+
+        for key, project in enumerate(projects, start=1):
             s.setValue("projects/%s/%s" % (key, "file"), project.get("file", ""))
             s.setValue("projects/%s/%s" % (key, "location"), project.get("location", ""))
             s.setValue("projects/%s/%s" % (key, "name"), project.get("name", ""))
