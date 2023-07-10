@@ -180,7 +180,7 @@
               ]
             },
             "domains": ["aelb"],
-            "users": [""]
+            "users": ["aubin_ni"]
           }
         ]
       },
