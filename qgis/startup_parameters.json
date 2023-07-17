@@ -396,19 +396,19 @@
         },
         {
           "name": "IGN - Géoplateforme - WMTS",
-          "url": "https://wmts.geopf.fr/rok4/wmts?",
+          "url": "https://wmts.geopf.fr/rok4/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetCapabilities",
           "domains": ["all"],
           "users": ["aubin_ni"]
         },
         {
           "name": "IGN - Géoplateforme - WMS Raster",
-          "url": "https://wms-r.geopf.fr/rok4/wms?",
+          "url": "https://wms-r.geopf.fr/rok4/wms?SERVICE=WMS&VERSION=1.3.0",
           "domains": ["all"],
           "users": [""]
         },
         {
           "name": "IGN - Géoplateforme - WMS Vecteur",
-          "url": "https://wms-v.geopf.fr/geoserver/ows?",
+          "url": "https://wms-v.geopf.fr/geoserver/ows?SERVICE=WMS&VERSION=1.3.0",
           "domains": ["all"],
           "users": [""]
         },
