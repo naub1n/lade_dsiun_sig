@@ -371,7 +371,7 @@
           "url": "https://services.sandre.eaufrance.fr/geo/sandre",
           "version" : "2.0.0",
           "domains": ["all"],
-          "users": ["aubin_ni"]
+          "users": [""]
         },
         {
           "name": "AESN - ArcGIS Server",
@@ -386,7 +386,7 @@
           "name": "IGN - Essentiels",
           "url" : "https://wxs.ign.fr/essentiels/geoportail/r/wms?",
           "domains": ["all"],
-          "users": ["aubin_ni"]
+          "users": [""]
         },
         {
           "name": "AEAP - Portail de bassin",
@@ -404,19 +404,19 @@
           "name": "IGN - Géoplateforme - WMS Raster",
           "url": "https://wms-r.geopf.fr/rok4/wms?",
           "domains": ["all"],
-          "users": ["aubin_ni"]
+          "users": [""]
         },
         {
-          "name": "IGN - Géoplateforme - WMS Raster",
+          "name": "IGN - Géoplateforme - WMS Vecteur",
           "url": "https://wms-v.geopf.fr/geoserver/ows?",
           "domains": ["all"],
-          "users": ["aubin_ni"]
+          "users": [""]
         },
         {
           "name": "SANDRE",
           "url": "https://services.sandre.eaufrance.fr/geo/sandre",
           "domains": ["all"],
-          "users": ["aubin_ni"]
+          "users": [""]
         }
       ],
       "composer_templates": [
