@@ -5,8 +5,8 @@ x-qwc-service-variables: &qwc-service-variables
   JWT_COOKIE_CSRF_PROTECT: 'True'
   # Set these to override the UID/GID which runs uwsgi. Useful to ensure uwsgi runs under the same user/group
   # which owns the shared volumes on host, avoiding the need to change the ownership/permissions of those files/folders.
-  SERVICE_UID: ${UID}
-  SERVICE_GID: ${GID}
+  SERVICE_UID: ${SERVICE_UID}
+  SERVICE_GID: ${SERVICE_GID}
   PGSERVICEFILE: "/srv/pg_services/pg_service.conf"
   #TENANT_URL_RE: ${QWC2_TENANT_URL_RE}
   #TENANT_URL_RE: ^https?://.+?/(.+?)/
@@ -22,11 +22,11 @@ services:
     environment:
       <<: *qwc-service-variables
     volumes:
-      - /app/qwc2/qgs-resources:/data:ro
-      - /app/qwc2/pg_services:/etc/postgresql-common:ro
-      - /app/qgis-server/conf:/etc/apache2/templates/
+      - ${QWC2_APP_PATH}/qgs-resources:/data:ro
+      - ${QWC2_APP_PATH}/pg_services:/etc/postgresql-common:ro
+      - ${QWC2_QGISSERVER_PATH}/conf:/etc/apache2/templates/
       - /etc/localtime:/etc/localtime:ro
-      - /app/qgis-server/auth-db:/var/lib/qgis/auth
+      - ${QWC2_QGISSERVER_PATH/auth-db:/var/lib/qgis/auth
 
 
   qwc-global-config-service:
@@ -36,7 +36,7 @@ services:
       <<: *qwc-service-variables
       INPUT_CONFIG_PATH: '/srv/qwc_service/config-in'
     volumes:
-      - /app/qwc2/config-in:/srv/qwc_service/config-in
+      - ${QWC2_APP_PATH}/config-in:/srv/qwc_service/config-in
 
   qwc-config-service:
     image: sourcepole/qwc-config-generator:v2023.06.15
@@ -49,11 +49,11 @@ services:
       OUTPUT_CONFIG_PATH: '/srv/qwc_service/config-out'
       GENERATE_DYNAMIC_KVRELS: 1
     volumes:
-      - /app/qwc2/config-in:/srv/qwc_service/config-in:ro
-      - /app/qwc2/config:/srv/qwc_service/config-out
-      - /app/qwc2/qwc2:/qwc2
-      - /app/qwc2/qgs-resources:/data
-      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - ${QWC2_APP_PATH}/config-in:/srv/qwc_service/config-in:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config-out
+      - ${QWC2_APP_PATH}/qwc2:/qwc2
+      - ${QWC2_APP_PATH}/qgs-resources:/data
+      - ${QWC2_APP_PATH}/pg_services:/srv/pg_services:ro
       - /etc/localtime:/etc/localtime:ro
 
   qwc-ogc-service:
@@ -63,7 +63,7 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/ows'
     volumes:
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -76,9 +76,9 @@ services:
       ATTACHMENTS_BASE_DIR: '/attachments'
       MAX_ATTACHMENT_FILE_SIZE: 1048576
     volumes:
-      - /app/qwc2/pg_services:/srv/pg_services:ro
-      - /app/qwc2/config:/srv/qwc_service/config:ro
-      - /app/qwc2/attachments:/attachments
+      - ${QWC2_APP_PATH}/pg_services:/srv/pg_services:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/attachments:/attachments
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -93,10 +93,10 @@ services:
     # ports:
      # - "127.0.0.1:8983:8983"
     volumes:
-      - /app/qwc2/solr/configsets/gdi:/gdi_conf:ro
+      - ${QWC2_APP_PATH}/solr/configsets/gdi:/gdi_conf:ro
       # Configuration is copied once from /gdi_conf/ to /var/solr/data/
       # Change ownership to solr user with `sudo chown 8983:8983 volumes/solr/data`
-      #- /app/qwc2/solr/data:/var/solr/data
+      #- ${QWC2_APP_PATH}/solr/data:/var/solr/data
       # Protect admin GUI and admin API with Basic auth
       # Change "#credentials" to "credentials" in security.json for adding a user 'solr' with password 'SolrRocks'
       #- ./volumes/solr/security.json:/var/solr/data/security.json:ro
@@ -109,8 +109,8 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v2/search'
     volumes:
-      - /app/qwc2/pg_services:/srv/pg_services:ro
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/pg_services:/srv/pg_services:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -126,12 +126,12 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/'
     volumes:
-      - /app/qwc2/pg_services:/srv/pg_services:ro
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/pg_services:/srv/pg_services:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
       # When using qwc-map-viewer-demo:
-      - /app/qwc2/qwc2/assets:/qwc2/assets:ro
+      - ${QWC2_APP_PATH}/qwc2/assets:/qwc2/assets:ro
       # When using own viewer build with qwc-map-viewer-base:
-      #- /app/qwc2/qwc2:/qwc2:ro
+      #- ${QWC2_APP_PATH}/qwc2:/qwc2:ro
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -153,13 +153,13 @@ services:
       SKIP_LOGIN: 'True'
 
     volumes:
-      - /app/qwc2/pg_services:/srv/pg_services:ro
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/pg_services:/srv/pg_services:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
       # Volumes for plugins
-      - /app/qwc2/qwc2:/qwc2:ro
-      - /app/qwc2/qgs-resources:/data
-      - /app/qwc2/config-in:/srv/qwc_service/config-in
+      - ${QWC2_APP_PATH}/qwc2:/qwc2:ro
+      - ${QWC2_APP_PATH}/qgs-resources:/data
+      - ${QWC2_APP_PATH}/config-in:/srv/qwc_service/config-in
 
   qwc-auth-service:
     image: sourcepole/qwc-oidc-auth:v2023.04.03
@@ -171,7 +171,7 @@ services:
       TENANT_HEADER:
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
 
 
   qwc-elevation-service:
@@ -181,7 +181,7 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/elevation'
     volumes:
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -192,8 +192,8 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v1/permalink'
     volumes:
-      - /app/qwc2/pg_services:/srv/pg_services:ro
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/pg_services:/srv/pg_services:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -204,7 +204,7 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v1/print'
     volumes:
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -216,8 +216,8 @@ services:
       SERVICE_MOUNTPOINT: '/api/v1/featureinfo'
       # SKIP_EMPTY_ATTRIBUTES: 1
     volumes:
-      - /app/qwc2/pg_services:/srv/pg_services:ro
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/pg_services:/srv/pg_services:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -228,8 +228,8 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v1/mapinfo'
     volumes:
-      - /app/qwc2/pg_services:/srv/pg_services:ro
-      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/pg_services:/srv/pg_services:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -240,8 +240,8 @@ services:
       <<: *qwc-service-variables
       SERVICE_MOUNTPOINT: '/api/v1/legend'
     volumes:
-      - /app/qwc2/config:/srv/qwc_service/config:ro
-      - /app/qwc2/legends:/legends
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/legends:/legends
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -253,9 +253,9 @@ services:
       AUTH_REQUIRED: True
       SERVICE_MOUNTPOINT: '/publisher'
     volumes:
-      - /app/qwc2/config:/srv/qwc_service/config:ro
-      - /app/qwc2/qgs-resources:/data
-      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - ${QWC2_APP_PATH}/config:/srv/qwc_service/config:ro
+      - ${QWC2_APP_PATH}/qgs-resources:/data
+      - ${QWC2_APP_PATH}/pg_services:/srv/pg_services:ro
       - /etc/localtime:/etc/localtime:ro
 
 
@@ -266,7 +266,7 @@ services:
     #command: [nginx-debug, '-g', 'daemon off;']
 
     volumes:
-      - /app/qwc2/api-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${QWC2_APP_PATH}/api-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - qwc-config-service
       - qwc-qgis-server
