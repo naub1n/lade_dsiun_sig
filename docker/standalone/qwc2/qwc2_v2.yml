@@ -26,7 +26,7 @@ services:
       - ${QWC2_APP_PATH}/pg_services:/etc/postgresql-common:ro
       - ${QWC2_QGISSERVER_PATH}/conf:/etc/apache2/templates/
       - /etc/localtime:/etc/localtime:ro
-      - ${QWC2_QGISSERVER_PATH/auth-db:/var/lib/qgis/auth
+      - ${QWC2_QGISSERVER_PATH}/auth-db:/var/lib/qgis/auth
 
 
   qwc-global-config-service:
