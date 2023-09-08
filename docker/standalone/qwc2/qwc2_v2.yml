@@ -1,0 +1,300 @@
+version: '3.4'
+
+x-qwc-service-variables: &qwc-service-variables
+  JWT_SECRET_KEY: $JWT_SECRET_KEY
+  JWT_COOKIE_CSRF_PROTECT: 'True'
+  # Set these to override the UID/GID which runs uwsgi. Useful to ensure uwsgi runs under the same user/group
+  # which owns the shared volumes on host, avoiding the need to change the ownership/permissions of those files/folders.
+  SERVICE_UID: ${UID}
+  SERVICE_GID: ${GID}
+  PGSERVICEFILE: "/srv/pg_services/pg_service.conf"
+  #TENANT_URL_RE: ${QWC2_TENANT_URL_RE}
+  #TENANT_URL_RE: ^https?://.+?/(.+?)/
+  TENANT_HEADER: Tenant
+  POST_PARAM_LOGIN: True
+  FLASK_DEBUG: ${QWC2_FLASK_DEBUG}
+  PREFERRED_URL_SCHEME: 'https'
+
+services:
+  qwc-qgis-server:
+    image: sourcepole/qwc-qgis-server:3.28-plugins
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+    volumes:
+      - /app/qwc2/qgs-resources:/data:ro
+      - /app/qwc2/pg_services:/etc/postgresql-common:ro
+      - /app/qgis-server/conf:/etc/apache2/templates/
+      - /etc/localtime:/etc/localtime:ro
+      - /app/qgis-server/auth-db:/var/lib/qgis/auth
+
+
+  qwc-global-config-service:
+    image: naub1n/qwc-global-config-generator:v2023.06.29
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      INPUT_CONFIG_PATH: '/srv/qwc_service/config-in'
+    volumes:
+      - /app/qwc2/config-in:/srv/qwc_service/config-in
+
+  qwc-config-service:
+    image: sourcepole/qwc-config-generator:v2023.06.15
+    # Lightweight variant without qgis, use if you don't need the split_categorized_layers feature
+    # image: sourcepole/qwc-config-generator:v2022.08.22-noqgis
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      INPUT_CONFIG_PATH: '/srv/qwc_service/config-in'
+      OUTPUT_CONFIG_PATH: '/srv/qwc_service/config-out'
+      GENERATE_DYNAMIC_KVRELS: 1
+    volumes:
+      - /app/qwc2/config-in:/srv/qwc_service/config-in:ro
+      - /app/qwc2/config:/srv/qwc_service/config-out
+      - /app/qwc2/qwc2:/qwc2
+      - /app/qwc2/qgs-resources:/data
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  qwc-ogc-service:
+    image: sourcepole/qwc-ogc-service:v2023.0-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/ows'
+    volumes:
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-data-service:
+    image: sourcepole/qwc-data-service:v2023.1-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/api/v1/data'
+      ATTACHMENTS_BASE_DIR: '/attachments'
+      MAX_ATTACHMENT_FILE_SIZE: 1048576
+    volumes:
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /app/qwc2/attachments:/attachments
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-solr:
+    image: solr:8.11.1-slim
+    restart: always
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - gdi
+      - /gdi_conf
+    # ports:
+     # - "127.0.0.1:8983:8983"
+    volumes:
+      - /app/qwc2/solr/configsets/gdi:/gdi_conf:ro
+      # Configuration is copied once from /gdi_conf/ to /var/solr/data/
+      # Change ownership to solr user with `sudo chown 8983:8983 volumes/solr/data`
+      #- /app/qwc2/solr/data:/var/solr/data
+      # Protect admin GUI and admin API with Basic auth
+      # Change "#credentials" to "credentials" in security.json for adding a user 'solr' with password 'SolrRocks'
+      #- ./volumes/solr/security.json:/var/solr/data/security.json:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  qwc-fulltext-search-service:
+    image: sourcepole/qwc-fulltext-search-service:v2023.0-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/api/v2/search'
+    volumes:
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-map-viewer:
+    image: sourcepole/qwc-map-viewer-demo:v2023.1-lts
+    # Update config.json with:
+    # curl -o volumes/config-in/config.json https://github.com/qgis/qwc2-demo-app/raw/v2022.01.08/static/config.json
+    # and generate service configuration
+    # With custom build added via volume:
+    # image: sourcepole/qwc-map-viewer-base:v2022.08.25
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/'
+    volumes:
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      # When using qwc-map-viewer-demo:
+      - /app/qwc2/qwc2/assets:/qwc2/assets:ro
+      # When using own viewer build with qwc-map-viewer-base:
+      #- /app/qwc2/qwc2:/qwc2:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+
+  qwc-admin-gui:
+    image: sourcepole/qwc-admin-gui:v2023.0-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      # Don't enable JWT CSRF protection for admin gui, it conflicts with CSRF protection offered by Flask-WTF
+      JWT_COOKIE_CSRF_PROTECT: 'False'
+      USER_INFO_FIELDS: '[{"title": "Surname", "name": "surname", "type": "text", "required": true}, {"title": "First name", "name": "first_name", "type": "text", "required": true}, {"title": "Street", "name": "street", "type": "text"}, {"title": "ZIP", "name": "zip", "type": "text"}, {"title": "City", "name": "city", "type": "text"}]'
+      #TOTP_ENABLED: 'False'
+      GROUP_REGISTRATION_ENABLED: 'True'
+      IDLE_TIMEOUT: 600
+      DEFAULT_LOCALE: 'fr'
+      MAIL_SUPPRESS_SEND: 'True'
+      MAIL_DEFAULT_SENDER: 'from@example.com'
+      SKIP_LOGIN: 'True'
+
+    volumes:
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /etc/localtime:/etc/localtime:ro
+      # Volumes for plugins
+      - /app/qwc2/qwc2:/qwc2:ro
+      - /app/qwc2/qgs-resources:/data
+      - /app/qwc2/config-in:/srv/qwc_service/config-in
+
+  qwc-auth-service:
+    image: sourcepole/qwc-oidc-auth:v2023.04.03
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/auth'
+      JWT_COOKIE_SAMESITE: 'Lax'
+      TENANT_HEADER:
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+
+
+  qwc-elevation-service:
+    image: sourcepole/qwc-elevation-service:v2023.0-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/elevation'
+    volumes:
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-permalink-service:
+    image: sourcepole/qwc-permalink-service:v2023.0-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/api/v1/permalink'
+    volumes:
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-print-service:
+    image: sourcepole/qwc-print-service:v2023.0-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/api/v1/print'
+    volumes:
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-feature-info-service:
+    image: sourcepole/qwc-feature-info-service:v2023.0-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/api/v1/featureinfo'
+      # SKIP_EMPTY_ATTRIBUTES: 1
+    volumes:
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-mapinfo-service:
+    image: sourcepole/qwc-mapinfo-service:v2023.0-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/api/v1/mapinfo'
+    volumes:
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-legend-service:
+    image: sourcepole/qwc-legend-service:v2023.0-lts
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      SERVICE_MOUNTPOINT: '/api/v1/legend'
+    volumes:
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /app/qwc2/legends:/legends
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-project-publisher:
+    image: naub1n/qwc-project-publisher-service:v2023.01.03
+    restart: always
+    environment:
+      <<: *qwc-service-variables
+      AUTH_REQUIRED: True
+      SERVICE_MOUNTPOINT: '/publisher'
+    volumes:
+      - /app/qwc2/config:/srv/qwc_service/config:ro
+      - /app/qwc2/qgs-resources:/data
+      - /app/qwc2/pg_services:/srv/pg_services:ro
+      - /etc/localtime:/etc/localtime:ro
+
+
+  qwc-api-gateway:
+    image: nginx
+    #ports:
+      #- "8088:80"
+    #command: [nginx-debug, '-g', 'daemon off;']
+
+    volumes:
+      - /app/qwc2/api-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - qwc-config-service
+      - qwc-qgis-server
+      - qwc-ogc-service
+      - qwc-map-viewer
+      - qwc-auth-service
+      - qwc-feature-info-service
+      - qwc-legend-service
+      - qwc-mapinfo-service
+      - qwc-permalink-service
+      - qwc-elevation-service
+      - qwc-fulltext-search-service
+      - qwc-data-service
+      - qwc-admin-gui
+      #- qwc-registration-gui
+      - qwc-global-config-service
+      - qwc-project-publisher
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.r_qwc2_header.rule=Host(`${TRAEFIK_QWC2_HOST}`)"
+      - "traefik.http.routers.r_qwc2_header.priority=10"
+      - "traefik.http.routers.r_qwc2_header.entrypoints=websecure"
+      #- "traefik.http.routers.r_qwc2_header.entrypoints=web"
+      - "traefik.http.routers.r_qwc2_header.tls=true"
+      - "traefik.http.services.s_qwc2_header.loadbalancer.server.port=443"
+      - "traefik.http.routers.r_qwc2_header.service=s_qwc2_header"
+
+networks:
+  default:
+    name: sig-net
+    external: true
