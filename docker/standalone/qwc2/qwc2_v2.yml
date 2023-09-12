@@ -291,7 +291,7 @@ services:
       - "traefik.http.routers.r_qwc2_header.entrypoints=websecure"
       #- "traefik.http.routers.r_qwc2_header.entrypoints=web"
       - "traefik.http.routers.r_qwc2_header.tls=true"
-      - "traefik.http.services.s_qwc2_header.loadbalancer.server.port=443"
+      - "traefik.http.services.s_qwc2_header.loadbalancer.server.port=80"
       - "traefik.http.routers.r_qwc2_header.service=s_qwc2_header"
 
 networks:
