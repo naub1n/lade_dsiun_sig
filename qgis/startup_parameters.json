@@ -60,6 +60,15 @@
             ],
             "domains": ["dag"],
             "users": [""]
+          },
+          {
+            "names": [
+              "gestionthemes",
+              "locouv",
+              "rechpg"
+            ],
+            "domains": ["domntade"],
+            "users": [""]
           }
         ],
         "configs": [
