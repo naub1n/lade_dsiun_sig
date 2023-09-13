@@ -19,7 +19,7 @@ services:
     ports:
       - 389:13389
     volumes:
-      - "/app/azuread-ldap/app:/app/.cache"
+      - "${AZURE2LDAP_APP_PATH}/app:/app/.cache"
 
 networks:
   default:

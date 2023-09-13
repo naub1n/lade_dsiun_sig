@@ -24,8 +24,8 @@ services:
       #- 8080:8080
     volumes:
       - /${XDG_RUNTIME_DIR}/docker.sock:/var/run/docker.sock:ro
-      - /app/traefik/providers:/providers
-      - /app/traefik/.certs:/certs
+      - ${TRAEFIK_APP_PATH}/providers:/providers
+      - ${TRAEFIK_APP_PATH}/.certs:/certs
       - /etc/localtime:/etc/localtime:ro
     labels:
       - "traefik.enable=true"

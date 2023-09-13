@@ -15,7 +15,7 @@ services:
       - LDAPURI=${LDAPURI}
       - VERBOSITY=${VERBOSITY}
     volumes:
-      - "/app/ldap2pg/workspace:/workspace"
+      - "${LDAP2PG_APP_PATH}/workspace:/workspace"
       - "/etc/localtime:/etc/localtime:ro"
 
 networks:

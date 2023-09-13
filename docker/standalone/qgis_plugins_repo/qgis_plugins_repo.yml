@@ -13,7 +13,7 @@ services:
         rm /tmp/phpQGISrepository.zip
         supervisord
     volumes:
-      - /app/qgis-plugins-repo/plugins:/app/downloads
+      - ${PHPQGISREPOSITORY_APP_PATH}/plugins:/app/downloads
       - "/etc/localtime:/etc/localtime:ro"
     labels:
       - "traefik.enable=true"
