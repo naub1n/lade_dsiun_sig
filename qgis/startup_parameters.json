@@ -69,6 +69,13 @@
             ],
             "domains": ["domntade"],
             "users": [""]
+          },
+          {
+            "names": [
+              "datagrandest"
+            ],
+            "domains": ["aerm.fr"],
+            "users": ["aubin_ni"]
           }
         ],
         "configs": [
@@ -432,20 +439,11 @@
         {
           "name": "AERM - GéoDonnées AERM",
           "url": "https://geo.eau-rhin-meuse.fr/server/rest/services/GEORM",
-          "headers": [
-            {
-              "key": "test_key",
-              "value": "test_value"
-            },
-            {
-              "key": "referer",
-              "value": "test_value2"
-            }
-          ],
-          "community_endpoint": "test",
-          "content_endpoint": "test2",
-          "authcfg": "dsiun01",
-          "domains": [],
+          "headers": [],
+          "community_endpoint": "",
+          "content_endpoint": "",
+          "authcfg": "",
+          "domains": ["aerm.fr"],
           "users": ["aubin_ni"]
         }
       ],
