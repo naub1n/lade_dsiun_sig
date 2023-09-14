@@ -119,6 +119,7 @@ class StartupDSIUN:
                     self.add_favorites()
                     self.add_wfs_connections()
                     self.add_wms_connections()
+                    self.add_arcgis_connections()
                     self.add_layout_templates()
                     self.add_svg_paths()
                     self.set_default_crs()
@@ -610,6 +611,42 @@ class StartupDSIUN:
                 s = QgsSettings()
                 s.beginGroup('qgis')
                 s.beginGroup('WMS')
+
+                s.setValue("%s/authcfg" % cnx_name, cnx_authcfg)
+                s.setValue("%s/username" % cnx_name, cnx_username)
+                s.setValue("%s/password" % cnx_name, cnx_password)
+
+    def add_arcgis_connections(self):
+        self.log("Vérification des connexions ArcGIS Server.", Qgis.Info)
+        arcgis_connections = self.env_config.get("arcgis_connections", [])
+
+        for arcgis_c in arcgis_connections:
+            cnx_name = arcgis_c.get("name", "")
+            cnx_headers = arcgis_c.get("headers", [])
+            cnx_url = arcgis_c.get("url", "")
+            cnx_community_endpoint = arcgis_c.get("community_endpoint", "")
+            cnx_content_endpoint = arcgis_c.get("content_endpoint", "")
+            cnx_authcfg = arcgis_c.get("authcfg", "")
+            cnx_username = arcgis_c.get("username", "")
+            cnx_password = arcgis_c.get("password", "")
+            cnx_domains = [x.lower() for x in arcgis_c.get("domains", [])]
+            cnx_users = [x.lower() for x in arcgis_c.get("users", [])]
+
+            if self.check_users_and_domains(cnx_users, cnx_domains):
+                s = QgsSettings()
+                s.beginGroup('qgis')
+                s.beginGroup('connections-arcgisfeatureserver')
+
+                s.setValue("%s/url" % cnx_name, cnx_url)
+                s.setValue("%s/community_endpoint" % cnx_name, cnx_community_endpoint)
+                s.setValue("%s/content_endpoint" % cnx_name, cnx_content_endpoint)
+
+                for header in cnx_headers:
+                    s.setValue("%s/http-header/%s" % (cnx_name, header.get("key")), header.get("value"))
+
+                s = QgsSettings()
+                s.beginGroup('qgis')
+                s.beginGroup('ARCGISFEATURESERVER')
 
                 s.setValue("%s/authcfg" % cnx_name, cnx_authcfg)
                 s.setValue("%s/username" % cnx_name, cnx_username)
