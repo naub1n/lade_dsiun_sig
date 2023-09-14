@@ -395,6 +395,24 @@
           "version" : "1.1.0",
           "domains": ["aesn1"],
           "users": [""]
+        },
+        {
+          "name": "BRGM - Géologie",
+          "url": "http://geoservices.brgm.fr/geologie",
+          "domains": ["all"],
+          "users": [""]
+        },
+        {
+          "name": "BRGM - Risques",
+          "url": "http://geoservices.brgm.fr/risques",
+          "domains": ["all"],
+          "users": [""]
+        },
+        {
+          "name": "BRGM - Obs. des Matériaux",
+          "url": "http://geoservices.brgm.fr/odmgm",
+          "domains": ["all"],
+          "users": [""]
         }
       ],
       "wms_connections": [
@@ -431,6 +449,24 @@
         {
           "name": "SANDRE",
           "url": "https://services.sandre.eaufrance.fr/geo/sandre",
+          "domains": ["all"],
+          "users": [""]
+        },
+        {
+          "name": "BRGM - Géologie",
+          "url": "http://geoservices.brgm.fr/geologie",
+          "domains": ["all"],
+          "users": [""]
+        },
+        {
+          "name": "BRGM - Risques",
+          "url": "http://geoservices.brgm.fr/risques",
+          "domains": ["all"],
+          "users": [""]
+        },
+        {
+          "name": "BRGM - Obs. des Matériaux",
+          "url": "http://geoservices.brgm.fr/odmgm",
           "domains": ["all"],
           "users": [""]
         }
