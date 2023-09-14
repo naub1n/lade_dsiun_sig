@@ -428,6 +428,21 @@
           "users": [""]
         }
       ],
+      "arcgis_connections": [
+        {
+          "name": "AERM - GéoDonnées AERM",
+          "url": "https://geo.eau-rhin-meuse.fr/server/rest/services/GEORM",
+          "headers": [
+            {
+              "key": "test_key",
+              "value": "test_value"
+            }
+          ],
+          "authcfg": "dsiun01",
+          "domains": [],
+          "users": ["aubin_ni"]
+        }
+      ],
       "composer_templates": [
         {
           "path": "W:/07-DONNEES_CONNAISSANCES/_ACCES_CARTO/1_aide_au_cartographe/11_presentation/113_mise_en_page_qgis",
