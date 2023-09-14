@@ -436,8 +436,14 @@
             {
               "key": "test_key",
               "value": "test_value"
+            },
+            {
+              "key": "referer",
+              "value": "test_value2"
             }
           ],
+          "community_endpoint": "test",
+          "content_endpoint": "test2",
           "authcfg": "dsiun01",
           "domains": [],
           "users": ["aubin_ni"]
