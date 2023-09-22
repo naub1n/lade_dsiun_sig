@@ -30,7 +30,7 @@ services:
 
 
   qwc-global-config-service:
-    image: naub1n/qwc-global-config-generator:v2023.06.29
+    image: naub1n/qwc-global-config-generator:v2023.09.22
     restart: always
     environment:
       <<: *qwc-service-variables
