@@ -494,6 +494,7 @@ class StartupDSIUN:
             cnx_port = cnx.get("port", "")
             cnx_dbname = cnx.get("dbname", "")
             cnx_auth_id = cnx.get("auth_id", "")
+            cnx_configs = cnx.get("configs", {})
             cnx_domains = [x.lower() for x in cnx.get("domains", [])]
             cnx_users = [x.lower() for x in cnx.get("users", [])]
 
@@ -507,8 +508,20 @@ class StartupDSIUN:
                                       aUsername=None,
                                       aPassword=None,
                                       authConfigId=cnx_auth_id)
+                    
+                    config = {
+                        "allowGeometrylessTables": cnx_configs.get("allowGeometrylessTables", False),
+                        "dontResolveType": cnx_configs.get("dontResolveType", False),
+                        "estimatedMetadata": cnx_configs.get("estimatedMetadata", False),
+                        "geometryColumnsOnly": cnx_configs.get("geometryColumnsOnly", True), 
+                        "metadataInDatabase": cnx_configs.get("metadataInDatabase", False),
+                        "projectsInDatabase": cnx_configs.get("projectsInDatabase", False),
+                        "publicOnly": cnx_configs.get("publicOnly", False),
+                        "savePassword": cnx_configs.get("savePassword", False),
+                        "saveUsername": cnx_configs.get("saveUsername", False) 
+                    }
                     self.log("Ajout/Restauration de la connection '%s'." % cnx_name, Qgis.Info)
-                    new_conn = provider.createConnection(None, {})
+                    new_conn = provider.createConnection(None, config)
                     new_conn.setUri(uri.uri(expandAuthConfig=False))
                     # La connexion est ajoutée si inexistante ou remplacée si elle existe déjà
                     new_conn.store(cnx_name)

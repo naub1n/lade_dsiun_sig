@@ -284,6 +284,9 @@
           "port": "11420",
           "dbname": "carto_aelb",
           "auth_id": "aelb001",
+          "configs": {
+            "allowGeometrylessTables": true
+          },
           "domains": [],
           "users": ["aubin_ni"]
         },
