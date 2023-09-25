@@ -337,6 +337,9 @@
           "port": "11410",
           "dbname": "carto_aelb",
           "auth_id": "aelb001",
+          "configs": {
+            "allowGeometrylessTables": true
+          },
           "domains": ["aelb"],
           "users": ["aubin_ni"]
         },
@@ -347,6 +350,9 @@
           "port": "11410",
           "dbname": "habillage",
           "auth_id": "aelb001",
+          "configs": {
+            "allowGeometrylessTables": true
+          },
           "domains": ["aelb"],
           "users": ["aubin_ni"]
         },
@@ -357,6 +363,9 @@
           "port": "11410",
           "dbname": "psc",
           "auth_id": "aelb001",
+          "configs": {
+            "allowGeometrylessTables": true
+          },
           "domains": ["aelb"],
           "users": ["aubin_ni"]
         }
