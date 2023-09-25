@@ -190,6 +190,13 @@ class StartupDSIUN:
                         self.log("Installation/Mise à jour du paquet %s" % str(plugin), Qgis.Info)
                         self.pyplugin_inst.installPlugin(plugin)
                     else:
+                        settings = QgsSettings()
+                        plugin_is_active = settings.value("/PythonPlugins/" + plugin, False, type=bool)
+                        
+                        if not plugin_is_active:
+                            self.log("Activation du plugin %s" % str(plugin), Qgis.Info)
+                            settings.setValue( "PythonPlugins/" + plugin, True)
+
                         self.log("Le paquet %s est installé et à jour" % str(plugin), Qgis.Info)
                 else:
                     errors = True
