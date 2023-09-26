@@ -274,30 +274,7 @@
           "port": "5432",
           "dbname": "data",
           "auth_id": "dsiun01",
-          "domains": ["all"],
-          "users": ["aubin_ni"]
-        },
-        {
-          "qgis_provider": "postgres",
-          "name": "AELB - GeoDiff Carto",
-          "host": "DB-HP21.siege.aelb",
-          "port": "11420",
-          "dbname": "carto_aelb",
-          "auth_id": "aelb001",
-          "configs": {
-            "allowGeometrylessTables": true
-          },
-          "domains": [],
-          "users": ["aubin_ni"]
-        },
-        {
-          "qgis_provider": "postgres",
-          "name": "AELB - GeoDiff Habillage",
-          "host": "DB-HP21.siege.aelb",
-          "port": "11420",
-          "dbname": "habillage",
-          "auth_id": "aelb001",
-          "domains": [],
+          "domains": [""],
           "users": ["aubin_ni"]
         },
         {
