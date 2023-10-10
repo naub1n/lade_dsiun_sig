@@ -4,11 +4,13 @@ services:
   azure2ldap:
     image: ahaen/azuread-ldap-wrapper
     restart: always
+    user: root:root
     environment:
       TZ: "Europe/Paris" # optional
       AZURE_TENANTID: ${AZURE2LDAP_TENANT_ID}
       AZURE_APP_ID: ${AZURE2LDAP_APP_ID}
       AZURE_APP_SECRET: ${AZURE2LDAP_APP_SECRET}
+      LDAP_PORT: 1000 # Pour utiliser le compte root à la place de node dans l'entrypoint = pour docker rootless
       LDAP_DOMAIN: ${AZURE2LDAP_DOMAIN}
       LDAP_BASEDN: ${AZURE2LDAP_BASEDN}
       LDAP_BINDUSER: ${AZURE2LDAP_BINDUSER}
@@ -17,7 +19,7 @@ services:
       DSM7: "true" # set this to false if you are running DSM 6 or lower
       LDAP_SAMBANTPWD_MAXCACHETIME: 0
     ports:
-      - 389:13389
+      - 389:1000
     volumes:
       - "${AZURE2LDAP_APP_PATH}/app:/app/.cache"
 
