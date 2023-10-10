@@ -1,0 +1,77 @@
+version: '3.4'
+
+services:
+  semarchy-proxy:
+    image: nginx
+    restart: always
+    volumes:
+      - ${MDM_APP_PATH}/poc-sig/nginx.conf:/etc/nginx/conf.d/default.conf
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.r_semarchy.entrypoints=websecure
+      - traefik.http.routers.r_semarchy.priority=50
+      - traefik.http.routers.r_semarchy.rule=Host(`geo-dev.lesagencesdeleau.eu`) && PathPrefix(`/semarchy/`)
+      - traefik.http.routers.r_semarchy.service=s_semarchy
+      - traefik.http.routers.r_semarchy.tls=true
+      - traefik.http.services.s_semarchy.loadbalancer.server.port=80
+
+  api-mdm-map2:
+    image: naub1n/api-poc-mdm-sig
+    restart: always
+    environment:
+      SERVICE_MOUNTPOINT: /mdm-map2/api
+    volumes:
+      - ${MDM_APP_PATH}/poc-sig/api/server.py:/srv/qwc_service/server.py
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.r_mdm2_api.entrypoints=websecure
+      - traefik.http.routers.r_mdm2_api.priority=60
+      - traefik.http.routers.r_mdm2_api.rule=Host(`geo-dev.lesagencesdeleau.eu`) && PathPrefix(`/mdm-map2/api/`)
+      - traefik.http.routers.r_mdm2_api.service=s_mdm2_api
+      - traefik.http.routers.r_mdm2_api.tls=true
+      - traefik.http.services.s_mdm2_api.loadbalancer.server.port=9090
+
+  mdm-map2:
+    image: naub1n/poc-mdm-sig
+    restart: always
+    environment:
+      GEO_APP_DB_HOST: ${GEO_APP_DB_HOST}
+      GEO_APP_DB_NAME: ${GEO_APP_DB_NAME}
+      GEO_APP_DB_PASS: ${GEO_APP_DB_PASS}
+      GEO_APP_DB_USER: ${GEO_APP_DB_USER}
+      GEO_APP_NOTSITOUREF: ${GEO_APP_NOTSITOUREF}
+      WEB_DOCUMENT_INDEX: index.html
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.r_mdm2.entrypoints=websecure
+      - traefik.http.routers.r_mdm2.priority=50
+      - traefik.http.routers.r_mdm2.rule=Host(`geo-dev.lesagencesdeleau.eu`) && PathPrefix(`/mdm-map2/`)
+      - traefik.http.routers.r_mdm2.service=s_mdm2
+      - traefik.http.routers.r_mdm2.tls=true
+      - traefik.http.services.s_mdm2.loadbalancer.server.port=80
+
+  mdm-map:
+    image: naub1n/dsiun-mdm-map
+    restart: always
+    environment:
+      SERVICE_MOUNTPOINT: /mdm-map
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.r_mdm.entrypoints=websecure
+      - traefik.http.routers.r_mdm.priority=50
+      - traefik.http.routers.r_mdm.rule=Host(`geo-dev.lesagencesdeleau.eu`) && PathPrefix(`/mdm-map/`)
+      - traefik.http.routers.r_mdm.service=s_mdm
+      - traefik.http.routers.r_mdm.tls=true
+      - traefik.http.services.s_mdm.loadbalancer.server.port=9090
+
+
+networks:
+  default:
+    name: sig-net
+    external: true
