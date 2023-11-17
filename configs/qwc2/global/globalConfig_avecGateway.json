@@ -147,10 +147,11 @@
             "user_info_fields": [],
             "proxy_url_whitelist": [],
             "proxy_timeout": 60,
-        "plugins": ["themes"],
-        "input_config_path": "/srv/qwc_service/config-in/%tenant%",
-        "qgs_resources_path": "/data",
-        "ogc_service_url": "http://qwc-ogc-service:9090/"
+            "plugins": ["themes"],
+            "input_config_path": "/srv/qwc_service/config-in",
+            "qgs_resources_path": "/data",
+            "ogc_service_url": "http://qwc-ogc-service:9090/",
+            "qwc2_path": "/qwc2"
           }
         },
         {
